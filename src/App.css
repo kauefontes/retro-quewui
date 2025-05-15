@@ -1,0 +1,474 @@
+@import './views/BlogView.css';
+
+/* Base font setup */
+:root {
+  /* Set base font */
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  line-height: 1.5;
+  font-size: 16px;
+  
+  /* Base animation */
+  --blink-animation: blink 1.2s step-end infinite;
+}
+
+/* Main App Styles */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Theme variables */
+.theme-dark {
+  /* Colors */
+  --bg-color: #0c0e14; 
+  --text-color: white;
+  --accent-color: #00ffd9; /* cyan NEON glow */
+  --accent-color-dim: rgba(0, 255, 217, 0.5); /* dimmed accent color */
+  --secondary-color: #007ef2; /* NEON blue */
+  --border-color: #103149; /* NEON grid */
+  --highlight-bg: rgba(16, 49, 73, 0.3); /* NEON grid with opacity */
+  --terminal-bg: rgba(0, 0, 0, 0.8);
+  --tag-bg: rgba(0, 0, 0, 0.5);
+  --bullet-color: var(--accent-color); /* Color for list bullets */
+  
+  /* UI Elements */
+  --button-hover: rgba(0, 255, 217, 0.2);
+  --button-active-bg: rgba(0, 255, 217, 0.1);
+
+  /* Apply theme colors */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.theme-light {
+  /* Colors - Debian installer inspired */
+  --bg-color: #0000B3; /* Debian blue background */
+  --text-color: #FFFFFF; /* White text for better contrast on blue */
+  --accent-color: #FF0000; /* Red for highlights/buttons */
+  --accent-color-dim: rgba(255, 0, 0, 0.5); /* dimmed accent color */
+  --secondary-color: #C0C0C0; /* Light gray for secondary elements */
+  --border-color: #FFFFFF; /* White borders */
+  --highlight-bg: #000080; /* Darker blue for highlighted elements */
+  --terminal-bg: #0000B3; /* Same as bg for consistency */
+  --tag-bg: #000080; /* Darker blue for tags */
+  
+  /* UI Elements */
+  --button-hover: #FF6666; /* Lighter red for button hover */
+
+  /* Apply theme colors */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Terminal window styling */
+.terminal-window {
+  background-color: var(--terminal-bg);
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--accent-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 2rem);
+}
+
+/* Debian-inspired window styling */
+.theme-light .terminal-window {
+  background-color: var(--terminal-bg);
+  border: 2px solid #FFFFFF;
+  border-radius: 0; /* Flat edges como na interface do Debian */
+  box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.7), 
+              inset -1px -1px 0px rgba(0, 0, 0, 0.5),
+              0 0 5px rgba(0, 0, 0, 0.5); /* Efeito de profundidade */
+  padding: 1px;
+  max-height: calc(100vh - 2rem);
+}
+
+.terminal-header {
+  background-color: var(--accent-color);
+  color: var(--terminal-bg);
+  border-bottom: 1px solid var(--accent-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  flex: 0 0 auto;
+}
+
+.theme-light .terminal-header {
+  background-color: #C0C0C0;
+  color: #000000;
+  border-bottom: 1px solid #FFFFFF;
+  box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .terminal-header span,
+.theme-light .terminal-header span {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.terminal-button {
+  background-color: var(--accent-color);
+  color: var(--terminal-bg);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-light .terminal-button {
+  background-color: #C0C0C0;
+  color: #000000;
+  border: 1px outset #FFFFFF;
+  border-radius: 0;
+  font-weight: bold;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.terminal-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.theme-light .terminal-button:hover {
+  background-color: #D3D3D3;
+  border: 1px inset #FFFFFF;
+}
+
+.theme-light .terminal-button:active {
+  background-color: #B0B0B0;
+  border: 1px inset #C0C0C0;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Terminal content styling */
+.terminal-content {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  height: 0; /* Força o scroll dentro do terminal */
+  min-height: 0; /* Importante para que o flex funcione corretamente */
+}
+
+.terminal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+/* Estilo para as abas no tema claro, garantindo contraste */
+.theme-light .terminal-content {
+  color: #FFFFFF;
+  background-color: #0000B3;
+}
+
+/* Status bar at the bottom of the terminal */
+.terminal-statusbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 1rem;
+  background-color: var(--border-color);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-color);
+  opacity: 0.8;
+  flex: 0 0 auto;
+}
+
+.theme-light .terminal-statusbar {
+  background-color: #C0C0C0;
+  color: #000000;
+  border-top: 1px solid #FFFFFF;
+  box-shadow: inset 0px 1px 0px rgba(0, 0, 0, 0.2);
+}
+
+.terminal-statusbar span.mx-2 {
+  margin: 0 0.5rem;
+}
+
+.terminal-statusbar span.mx-3 {
+  margin: 0 0.75rem;
+}
+
+/* Navigation tabs styling */
+.nav-tabs {
+  padding: 0 1rem;
+  background-color: var(--terminal-bg);
+  border-bottom: 1px solid var(--border-color);
+  flex: 0 0 auto;
+}
+
+/* Estilo para caixas de diálogo à la Debian */
+.theme-light .nav-tabs {
+  background-color: #0000B3;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+.nav-tab {
+  position: relative;
+  background: transparent;
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.theme-light .nav-tab {
+  color: #FFFFFF;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-tab:hover {
+  color: var(--accent-color);
+}
+
+.theme-light .nav-tab:hover {
+  background-color: #000099;
+}
+
+.nav-tab.active {
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.theme-light .nav-tab.active {
+  color: #FFFFFF;
+  background-color: #000080;
+  border-bottom: 2px solid #FFFFFF;
+  font-weight: bold;
+}
+
+.nav-tab-indicator {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  right: 5px;
+  top: 5px;
+  animation: var(--blink-animation);
+}
+
+/* Destaque de itens ativos */
+.theme-light .active-item {
+  background-color: #000080;
+  color: #FFFFFF;
+}
+
+/* Command input styling */
+.command-input {
+  display: flex;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--terminal-bg);
+  flex: 0 0 auto;
+}
+
+/* Ajusta o estilo de linha de comando */
+.theme-light .command-input {
+  background-color: #000080;
+  border-top: 1px solid #FFFFFF;
+}
+
+.command-input input {
+  flex: 1;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1rem;
+  outline: none;
+}
+
+.theme-light .command-input input {
+  color: #FFFFFF;
+}
+
+.command-input .prompt {
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+
+.theme-light .command-input .prompt {
+  color: #FFFFFF;
+}
+
+.command-cursor {
+  display: inline-block;
+  width: 0.5rem;
+  height: 1rem;
+  background-color: var(--accent-color);
+  animation: var(--blink-animation);
+}
+
+.theme-light .command-cursor {
+  background-color: #FFFFFF;
+}
+
+/* Estilo de caixas de conteúdo inspirado no Debian */
+.theme-light .content-box {
+  border: 1px solid #FFFFFF;
+  background-color: #000080;
+  box-shadow: inset 1px 1px 0px rgba(0, 0, 0, 0.5), 
+              inset -1px -1px 0px rgba(255, 255, 255, 0.3);
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* Estilo para títulos nos temas claros */
+.theme-light h1, 
+.theme-light h2, 
+.theme-light h3, 
+.theme-light h4, 
+.theme-light h5 {
+  color: #FFFFFF;
+  border-bottom: 1px solid #C0C0C0;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+/* Estilo para listas */
+.theme-light ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.theme-light ul li:before {
+  content: ">";
+  color: #FFFFFF;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Boot screen animation */
+.boot-screen {
+  animation: fadeIn 2s ease-in-out;
+}
+
+/* ASCII art display for larger screens */
+@media (min-width: 768px) {
+  .ascii-art {
+    display: block !important;
+  }
+}
+
+/* Common UI utilities */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+html, body, #root {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Make terminal scrollbars look nicer */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.theme-dark ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark ::-webkit-scrollbar-thumb {
+  background: rgba(0, 127, 242, 0.5);
+  border-radius: 4px;
+}
+
+.theme-dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 217, 0.7);
+}
+
+.theme-light ::-webkit-scrollbar-track {
+  background: #d3d3d3;
+}
+
+.theme-light ::-webkit-scrollbar-thumb {
+  background: #b0b0b0;
+  border-radius: 0;
+}
+
+.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* Extras para tema Debian */
+.theme-light .debian-box {
+  border: 1px solid #FFFFFF;
+  background-color: #000080;
+  padding: 1rem;
+  box-shadow: inset 1px 1px 0px rgba(0, 0, 0, 0.5), 
+              inset -1px -1px 0px rgba(255, 255, 255, 0.3);
+}
+
+.theme-light .debian-dialog {
+  border: 2px solid #FFFFFF;
+  background-color: #0000B3;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  padding: 0;
+}
+
+.theme-light .debian-dialog-header {
+  background-color: #C0C0C0;
+  color: #000000;
+  font-weight: bold;
+  padding: 0.25rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+.theme-light .debian-dialog-body {
+  padding: 1rem;
+  color: #FFFFFF;
+}
+
+.theme-light .debian-button {
+  display: inline-block;
+  background-color: #C0C0C0;
+  color: #000000;
+  border: 1px outset #FFFFFF;
+  padding: 0.25rem 1rem;
+  margin: 0.25rem;
+  min-width: 80px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.theme-light .debian-button:active,
+.theme-light .debian-button.active {
+  border: 1px inset #C0C0C0;
+  background-color: #B0B0B0;
+}
+
+/* Ajustes para o tema escuro - mantém o estilo NEON consistente */
+.theme-dark .terminal-window {
+  box-shadow: 0 0 20px rgba(0, 255, 217, 0.6);
+  border-color: var(--accent-color);
+}
+
+.theme-dark .terminal-content {
+  border: none;
+  background-color: transparent;
+}
