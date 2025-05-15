@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import type { Theme, TabName } from '../types';
 
+/**
+ * Application State Store
+ * 
+ * This module defines the global state management for the application using Zustand.
+ * It handles theme settings, tab navigation, command history, and UI state.
+ */
+
 // Define state interface
 interface AppState {
   // Theme management

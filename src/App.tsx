@@ -15,6 +15,13 @@ import { BlogView } from './views/BlogView';
 import { ContactView } from './views/ContactView';
 import { StatsView } from './views/StatsView';
 
+/**
+ * Main Application Component
+ * 
+ * This is the root component that manages the terminal-like UI experience.
+ * It handles keyboard navigation, view switching, and maintains a boot screen
+ * for the initial application load.
+ */
 function App() {
   const { 
     currentTab, 
