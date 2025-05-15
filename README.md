@@ -1,28 +1,78 @@
-# React + TypeScript + Vite
+# Retro Quewui
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A retro terminal-style UI built with React, TypeScript, and Vite. This interactive web application mimics a classic terminal interface with a modern twist.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Terminal-inspired UI with command interface
+- Vim-like keyboard navigation
+- Multiple view components (Home, About, Projects, Experiences, etc.)
+- Theme switching (light/dark mode)
+- Command history tracking
+- Responsive design with Tailwind CSS
 
-## Expanding the ESLint configuration
+## Setup and Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/retro-quewui.git
+cd retro-quewui
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Commands
+
+The terminal interface accepts the following commands:
+
+- `help` - Display available commands
+- `home`, `about`, `projects`, `experiences`, `blog`, `contact`, `stats` - Navigate to different views
+- `theme` - Toggle between light and dark theme
+- `clear` - Clear the terminal screen
+- `exit` - Exit command mode
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand (State Management)
+- React Markdown
+- Headless UI
+
+## Project Structure
+
+```
+src/
+  ├── components/       # UI components
+  ├── store/            # State management
+  ├── views/            # View components
+  ├── data/             # API and mock data
+  ├── types/            # TypeScript types
+  ├── assets/           # Static assets
+  └── App.tsx           # Main application
+```
+
+## Development
+
+To improve type-checking and linting, you can update the ESLint configuration:
 
 ```js
 export default tseslint.config({
   extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
     ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
     ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
     ...tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
-    // other options...
     parserOptions: {
       project: ['./tsconfig.node.json', './tsconfig.app.json'],
       tsconfigRootDir: import.meta.dirname,
@@ -31,24 +81,6 @@ export default tseslint.config({
 })
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+MIT
