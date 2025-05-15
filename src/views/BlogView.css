@@ -1,0 +1,112 @@
+/* Blog post markdown styling */
+.prose {
+  font-size: 1rem;
+}
+
+.prose-debian {
+  color: #FFFFFF;
+}
+
+.prose-tron {
+  color: var(--text-color);
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose h1 {
+  font-size: 1.5rem;
+}
+
+.prose h2 {
+  font-size: 1.25rem;
+}
+
+.prose h3 {
+  font-size: 1.125rem;
+}
+
+.prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose ul, .prose ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose code {
+  font-family: monospace;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  border-radius: 0.25rem;
+}
+
+.prose pre {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+}
+
+.theme-dark .prose pre {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.theme-light .prose pre {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.prose pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+.prose blockquote {
+  padding-left: 1rem;
+  border-left-width: 4px;
+  font-style: italic;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.theme-dark .prose blockquote {
+  border-left-color: #007ef2;
+}
+
+.theme-light .prose blockquote {
+  border-left-color: #C0C0C0;
+}
+
+.prose a {
+  text-decoration: underline;
+}
+
+.theme-dark .prose a {
+  color: #00ffd9;
+}
+
+/* Light theme specific overrides */
+.theme-light .prose {
+  color: black;
+}
+
+.theme-light .prose a {
+  color: #00AAFF;
+}
