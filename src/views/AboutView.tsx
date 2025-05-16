@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { skills as mockSkills } from '../data/mockData';
-import { getSkills } from '../data/api';
-import type { Skill } from '../types/index';
+import { getSkills, getProfile } from '../data/api';
+import type { Skill, Profile, SocialLink, Education, Language } from '../types/index';
 
 // About View Component
 export const AboutView = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
 
@@ -29,7 +32,23 @@ export const AboutView = () => {
       }
     };
 
+    const fetchProfile = async () => {
+      try {
+        setProfileLoading(true);
+        const profileData = await getProfile();
+        setProfile(profileData);
+        setProfileError(null);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setProfileError('Failed to load profile data.');
+        // Não temos dados mockados para o perfil, então vamos deixar como null
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
     fetchSkills();
+    fetchProfile();
   }, []);
   
   return (
@@ -64,28 +83,30 @@ export const AboutView = () => {
       }}>
         {/* Bio section */}
         <section>
-          <p style={{
-            marginBottom: '0.75rem',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            Senior Software Developer specializing in creating intuitive and high-performance web applications. 
-            With over 5 years of professional experience, I've worked on projects ranging from automotive 
-            dashboards to IoT systems and developer tools.
-          </p>
-          <p style={{
-            marginBottom: '0.75rem',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            I'm passionate about building software that combines technical excellence with great user 
-            experience. My approach emphasizes clean code, performance optimization, and sustainable 
-            architecture that can evolve with changing requirements.
-          </p>
-          <p style={{
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            When I'm not coding, you can find me exploring new technologies, contributing to open-source 
-            projects, or enjoying outdoor activities.
-          </p>
+          {profileLoading ? (
+            <div style={{ 
+              padding: '1rem', 
+              textAlign: 'center', 
+              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+            }}>
+              Loading bio...
+            </div>
+          ) : profileError ? (
+            <div style={{ 
+              padding: '1rem', 
+              color: isDebianTheme ? '#FF6666' : '#FF6666',
+              borderLeft: '3px solid #FF6666'
+            }}>
+              {profileError}
+            </div>
+          ) : profile && profile.bio.map((paragraph, index) => (
+            <p key={index} style={{
+              marginBottom: index < profile.bio.length - 1 ? '0.75rem' : '0',
+              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+            }}>
+              {paragraph}
+            </p>
+          ))}
         </section>
         
         {/* Main content grid */}
@@ -171,22 +192,50 @@ export const AboutView = () => {
                 paddingBottom: '0.25rem',
                 borderBottom: '1px solid',
                 borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>Links</h3>
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                Links
+                {!profileLoading && !profileError && (
+                  <span style={{ 
+                    fontSize: '0.75rem', 
+                    backgroundColor: '#00AA00', 
+                    color: 'white',
+                    padding: '0.1rem 0.3rem',
+                    borderRadius: '0.25rem',
+                    fontWeight: 'normal'
+                  }}>live</span>
+                )}
+              </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <SocialLink
-                  title="GitHub"
-                  url="https://github.com/kauefontes"
-                  icon="󰊤"
-                  isDebianTheme={isDebianTheme}
-                />
-                <SocialLink
-                  title="LinkedIn"
-                  url="https://www.linkedin.com/in/kauefontes/"
-                  icon="󰌻"
-                  isDebianTheme={isDebianTheme}
-                />
+                {profileLoading ? (
+                  <div style={{ 
+                    padding: '1rem', 
+                    textAlign: 'center', 
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                  }}>
+                    Loading links...
+                  </div>
+                ) : profileError ? (
+                  <div style={{ 
+                    padding: '1rem', 
+                    color: isDebianTheme ? '#FF6666' : '#FF6666',
+                    borderLeft: '3px solid #FF6666'
+                  }}>
+                    {profileError}
+                  </div>
+                ) : profile && profile.socialLinks.map((link, index) => (
+                  <SocialLink
+                    key={index}
+                    title={link.title}
+                    url={link.url}
+                    icon={link.icon}
+                    isDebianTheme={isDebianTheme}
+                  />
+                ))}
               </div>
             </section>
             
@@ -199,80 +248,127 @@ export const AboutView = () => {
                 paddingBottom: '0.25rem',
                 borderBottom: '1px solid',
                 borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>Education</h3>
-              
-              <div style={{
-                marginBottom: '0.75rem',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
               }}>
-                <div style={{ fontWeight: 'bold' }}>Computer Science, B.Sc.</div>
-                <div>University of Technology</div>
-                <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>2016 - 2020</div>
-              </div>
+                Education
+                {!profileLoading && !profileError && (
+                  <span style={{ 
+                    fontSize: '0.75rem', 
+                    backgroundColor: '#00AA00', 
+                    color: 'white',
+                    padding: '0.1rem 0.3rem',
+                    borderRadius: '0.25rem',
+                    fontWeight: 'normal'
+                  }}>live</span>
+                )}
+              </h3>
               
-              <div style={{
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>
-                <div style={{ fontWeight: 'bold' }}>Advanced Software Architecture</div>
-                <div>Tech Institute</div>
-                <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>2022</div>
-              </div>
+              {profileLoading ? (
+                <div style={{ 
+                  padding: '1rem', 
+                  textAlign: 'center', 
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                }}>
+                  Loading education...
+                </div>
+              ) : profileError ? (
+                <div style={{ 
+                  padding: '1rem', 
+                  color: isDebianTheme ? '#FF6666' : '#FF6666',
+                  borderLeft: '3px solid #FF6666'
+                }}>
+                  {profileError}
+                </div>
+              ) : profile && profile.education.map((edu, index) => (
+                <div 
+                  key={index}
+                  style={{
+                    marginBottom: index < profile.education.length - 1 ? '0.75rem' : '0',
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                  }}
+                >
+                  <div style={{ fontWeight: 'bold' }}>{edu.degree}</div>
+                  <div>{edu.institution}</div>
+                  <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>{edu.period}</div>
+                </div>
+              ))}
             </section>
             
             {/* Languages section */}
             <section>
-              <h3 style={{ 
-                fontSize: '1.125rem',
-                fontWeight: 'bold', 
-                marginBottom: '1rem',
-                paddingBottom: '0.25rem',
-                borderBottom: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>Languages</h3>
+              <div>
+                <h3 style={{ 
+                  fontSize: '1.125rem',
+                  fontWeight: 'bold', 
+                  marginBottom: '1rem',
+                  paddingBottom: '0.25rem',
+                  borderBottom: '1px solid',
+                  borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  Languages
+                  {!profileLoading && !profileError && (
+                    <span style={{ 
+                      fontSize: '0.75rem', 
+                      backgroundColor: '#00AA00', 
+                      color: 'white',
+                      padding: '0.1rem 0.3rem',
+                      borderRadius: '0.25rem',
+                      fontWeight: 'normal'
+                    }}>live</span>
+                  )}
+                </h3>
+              </div>
               
-              <ul style={{
-                listStyleType: 'none',
-                paddingLeft: isDebianTheme ? '0.75rem' : '1rem',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>
-                <li style={{
-                  position: 'relative',
-                  paddingLeft: '1rem',
-                  marginBottom: '0.5rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-                  }}>›</span>
-                  English (Fluent)
-                </li>
-                <li style={{
-                  position: 'relative',
-                  paddingLeft: '1rem',
-                  marginBottom: '0.5rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-                  }}>›</span>
-                  Portuguese (Native)
-                </li>
-                <li style={{
-                  position: 'relative',
-                  paddingLeft: '1rem'
-                }}>
-                  <span style={{
-                    position: 'absolute',
-                    left: '0',
-                    color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-                  }}>›</span>
-                  Spanish (Intermediate)
-                </li>
-              </ul>
+              <div>
+                {profileLoading ? (
+                  <div style={{ 
+                    padding: '1rem', 
+                    textAlign: 'center', 
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                  }}>
+                    Loading languages...
+                  </div>
+                ) : profileError ? (
+                  <div style={{ 
+                    padding: '1rem', 
+                    color: isDebianTheme ? '#FF6666' : '#FF6666',
+                    borderLeft: '3px solid #FF6666'
+                  }}>
+                    {profileError}
+                  </div>
+                ) : (
+                  <ul style={{
+                    listStyleType: 'none',
+                    paddingLeft: isDebianTheme ? '0.75rem' : '1rem',
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                  }}>
+                    {profile && profile.languages.map((lang, index) => (
+                      <li 
+                        key={index}
+                        style={{
+                          position: 'relative',
+                          paddingLeft: '1rem',
+                          marginBottom: index < profile.languages.length - 1 ? '0.5rem' : '0'
+                        }}
+                      >
+                        <span style={{
+                          position: 'absolute',
+                          left: '0',
+                          color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+                        }}>›</span>
+                        {lang.name} ({lang.level})
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </section>
           </div>
         </div>
