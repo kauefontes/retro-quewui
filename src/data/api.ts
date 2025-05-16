@@ -1,6 +1,27 @@
 import type { Project, Experience, Skill, Post, GithubStats, ContactFormData } from '../types/index';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+// Adapter for converting snake_case to camelCase for objects
+const convertToCamelCase = <T>(data: any): T => {
+  if (Array.isArray(data)) {
+    return data.map(item => convertToCamelCase<any>(item)) as unknown as T;
+  }
+  
+  if (data !== null && typeof data === 'object') {
+    const camelCaseData: Record<string, any> = {};
+    
+    Object.keys(data).forEach(key => {
+      // Convert snake_case to camelCase
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      camelCaseData[camelKey] = convertToCamelCase(data[key]);
+    });
+    
+    return camelCaseData as T;
+  }
+  
+  return data as T;
+};
 
 // Generic fetch function with error handling
 const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
@@ -11,7 +32,9 @@ const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
       throw new Error(`API error: ${response.status}`);
     }
 
-    return await response.json() as T;
+    const data = await response.json();
+    // Convert snake_case from backend to camelCase for frontend
+    return convertToCamelCase<T>(data);
   } catch (error) {
     console.error(`Error fetching from ${endpoint}:`, error);
     throw error;
@@ -53,16 +76,29 @@ export const getGithubStats = async (): Promise<GithubStats> => {
 
 // Contact Form
 export const submitContactForm = async (data: ContactFormData): Promise<{ message: string }> => {
+  // Convert camelCase to snake_case for the backend
+  const convertToSnakeCase = (obj: Record<string, any>): Record<string, any> => {
+    const result: Record<string, any> = {};
+    Object.keys(obj).forEach(key => {
+      const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+      result[snakeKey] = typeof obj[key] === 'object' && obj[key] !== null 
+        ? convertToSnakeCase(obj[key]) 
+        : obj[key];
+    });
+    return result;
+  };
+
   const response = await fetch(`${API_BASE_URL}/contact`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(convertToSnakeCase(data)),
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: response.statusText }));
     throw new Error(errorData.message || `Failed to submit contact form: ${response.statusText}`);
   }
-  return response.json() as Promise<{ message: string }>;
+  const responseData = await response.json();
+  return convertToCamelCase<{ message: string }>(responseData);
 };

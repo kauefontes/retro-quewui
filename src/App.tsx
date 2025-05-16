@@ -11,6 +11,7 @@ import { CommandInput, TerminalContent } from './components/Terminal';
 import { HomeView } from './views/HomeView';
 import { AboutView } from './views/AboutView';
 import { ExperiencesView } from './views/ExperiencesView';
+import { ProjectsView } from './views/ProjectsView';
 import { BlogView } from './views/BlogView';
 import { ContactView } from './views/ContactView';
 import { StatsView } from './views/StatsView';
@@ -48,7 +49,7 @@ function App() {
             
           case 'h': {
             // Navigate left/previous tab
-            const tabs: TabName[] = ['about', 'experiences', 'blog', 'contact', 'stats'];
+            const tabs: TabName[] = ['about', 'projects', 'experiences', 'blog', 'contact', 'stats'];
             const currentIndex = tabs.indexOf(currentTab);
             if (currentIndex > 0) {
               setCurrentTab(tabs[currentIndex - 1]);
@@ -58,7 +59,7 @@ function App() {
             
           case 'l': {
             // Navigate right/next tab
-            const tabs: TabName[] = ['about', 'experiences', 'blog', 'contact', 'stats'];
+            const tabs: TabName[] = ['about', 'projects', 'experiences', 'blog', 'contact', 'stats'];
             const currentIndex = tabs.indexOf(currentTab);
             if (currentIndex < tabs.length - 1) {
               setCurrentTab(tabs[currentIndex + 1]);
@@ -98,6 +99,8 @@ function App() {
     switch (currentTab) {
       case 'about':
         return <AboutView />;
+      case 'projects':
+        return <ProjectsView />;
       case 'experiences':
         return <ExperiencesView />;
       case 'blog':

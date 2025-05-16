@@ -1,10 +1,36 @@
+import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { skills } from '../data/mockData';
+import { skills as mockSkills } from '../data/mockData';
+import { getSkills } from '../data/api';
+import type { Skill } from '../types/index';
 
 // About View Component
 export const AboutView = () => {
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        setLoading(true);
+        const skillsData = await getSkills();
+        setSkills(skillsData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching skills:', err);
+        setError('Failed to load skills data. Using fallback data.');
+        // Usando dados mockados como fallback
+        setSkills(mockSkills);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
   
   return (
     <div style={{
@@ -79,22 +105,57 @@ export const AboutView = () => {
                 paddingBottom: '0.25rem',
                 borderBottom: '1px solid',
                 borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>Technical Skills</h3>
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                Technical Skills
+                {!loading && !error && (
+                  <span style={{ 
+                    fontSize: '0.75rem', 
+                    backgroundColor: '#00AA00', 
+                    color: 'white',
+                    padding: '0.1rem 0.3rem',
+                    borderRadius: '0.25rem',
+                    fontWeight: 'normal'
+                  }}>live</span>
+                )}
+              </h3>
               
               <div style={{ 
                   display: 'grid', 
                   gridTemplateColumns: '1fr 1fr',
                   gap: '1rem'
                 }}>
-                  {skills.map((skillCategory) => (
-                    <SkillCategory 
-                      key={skillCategory.category}
-                      title={skillCategory.category} 
-                      skills={skillCategory.items} 
-                      isDebianTheme={isDebianTheme}
-                    />
-                  ))}
+                  {loading ? (
+                    <div style={{ 
+                      gridColumn: 'span 2',
+                      padding: '1rem', 
+                      textAlign: 'center', 
+                      color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                    }}>
+                      Loading skills...
+                    </div>
+                  ) : error ? (
+                    <div style={{ 
+                      gridColumn: 'span 2',
+                      padding: '1rem', 
+                      color: isDebianTheme ? '#FF6666' : '#FF6666',
+                      borderLeft: '3px solid #FF6666'
+                    }}>
+                      {error}
+                    </div>
+                  ) : (
+                    skills.map((skillCategory) => (
+                      <SkillCategory 
+                        key={skillCategory.category}
+                        title={skillCategory.category} 
+                        skills={skillCategory.items} 
+                        isDebianTheme={isDebianTheme}
+                      />
+                    ))
+                  )}
                 </div>
             </section>
           </div>

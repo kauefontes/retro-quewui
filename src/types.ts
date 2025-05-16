@@ -3,4 +3,4 @@
 export type Theme = 'dark' | 'light';
 
 // Define tab types for navigation
-export type TabName = 'about' | 'experiences' | 'blog' | 'contact' | 'stats';
+export type TabName = 'about' | 'projects' | 'experiences' | 'blog' | 'contact' | 'stats';
