@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { posts } from '../data/mockData';
-import type { Post } from '../data/mockData';
+import { useState, useEffect } from 'react';
+import type { Post } from '../types/index';
+import { getPosts } from '../data/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './BlogView.css';
@@ -9,14 +9,41 @@ import { useAppStore } from '../store/appStore';
 export const BlogView = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
   
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const postsData = await getPosts();
+        setPosts(postsData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError('Failed to load blog posts. Using fallback data.');
+        // Importando dados mockados como fallback
+        import('../data/mockData').then(data => {
+          setPosts(data.posts);
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+  
   // Extract unique tags from posts
-  const allTags = Array.from(new Set(posts.flatMap(post => post.tags)));
+  const allTags = posts.length > 0 
+    ? Array.from(new Set(posts.flatMap(post => post.tags)))
+    : [];
   
   // Filter posts based on selected tag
-  const filteredPosts = selectedTag 
+  const filteredPosts = selectedTag && posts.length > 0
     ? posts.filter(post => post.tags.includes(selectedTag))
     : posts;
   
@@ -34,88 +61,127 @@ export const BlogView = () => {
         <h2 style={{ 
           fontSize: '1.25rem', 
           fontWeight: 'bold',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-        }}>Blog</h2>
+          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          Blog
+          {!loading && !error && (
+            <span style={{ 
+              fontSize: '0.75rem', 
+              backgroundColor: '#00AA00', 
+              color: 'white',
+              padding: '0.1rem 0.3rem',
+              borderRadius: '0.25rem',
+              fontWeight: 'normal'
+            }}>live</span>
+          )}
+        </h2>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button 
-            style={{ 
-              padding: '0.25rem 0.5rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem', 
-              fontSize: '0.875rem',
-              opacity: selectedTag === null ? '1' : '0.7',
-              border: '1px solid',
-              borderColor: selectedTag === null 
-                ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                : (isDebianTheme ? '#666666' : '#103149'),
-              backgroundColor: selectedTag === null 
-                ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                : 'transparent',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-            onClick={() => setSelectedTag(null)}
-          >
-            All
-          </button>
-          
-          {allTags.map(tag => (
+        {posts.length > 0 && (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button 
-              key={tag}
               style={{ 
                 padding: '0.25rem 0.5rem', 
                 borderRadius: isDebianTheme ? '0' : '0.25rem', 
                 fontSize: '0.875rem',
-                opacity: selectedTag === tag ? '1' : '0.7',
+                opacity: selectedTag === null ? '1' : '0.7',
                 border: '1px solid',
-                borderColor: selectedTag === tag 
+                borderColor: selectedTag === null 
                   ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
                   : (isDebianTheme ? '#666666' : '#103149'),
-                backgroundColor: selectedTag === tag 
+                backgroundColor: selectedTag === null 
                   ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
                   : 'transparent',
                 color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
               }}
-              onClick={() => setSelectedTag(tag)}
+              onClick={() => setSelectedTag(null)}
             >
-              #{tag}
+              All
             </button>
-          ))}
-        </div>
+            
+            {allTags.map(tag => (
+              <button 
+                key={tag}
+                style={{ 
+                  padding: '0.25rem 0.5rem', 
+                  borderRadius: isDebianTheme ? '0' : '0.25rem', 
+                  fontSize: '0.875rem',
+                  opacity: selectedTag === tag ? '1' : '0.7',
+                  border: '1px solid',
+                  borderColor: selectedTag === tag 
+                    ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+                    : (isDebianTheme ? '#666666' : '#103149'),
+                  backgroundColor: selectedTag === tag 
+                    ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+                    : 'transparent',
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+                }}
+                onClick={() => setSelectedTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       
       <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
-        {/* Blog Post List */}
-        <div style={{ 
-          width: selectedPost ? '33%' : '100%', 
-          overflowY: 'auto', 
-          paddingRight: '0.75rem'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {filteredPosts.map(post => (
-              <PostCard 
-                key={post.id}
-                post={post}
-                isSelected={selectedPost?.id === post.id}
-                onClick={() => setSelectedPost(post)}
-              />
-            ))}
-              
-            {filteredPosts.length === 0 && (
-              <div style={{ padding: '1rem', textAlign: 'center', opacity: 0.7 }}>
-                No posts found for tag #{selectedTag}
+        {loading ? (
+          <div style={{ 
+            padding: '2rem', 
+            textAlign: 'center', 
+            width: '100%',
+            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+          }}>
+            Loading blog posts...
+          </div>
+        ) : error ? (
+          <div style={{ 
+            padding: '1rem', 
+            color: isDebianTheme ? '#FF6666' : '#FF6666',
+            borderLeft: '3px solid #FF6666',
+            width: '100%'
+          }}>
+            {error}
+          </div>
+        ) : (
+          <>
+            {/* Blog Post List */}
+            <div style={{ 
+              width: selectedPost ? '33%' : '100%', 
+              overflowY: 'auto', 
+              paddingRight: '0.75rem'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {filteredPosts.map(post => (
+                  <PostCard 
+                    key={post.id}
+                    post={post}
+                    isSelected={selectedPost?.id === post.id}
+                    onClick={() => setSelectedPost(post)}
+                  />
+                ))}
+                  
+                {filteredPosts.length === 0 && (
+                  <div style={{ padding: '1rem', textAlign: 'center', opacity: 0.7 }}>
+                    No posts found for tag #{selectedTag}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Post Detail */}
+            {selectedPost && (
+              <div style={{ width: '67%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
+                <PostDetail 
+                  post={selectedPost} 
+                  onClose={() => setSelectedPost(null)}
+                />
               </div>
             )}
-          </div>
-        </div>
-        
-        {/* Post Detail */}
-        {selectedPost && (
-          <div style={{ width: '67%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
-            <PostDetail 
-              post={selectedPost} 
-              onClose={() => setSelectedPost(null)}
-            />
-          </div>
+          </>
         )}
       </div>
     </div>

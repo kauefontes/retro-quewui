@@ -1,21 +1,47 @@
-import { useState } from 'react';
-import { experiences } from '../data/mockData';
-import type { Experience } from '../data/mockData';
+import { useState, useEffect } from 'react';
+import type { Experience } from '../types/index';
 import { useAppStore } from '../store/appStore';
+import { experiences as mockExperiences } from '../data/mockData';
+import { getExperiences } from '../data/api';
 
 export const ExperiencesView = () => {
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
   
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        setLoading(true);
+        const experiencesData = await getExperiences();
+        setExperiences(experiencesData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching experiences:', err);
+        setError('Failed to load experiences data. Using fallback data.');
+        // Importando dados mockados como fallback
+        setExperiences(mockExperiences);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
+
   // Extract unique technologies from all experiences to create tech tags
-  const allTechnologies = Array.from(
-    new Set(experiences.flatMap(exp => exp.technologies))
-  ).sort();
+  const allTechnologies = experiences.length > 0 
+    ? Array.from(
+        new Set(experiences.flatMap(exp => exp.technologies))
+      ).sort()
+    : [];
 
   // Filter experiences based on selected technology
-  const filteredExperiences = selectedTech 
+  const filteredExperiences = selectedTech && experiences.length > 0
     ? experiences.filter(exp => exp.technologies.includes(selectedTech))
     : experiences;
   
@@ -33,108 +59,141 @@ export const ExperiencesView = () => {
         <h2 style={{ 
           fontSize: '1.25rem', 
           fontWeight: 'bold',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' 
+          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
         }}>
           Professional Experience
+          {!loading && !error && (
+            <span style={{ 
+              fontSize: '0.75rem', 
+              backgroundColor: '#00AA00', 
+              color: 'white',
+              padding: '0.1rem 0.3rem',
+              borderRadius: '0.25rem',
+              fontWeight: 'normal'
+            }}>live</span>
+          )}
         </h2>
       </div>
       
-      {/* Tech filter tags */}
-      <div style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '0.5rem', 
-        marginBottom: '1rem',
-        overflowX: 'auto',
-        paddingBottom: '0.5rem'
-      }}>
-        <button 
-          style={{ 
-            padding: '0.25rem 0.5rem', 
-            borderRadius: isDebianTheme ? '0' : '0.25rem', 
-            fontSize: '0.875rem',
-            opacity: selectedTech === null ? '1' : '0.7',
-            border: '1px solid',
-            borderColor: selectedTech === null 
-              ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-              : (isDebianTheme ? '#666666' : '#103149'),
-            backgroundColor: selectedTech === null 
-              ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-              : 'transparent',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-          }}
-          onClick={() => setSelectedTech(null)}
-        >
-          All Stacks
-        </button>
-        
-        {allTechnologies.map(tech => (
-          <button 
-            key={tech}
-            style={{ 
-              padding: '0.25rem 0.5rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem', 
-              fontSize: '0.875rem',
-              opacity: selectedTech === tech ? '1' : '0.7',
-              border: '1px solid',
-              borderColor: selectedTech === tech 
-                ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                : (isDebianTheme ? '#666666' : '#103149'),
-              backgroundColor: selectedTech === tech 
-                ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                : 'transparent',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-            onClick={() => setSelectedTech(tech)}
-          >
-            {tech}
-          </button>
-        ))}
-      </div>
-      
-      <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
-        {/* Experiences List */}
+      {loading ? (
         <div style={{ 
-          width: selectedExperience ? '35%' : '100%', 
-          overflowY: 'auto', 
-          paddingRight: '0.75rem'
+          padding: '2rem', 
+          textAlign: 'center', 
+          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
         }}>
-          {filteredExperiences.length === 0 ? (
-            <div style={{ 
-              padding: '1rem', 
-              textAlign: 'center', 
-              opacity: 0.7,
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' 
-            }}>
-              No experiences found with {selectedTech} technology
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {filteredExperiences.map(exp => (
-                <ExperienceCard 
-                  key={exp.id}
-                  experience={exp}
-                  isSelected={selectedExperience?.id === exp.id}
-                  onClick={() => setSelectedExperience(exp)}
-                  isDebianTheme={isDebianTheme}
-                />
-              ))}
-            </div>
-          )}
+          Loading professional experiences...
         </div>
-        
-        {/* Experience Detail */}
-        {selectedExperience && (
-          <div style={{ width: '65%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
-            <ExperienceDetail 
-              experience={selectedExperience} 
-              onClose={() => setSelectedExperience(null)}
-              isDebianTheme={isDebianTheme}
-              setSelectedTech={setSelectedTech}
-            />
+      ) : error ? (
+        <div style={{ 
+          padding: '1rem', 
+          color: isDebianTheme ? '#FF6666' : '#FF6666',
+          borderLeft: '3px solid #FF6666'
+        }}>
+          {error}
+        </div>
+      ) : (
+        <>
+          {/* Tech filter tags */}
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '0.5rem', 
+            marginBottom: '1rem',
+            overflowX: 'auto',
+            paddingBottom: '0.5rem'
+          }}>
+            <button
+              style={{ 
+                padding: '0.25rem 0.5rem', 
+                borderRadius: isDebianTheme ? '0' : '0.25rem', 
+                fontSize: '0.875rem',
+                opacity: selectedTech === null ? '1' : '0.7',
+                border: '1px solid',
+                borderColor: selectedTech === null 
+                  ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+                  : (isDebianTheme ? '#666666' : '#103149'),
+                backgroundColor: selectedTech === null 
+                  ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+                  : 'transparent',
+                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+              }}
+              onClick={() => setSelectedTech(null)}
+            >
+              All Stacks
+            </button>
+            
+            {allTechnologies.map((tech) => (
+              <button 
+                key={tech}
+                style={{ 
+                  padding: '0.25rem 0.5rem', 
+                  borderRadius: isDebianTheme ? '0' : '0.25rem', 
+                  fontSize: '0.875rem',
+                  opacity: selectedTech === tech ? '1' : '0.7',
+                  border: '1px solid',
+                  borderColor: selectedTech === tech 
+                    ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+                    : (isDebianTheme ? '#666666' : '#103149'),
+                  backgroundColor: selectedTech === tech 
+                    ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+                    : 'transparent',
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+                }}
+                onClick={() => setSelectedTech(tech)}
+              >
+                {tech}
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+          
+          <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
+            {/* Experiences List */}
+            <div style={{ 
+              width: selectedExperience ? '35%' : '100%', 
+              overflowY: 'auto', 
+              paddingRight: '0.75rem'
+            }}>
+              {filteredExperiences.length === 0 ? (
+                <div style={{ 
+                  padding: '1rem', 
+                  textAlign: 'center', 
+                  opacity: 0.7,
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' 
+                }}>
+                  No experiences found with {selectedTech} technology
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {filteredExperiences.map((exp) => (
+                    <ExperienceCard 
+                      key={exp.id}
+                      experience={exp}
+                      isSelected={selectedExperience?.id === exp.id}
+                      onClick={() => setSelectedExperience(exp)}
+                      isDebianTheme={isDebianTheme}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Experience Detail */}
+            {selectedExperience && (
+              <div style={{ width: '65%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
+                <ExperienceDetail 
+                  experience={selectedExperience} 
+                  onClose={() => setSelectedExperience(null)}
+                  isDebianTheme={isDebianTheme}
+                  setSelectedTech={setSelectedTech}
+                />
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -147,7 +206,10 @@ interface ExperienceCardProps {
 }
 
 const ExperienceCard = ({ experience, isSelected, onClick, isDebianTheme }: ExperienceCardProps) => {
-  const dateDisplay = `${experience.startDate} - ${experience.endDate || 'Present'}`;
+  // Handle property name differences between backend and frontend
+  const startDate = 'startDate' in experience ? experience.startDate : (experience as { start_date: string }).start_date;
+  const endDate = 'endDate' in experience ? experience.endDate : (experience as { end_date: string | null }).end_date;
+  const dateDisplay = `${startDate} - ${endDate || 'Present'}`;
   
   return (
     <div 
@@ -245,7 +307,10 @@ interface ExperienceDetailProps {
 }
 
 const ExperienceDetail = ({ experience, onClose, isDebianTheme, setSelectedTech }: ExperienceDetailProps) => {
-  const dateDisplay = `${experience.startDate} - ${experience.endDate || 'Present'}`;
+  // Handle property name differences between backend and frontend
+  const startDate = 'startDate' in experience ? experience.startDate : (experience as { start_date: string }).start_date;
+  const endDate = 'endDate' in experience ? experience.endDate : (experience as { end_date: string | null }).end_date;
+  const dateDisplay = `${startDate} - ${endDate || 'Present'}`;
   
   return (
     <div style={{ 
