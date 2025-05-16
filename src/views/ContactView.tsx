@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
+import { submitContactForm } from '../data/api';
+import type { ContactFormData } from '../types/index';
 
 export const ContactView = () => {
   const [formData, setFormData] = useState({
@@ -23,8 +25,9 @@ export const ContactView = () => {
     setSubmitting(true);
     setError(null);
     
-    // Simulação de envio bem-sucedido
-    setTimeout(() => {
+    try {
+      // Send data to the API
+      await submitContactForm(formData as ContactFormData);
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
       
@@ -32,8 +35,12 @@ export const ContactView = () => {
       setTimeout(() => {
         setSubmitted(false);
       }, 5000);
+    } catch (err) {
+      console.error('Error submitting contact form:', err);
+      setError(err instanceof Error ? err.message : 'Failed to submit contact form');
+    } finally {
       setSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (
