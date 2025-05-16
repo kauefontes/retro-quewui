@@ -1,4 +1,4 @@
-import type { Project, Experience, Skill, Post, GithubStats, ContactFormData } from '../types/index';
+import type { Project, Experience, Skill, Post, GithubStats, ContactFormData, Profile } from '../types/index';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -7,19 +7,19 @@ const convertToCamelCase = <T>(data: any): T => {
   if (Array.isArray(data)) {
     return data.map(item => convertToCamelCase<any>(item)) as unknown as T;
   }
-  
+
   if (data !== null && typeof data === 'object') {
     const camelCaseData: Record<string, any> = {};
-    
+
     Object.keys(data).forEach(key => {
       // Convert snake_case to camelCase
       const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
       camelCaseData[camelKey] = convertToCamelCase(data[key]);
     });
-    
+
     return camelCaseData as T;
   }
-  
+
   return data as T;
 };
 
@@ -74,6 +74,11 @@ export const getGithubStats = async (): Promise<GithubStats> => {
   return fetchFromApi<GithubStats>('/github-stats');
 };
 
+// Profile
+export const getProfile = async (): Promise<Profile> => {
+  return fetchFromApi<Profile>('/profile');
+};
+
 // Contact Form
 export const submitContactForm = async (data: ContactFormData): Promise<{ message: string }> => {
   // Convert camelCase to snake_case for the backend
@@ -81,8 +86,8 @@ export const submitContactForm = async (data: ContactFormData): Promise<{ messag
     const result: Record<string, any> = {};
     Object.keys(obj).forEach(key => {
       const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-      result[snakeKey] = typeof obj[key] === 'object' && obj[key] !== null 
-        ? convertToSnakeCase(obj[key]) 
+      result[snakeKey] = typeof obj[key] === 'object' && obj[key] !== null
+        ? convertToSnakeCase(obj[key])
         : obj[key];
     });
     return result;

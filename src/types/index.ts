@@ -51,3 +51,27 @@ export interface ContactFormData {
   email: string;
   message: string;
 }
+
+export interface SocialLink {
+  title: string;
+  url: string;
+  icon: string;
+}
+
+export interface Education {
+  degree: string;
+  institution: string;
+  period: string;
+}
+
+export interface Language {
+  name: string;
+  level: string;
+}
+
+export interface Profile {
+  bio: string[];
+  socialLinks: SocialLink[];
+  education: Education[];
+  languages: Language[];
+}
