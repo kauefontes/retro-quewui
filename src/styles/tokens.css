@@ -1,0 +1,90 @@
+:root {
+  /* Colors - Dark Theme (Default) */
+  --dark-bg-primary: #0d1117;
+  --dark-bg-secondary: #161b22;
+  --dark-border-primary: #103149;
+  --dark-border-secondary: #30363d;
+  --dark-text-primary: #c9d1d9;
+  --dark-text-secondary: #8b949e;
+  --dark-accent-color: #00ffd9;
+  --dark-accent-hover: rgba(0, 255, 217, 0.2);
+  --dark-card-bg: transparent;
+  --dark-card-bg-selected: rgba(0, 255, 217, 0.1);
+  
+  /* Colors - Light Theme (Debian-like) */
+  --light-bg-primary: #0000AA;
+  --light-bg-secondary: #0000B3;
+  --light-bg-selected: #0000D3;
+  --light-border-primary: #666666;
+  --light-border-secondary: #FFFFFF;
+  --light-text-primary: #FFFFFF;
+  --light-text-secondary: rgba(255, 255, 255, 0.8);
+  --light-accent-color: #FFFFFF;
+  --light-accent-hover: rgba(255, 255, 255, 0.2);
+  
+  /* Status Colors */
+  --success-color: #00AA00;
+  --error-color: #FF6666;
+  --warning-color: #FFCC00;
+  --info-color: #0066FF;
+  
+  /* Spacing */
+  --space-xxs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-xxl: 2rem;
+  
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  
+  /* Transitions */
+  --transition-fast: 0.2s;
+  --transition-normal: 0.3s;
+  
+  /* Z-index */
+  --z-background: -1;
+  --z-default: 1;
+  --z-overlay: 10;
+  --z-modal: 100;
+  --z-tooltip: 1000;
+}
+
+/* Apply theme variables to global scope for easier access */
+.theme-dark {
+  --bg-primary: var(--dark-bg-primary);
+  --bg-secondary: var(--dark-bg-secondary);
+  --border-primary: var(--dark-border-primary);
+  --border-secondary: var(--dark-border-secondary);
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --accent-color: var(--dark-accent-color);
+  --accent-hover: var(--dark-accent-hover);
+  --card-bg: var(--dark-card-bg);
+  --card-bg-selected: var(--dark-card-bg-selected);
+  --border-radius: var(--radius-sm);
+}
+
+.theme-light {
+  --bg-primary: var(--light-bg-primary);
+  --bg-secondary: var(--light-bg-secondary);
+  --bg-selected: var(--light-bg-selected);
+  --border-primary: var(--light-border-primary);
+  --border-secondary: var(--light-border-secondary);
+  --text-primary: var(--light-text-primary);
+  --text-secondary: var(--light-text-secondary);
+  --accent-color: var(--light-accent-color);
+  --accent-hover: var(--light-accent-hover);
+  --border-radius: var(--radius-none);
+}

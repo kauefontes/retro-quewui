@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppStore } from '../store/appStore';
 import type { TabName } from '../types';
 
@@ -8,6 +7,7 @@ export const NavTabs = () => {
   // Define all tabs
   const tabs: { id: TabName; label: string }[] = [
     { id: 'about', label: 'About' },
+    { id: 'projects', label: 'Projects' },
     { id: 'experiences', label: 'Experiences' },
     { id: 'blog', label: 'Blog' },
     { id: 'contact', label: 'Contact' },

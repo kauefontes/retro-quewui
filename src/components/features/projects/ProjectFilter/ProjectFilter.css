@@ -1,0 +1,42 @@
+.project-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+}
+
+.filter-button {
+  opacity: 0.7;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.filter-button.selected {
+  opacity: 1;
+}
+
+/* Dark theme */
+.project-filter.theme-dark .filter-button.selected {
+  border-color: var(--dark-accent-color);
+  background-color: var(--dark-accent-hover);
+}
+
+/* Light theme */
+.project-filter.theme-light .filter-button.selected {
+  border-color: var(--light-border-secondary);
+  background-color: var(--light-bg-selected);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .project-filter {
+    padding-bottom: var(--space-sm);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  
+  .filter-button {
+    flex-shrink: 0;
+  }
+}

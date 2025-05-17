@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppStore } from '../store/appStore';
 
 export const StatusBar = () => {
@@ -21,28 +20,34 @@ export const StatusBar = () => {
       justifyContent: 'space-between',
       alignItems: 'center'
     }}>
-      <div className="flex items-center gap-3">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <span>Theme: {theme === 'dark' ? 'NEON' : 'DEBIAN'}</span>
         <span className="mx-3">|</span>
         <span>Mode: {isCommandMode ? 'COMMAND' : 'NORMAL'}</span>
       </div>
-      <div className="flex items-center gap-3">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <a 
-          href="https://github.com/kauefontes" 
+          href="https://github.com/username" 
           target="_blank" 
           rel="noopener noreferrer"
+          style={{ 
+            textDecoration: 'none',
+            color: isDebianTheme ? '#000000' : 'inherit'
+          }}
           className="hover:underline"
-          style={{ color: isDebianTheme ? '#000000' : undefined }}
         >
           GitHub
         </a>
         <span>|</span>
         <a 
-          href="https://www.linkedin.com/in/kauefontes/" 
+          href="https://www.linkedin.com/in/username/" 
           target="_blank" 
           rel="noopener noreferrer"
+          style={{ 
+            textDecoration: 'none',
+            color: isDebianTheme ? '#000000' : 'inherit'
+          }}
           className="hover:underline"
-          style={{ color: isDebianTheme ? '#000000' : undefined }}
         >
           LinkedIn
         </a>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Project } from '../types/index';
 import { useAppStore } from '../store/appStore';
 import { projects as mockProjects } from '../data/mockData';
-import { getProjects, getProjectById } from '../data/api';
+import { getProjects } from '../data/api';
 
 export const ProjectsView = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);

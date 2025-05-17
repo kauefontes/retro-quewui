@@ -4,14 +4,16 @@ import type { TabName } from './types';
 import './App.css';
 
 // Import layout components
-import { TerminalLayout, BootScreen } from './components/Layout';
+import { TerminalLayout } from './components/layout/TerminalLayout';
+import { BootScreen } from './components/layout/BootScreen';
 import { CommandInput, TerminalContent } from './components/Terminal';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Import views
 import { HomeView } from './views/HomeView';
 import { AboutView } from './views/AboutView';
 import { ExperiencesView } from './views/ExperiencesView';
-import { ProjectsView } from './views/ProjectsView';
+import { ProjectsView } from './views/ProjectsView/ProjectsView';
 import { BlogView } from './views/BlogView';
 import { ContactView } from './views/ContactView';
 import { StatsView } from './views/StatsView';
@@ -115,12 +117,14 @@ function App() {
   };
 
   return (
-    <TerminalLayout>
-      <TerminalContent>
-        {renderContent()}
-      </TerminalContent>
-      <CommandInput />
-    </TerminalLayout>
+    <AuthProvider>
+      <TerminalLayout>
+        <TerminalContent>
+          {renderContent()}
+        </TerminalContent>
+        <CommandInput />
+      </TerminalLayout>
+    </AuthProvider>
   );
 }
 

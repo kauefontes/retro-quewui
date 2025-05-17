@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import type { Theme } from '../types';
 import { NavTabs } from './NavTabs';
 import { StatusBar } from './StatusBar';
 

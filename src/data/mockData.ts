@@ -54,7 +54,7 @@ export const projects: Project[] = [
     technologies: ['React', 'TypeScript', 'WebSockets', 'D3.js'],
     githubUrl: 'https://github.com/username/auto-dashboard',
     liveUrl: 'https://auto-dashboard.example.com',
-    year: 2024,
+    year: 2023,
     highlights: [
       'Real-time data visualization',
       'Cross-platform compatibility',
@@ -69,7 +69,7 @@ export const projects: Project[] = [
     technologies: ['React', 'Vite', 'Zustand', 'Tailwind CSS'],
     githubUrl: 'https://github.com/username/terminal-portfolio',
     liveUrl: 'https://terminal-portfolio.example.com',
-    year: 2025,
+    year: 2023,
     highlights: [
       'Retro terminal UI with NEON-inspired aesthetics',
       'Vim-like keyboard navigation',
@@ -164,7 +164,7 @@ export const posts: Post[] = [
   {
     id: 'post-1',
     title: 'Building User Interfaces with Terminal Aesthetics',
-    date: '2025-02-15',
+    date: '2023-02-15',
     tags: ['UI/UX', 'Frontend', 'Design'],
     excerpt: 'How to create modern applications with retro terminal aesthetics',
     content: `
@@ -214,7 +214,7 @@ Remember that a terminal-style UI doesn't mean sacrificing usability. Always ens
   {
     id: 'post-2',
     title: 'Optimizing IoT Devices for Garden Monitoring',
-    date: '2024-11-03',
+    date: '2022-11-03',
     tags: ['IoT', 'Gardening', 'Rust'],
     excerpt: 'Creating low-power, long-lasting garden monitoring systems with Rust and ESP32',
     content: `
@@ -285,22 +285,22 @@ export const githubStats: GithubStats = {
   ],
   recentActivity: [
     {
-      date: '2025-05-10',
+      date: '2023-05-10',
       message: 'Fix performance issue in dashboard rendering',
       repo: 'auto-dashboard'
     },
     {
-      date: '2025-05-08',
+      date: '2023-05-08',
       message: 'Add keyboard shortcut documentation',
       repo: 'terminal-portfolio'
     },
     {
-      date: '2025-05-05',
+      date: '2023-05-05',
       message: 'Implement dark mode toggle with theme persistence',
       repo: 'terminal-portfolio'
     },
     {
-      date: '2025-05-01',
+      date: '2023-05-01',
       message: 'Update dependencies and fix security vulnerabilities',
       repo: 'garden-monitor'
     }
