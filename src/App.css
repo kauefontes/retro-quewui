@@ -1,13 +1,7 @@
 @import './views/BlogView.css';
 
-/* Base font setup */
+/* Base animation */
 :root {
-  /* Set base font */
-  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
-  line-height: 1.5;
-  font-size: 16px;
-  
-  /* Base animation */
   --blink-animation: blink 1.2s step-end infinite;
 }
 
@@ -17,82 +11,50 @@
   min-height: 100vh;
 }
 
-/* Theme variables */
+/* Theme CSS variables */
 .theme-dark {
   /* Colors */
   --bg-color: #0c0e14; 
   --text-color: white;
   --accent-color: #00ffd9; /* cyan NEON glow */
-  --accent-color-dim: rgba(0, 255, 217, 0.5); /* dimmed accent color */
+  --accent-color-dim: rgba(0, 255, 217, 0.5);
   --secondary-color: #007ef2; /* NEON blue */
   --border-color: #103149; /* NEON grid */
-  --highlight-bg: rgba(16, 49, 73, 0.3); /* NEON grid with opacity */
   --terminal-bg: rgba(0, 0, 0, 0.8);
-  --tag-bg: rgba(0, 0, 0, 0.5);
-  --bullet-color: var(--accent-color); /* Color for list bullets */
-  
-  /* UI Elements */
-  --button-hover: rgba(0, 255, 217, 0.2);
-  --button-active-bg: rgba(0, 255, 217, 0.1);
-
-  /* Apply theme colors */
-  background-color: var(--bg-color);
-  color: var(--text-color);
 }
 
 .theme-light {
   /* Colors - Debian installer inspired */
   --bg-color: #0000B3; /* Debian blue background */
-  --text-color: #FFFFFF; /* White text for better contrast on blue */
+  --text-color: #FFFFFF;
   --accent-color: #FF0000; /* Red for highlights/buttons */
-  --accent-color-dim: rgba(255, 0, 0, 0.5); /* dimmed accent color */
-  --secondary-color: #C0C0C0; /* Light gray for secondary elements */
+  --accent-color-dim: rgba(255, 0, 0, 0.5);
+  --secondary-color: #C0C0C0; /* Light gray */
   --border-color: #FFFFFF; /* White borders */
-  --highlight-bg: #000080; /* Darker blue for highlighted elements */
-  --terminal-bg: #0000B3; /* Same as bg for consistency */
-  --tag-bg: #000080; /* Darker blue for tags */
-  
-  /* UI Elements */
-  --button-hover: #FF6666; /* Lighter red for button hover */
-
-  /* Apply theme colors */
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  --terminal-bg: #0000B3;
 }
 
-/* Terminal window styling */
+/* Core Terminal styling */
 .terminal-window {
   background-color: var(--terminal-bg);
   border: 1px solid var(--accent-color);
   border-radius: 4px;
   box-shadow: 0 0 10px var(--accent-color);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  max-height: calc(100vh - 2rem);
 }
 
-/* Debian-inspired window styling */
 .theme-light .terminal-window {
-  background-color: var(--terminal-bg);
   border: 2px solid #FFFFFF;
-  border-radius: 0; /* Flat edges como na interface do Debian */
+  border-radius: 0;
   box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.7), 
               inset -1px -1px 0px rgba(0, 0, 0, 0.5),
-              0 0 5px rgba(0, 0, 0, 0.5); /* Efeito de profundidade */
+              0 0 5px rgba(0, 0, 0, 0.5);
   padding: 1px;
-  max-height: calc(100vh - 2rem);
 }
 
 .terminal-header {
   background-color: var(--accent-color);
   color: var(--terminal-bg);
   border-bottom: 1px solid var(--accent-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  flex: 0 0 auto;
 }
 
 .theme-light .terminal-header {
@@ -346,6 +308,7 @@
 }
 
 /* Animations */
+/* Animations */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -368,11 +331,6 @@
   }
 }
 
-/* Common UI utilities */
-.cursor-pointer {
-  cursor: pointer;
-}
-
 html, body, #root {
   height: 100vh;
   margin: 0;
@@ -380,7 +338,7 @@ html, body, #root {
   overflow: hidden;
 }
 
-/* Make terminal scrollbars look nicer */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -412,63 +370,12 @@ html, body, #root {
   background: #a0a0a0;
 }
 
-/* Extras para tema Debian */
+/* Essential Debian-inspired components - keep only what's actively used */
 .theme-light .debian-box {
   border: 1px solid #FFFFFF;
   background-color: #000080;
-  padding: 1rem;
   box-shadow: inset 1px 1px 0px rgba(0, 0, 0, 0.5), 
               inset -1px -1px 0px rgba(255, 255, 255, 0.3);
 }
 
-.theme-light .debian-dialog {
-  border: 2px solid #FFFFFF;
-  background-color: #0000B3;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-  padding: 0;
-}
-
-.theme-light .debian-dialog-header {
-  background-color: #C0C0C0;
-  color: #000000;
-  font-weight: bold;
-  padding: 0.25rem 1rem;
-  text-align: center;
-  border-bottom: 1px solid #FFFFFF;
-}
-
-.theme-light .debian-dialog-body {
-  padding: 1rem;
-  color: #FFFFFF;
-}
-
-.theme-light .debian-button {
-  display: inline-block;
-  background-color: #C0C0C0;
-  color: #000000;
-  border: 1px outset #FFFFFF;
-  padding: 0.25rem 1rem;
-  margin: 0.25rem;
-  min-width: 80px;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.theme-light .debian-button:active,
-.theme-light .debian-button.active {
-  border: 1px inset #C0C0C0;
-  background-color: #B0B0B0;
-}
-
-/* Ajustes para o tema escuro - mantém o estilo NEON consistente */
-.theme-dark .terminal-window {
-  box-shadow: 0 0 20px rgba(0, 255, 217, 0.6);
-  border-color: var(--accent-color);
-}
-
-.theme-dark .terminal-content {
-  border: none;
-  background-color: transparent;
-}
+/* Removed duplicate - already defined above */
