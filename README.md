@@ -1,6 +1,6 @@
 # Retro Quewui
 
-A retro terminal-style UI built with React, TypeScript, and Vite. This interactive web application mimics a classic terminal interface with a modern twist.
+A retro terminal-style UI built with React, TypeScript, and Vite. This interactive web application mimics a classic terminal interface with a modern twist, offering both a neon-inspired dark theme and a Debian installer-inspired light theme.
 
 ## Features
 
@@ -9,7 +9,7 @@ A retro terminal-style UI built with React, TypeScript, and Vite. This interacti
 - Multiple view components (Home, About, Projects, Experiences, etc.)
 - Theme switching (light/dark mode)
 - Command history tracking
-- Responsive design with Tailwind CSS
+- Responsive design with CSS
 
 ## Setup and Installation
 
@@ -40,10 +40,10 @@ The terminal interface accepts the following commands:
 
 ## Tech Stack
 
-- React 19
+- React 18
 - TypeScript
 - Vite
-- Tailwind CSS
+- CSS
 - Zustand (State Management)
 - React Markdown
 - Headless UI
@@ -66,11 +66,14 @@ src/
 To improve type-checking and linting, you can update the ESLint configuration:
 
 ```js
+// eslint.config.js
+import { javascriptESLint } from "@eslint/js";
+import tseslint from "typescript-eslint";
+ 
 export default tseslint.config({
   extends: [
     ...tseslint.configs.recommendedTypeChecked,
     ...tseslint.configs.strictTypeChecked,
-    ...tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
     parserOptions: {
