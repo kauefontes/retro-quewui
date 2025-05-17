@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import type { Theme, TabName } from '../types';
 
+type LoginState = {
+  state: 'none' | 'username' | 'password';
+  username?: string;
+};
+
 /**
  * Application State Store
  * 
@@ -36,6 +41,10 @@ interface AppState {
   // Terminal initialization state
   isInitialized: boolean;
   setInitialized: (isInitialized: boolean) => void;
+
+  // Login state machine
+  currentLoginState: LoginState;
+  setLoginState: (state: LoginState) => void;
 }
 
 // Create the store
@@ -69,4 +78,8 @@ export const useAppStore = create<AppState>((set) => ({
   // Terminal initialization state
   isInitialized: false,
   setInitialized: (isInitialized) => set({ isInitialized }),
+
+  // Login state machine
+  currentLoginState: { state: 'none' },
+  setLoginState: (loginState) => set({ currentLoginState: loginState }),
 }));

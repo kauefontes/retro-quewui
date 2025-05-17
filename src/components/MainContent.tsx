@@ -1,27 +1,19 @@
-import { useAppStore } from './store/appStore';
-import { useEffect } from 'react';
-import type { TabName } from './types';
-import './App.css';
-import { useAuth } from './contexts/AuthUtils';
-
-// Import layout components
-import { TerminalLayout } from './components/layout/TerminalLayout';
-import { BootScreen } from './components/layout/BootScreen';
-import { CommandInput, TerminalContent } from './components/Terminal';
-import { AuthProvider } from './contexts/AuthContext';
+import React, { useEffect } from 'react';
+import { useAppStore } from '../store/appStore';
+import type { TabName } from '../types';
+import { useAuth } from '../contexts/AuthUtils';
 
 // Import views
-import { HomeView } from './views/HomeView';
-import { AboutView } from './views/AboutView';
-import { ExperiencesView } from './views/ExperiencesView';
-import { ProjectsView } from './views/ProjectsView/ProjectsView';
-import { BlogView } from './views/BlogView';
-import { ContactView } from './views/ContactView';
-import { StatsView } from './views/StatsView';
-import { MessagesView } from './views/MessagesView';
+import { HomeView } from '../views/HomeView';
+import { AboutView } from '../views/AboutView';
+import { ExperiencesView } from '../views/ExperiencesView';
+import { ProjectsView } from '../views/ProjectsView/ProjectsView';
+import { BlogView } from '../views/BlogView';
+import { ContactView } from '../views/ContactView';
+import { StatsView } from '../views/StatsView';
+import { MessagesView } from '../views/MessagesView';
 
-// MainContent component with keyboard navigation
-const MainContent = () => {
+export const MainContent: React.FC = () => {
   const { 
     currentTab, 
     setCurrentTab, 
@@ -108,51 +100,28 @@ const MainContent = () => {
   }, [isCommandMode, toggleCommandMode, currentTab, setCurrentTab, isAuthenticated]);
 
   // Render the active tab content
-  switch (currentTab) {
-    case 'about':
-      return <AboutView />;
-    case 'projects':
-      return <ProjectsView />;
-    case 'experiences':
-      return <ExperiencesView />;
-    case 'blog':
-      return <BlogView />;
-    case 'contact':
-      return <ContactView />;
-    case 'stats':
-      return <StatsView />;
-    case 'messages':
-      return <MessagesView />;
-    default:
-      return <HomeView />;
-  }
+  const renderContent = () => {
+    switch (currentTab) {
+      case 'about':
+        return <AboutView />;
+      case 'projects':
+        return <ProjectsView />;
+      case 'experiences':
+        return <ExperiencesView />;
+      case 'blog':
+        return <BlogView />;
+      case 'contact':
+        return <ContactView />;
+      case 'stats':
+        return <StatsView />;
+      case 'messages':
+        return <MessagesView />;
+      default:
+        return <HomeView />;
+    }
+  };
+
+  return <>{renderContent()}</>;
 };
 
-/**
- * Main Application Component
- * 
- * This is the root component that manages the terminal-like UI experience.
- * It handles keyboard navigation, view switching, and maintains a boot screen
- * for the initial application load.
- */
-function App() {
-  const { isInitialized } = useAppStore();
-  
-  // Render different content based on initialization state
-  if (!isInitialized) {
-    return <BootScreen />;
-  }
-
-  return (
-    <AuthProvider>
-      <TerminalLayout>
-        <TerminalContent>
-          <MainContent />
-        </TerminalContent>
-        <CommandInput />
-      </TerminalLayout>
-    </AuthProvider>
-  );
-}
-
-export default App;
+export default MainContent;

@@ -47,9 +47,11 @@ export interface GithubStats {
 }
 
 export interface ContactFormData {
+  id?: string;
   name: string;
   email: string;
   message: string;
+  date?: string;
 }
 
 export interface SocialLink {
@@ -74,4 +76,18 @@ export interface Profile {
   socialLinks: SocialLink[];
   education: Education[];
   languages: Language[];
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email?: string;
+  role: string;
+  avatarUrl?: string;
+}
+
+// Additional types for admin/edit mode
+export interface EditMode {
+  isEditing: boolean;
+  editingId: string | null;
 }

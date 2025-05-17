@@ -1,21 +1,27 @@
 import { useAppStore } from '../store/appStore';
 import type { TabName } from '../types';
+import { useAuth } from '../contexts/AuthUtils';
 
 export const NavTabs = () => {
   const { currentTab, setCurrentTab, isCommandMode } = useAppStore();
+  const { isAuthenticated } = useAuth();
   
   // Define all tabs
-  const tabs: { id: TabName; label: string }[] = [
+  const tabs: { id: TabName; label: string; adminOnly?: boolean }[] = [
     { id: 'about', label: 'About' },
     { id: 'projects', label: 'Projects' },
     { id: 'experiences', label: 'Experiences' },
     { id: 'blog', label: 'Blog' },
     { id: 'contact', label: 'Contact' },
-    { id: 'stats', label: 'Stats' }
+    { id: 'stats', label: 'Stats' },
+    { id: 'messages', label: 'Messages', adminOnly: true }
   ];
   
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
+  
+  // Filter tabs based on authentication status
+  const visibleTabs = tabs.filter(tab => !tab.adminOnly || isAuthenticated);
   
   return (
     <div className="nav-tabs" style={{
@@ -23,7 +29,7 @@ export const NavTabs = () => {
       display: 'flex',
       borderBottom: isDebianTheme ? '1px solid #FFFFFF' : undefined,
     }}>
-      {tabs.map(tab => (
+      {visibleTabs.map(tab => (
         <button
           key={tab.id}
           className={`nav-tab ${currentTab === tab.id ? 'active' : ''}`}

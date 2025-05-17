@@ -1,25 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatarUrl?: string;
-}
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import React, { useState, useEffect } from 'react';
+import type { User } from '../types/index';
+import { login as apiLogin } from '../data/api';
+import { AuthContext } from './AuthUtils';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check if user is already logged in on load
@@ -27,13 +13,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const checkAuth = () => {
       setLoading(true);
       const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
       
-      if (storedUser) {
+      if (storedUser && storedToken) {
         try {
           setUser(JSON.parse(storedUser));
+          setToken(storedToken);
         } catch (error) {
           console.error('Error parsing stored user:', error);
           localStorage.removeItem('user');
+          localStorage.removeItem('token');
         }
       }
       
@@ -43,28 +32,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setLoading(true);
     try {
-      // Simulate API call - in a real app, this would call your authentication API
-      const response = await new Promise<User>((resolve, reject) => {
-        setTimeout(() => {
-          if (email && password) {
-            resolve({
-              id: '1',
-              name: 'Test User',
-              email,
-              role: 'user',
-              avatarUrl: 'https://i.pravatar.cc/150?img=68'
-            });
-          } else {
-            reject(new Error('Invalid credentials'));
-          }
-        }, 1000);
-      });
+      // Call the actual API
+      const response = await apiLogin(username, password);
       
-      setUser(response);
-      localStorage.setItem('user', JSON.stringify(response));
+      setUser(response.user);
+      setToken(response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.token);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -75,13 +52,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   return (
     <AuthContext.Provider value={{
-      isAuthenticated: !!user,
+      isAuthenticated: !!user && !!token,
       user,
+      token,
       login,
       logout,
       loading
@@ -90,13 +70,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export default AuthProvider;

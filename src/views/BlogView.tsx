@@ -1,51 +1,87 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Post } from '../types/index';
-import { getPosts } from '../data/api';
+import { deletePost } from '../data/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './BlogView.css';
 import { useAppStore } from '../store/appStore';
+import { PostForm } from '../components/features/blog/PostForm';
+import { AdminControls } from '../components/common/AdminControls';
+import { AuthContent } from '../components/common/AuthContent/AuthContent';
+import { usePosts } from '../hooks/usePosts';
 
 export const BlogView = () => {
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { 
+    filteredPosts, 
+    selectedPost, 
+    setSelectedPost,
+    selectedTag,
+    setSelectedTag,
+    allTags,
+    loading,
+    error,
+    refreshPosts 
+  } = usePosts();
+  
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
   
-  useEffect(() => {
-    const fetchPosts = async () => {
+  // Admin state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+    
+  // Admin functions
+  const handleAddPost = () => {
+    setIsEditing(true);
+    setEditingPost(null);
+    setSelectedPost(null);
+  };
+  
+  const handleEditPost = () => {
+    if (selectedPost) {
+      setIsEditing(true);
+      setEditingPost(selectedPost);
+    }
+  };
+  
+  const handleDeletePost = async () => {
+    if (!selectedPost) return;
+    
+    if (window.confirm(`Are you sure you want to delete the post "${selectedPost.title}"?`)) {
       try {
-        setLoading(true);
-        const postsData = await getPosts();
-        setPosts(postsData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching posts:', err);
-        setError('Failed to load blog posts. Using fallback data.');
-        // Importando dados mockados como fallback
-        import('../data/mockData').then(data => {
-          setPosts(data.posts);
-        });
-      } finally {
-        setLoading(false);
+        await deletePost(selectedPost.id);
+        setSelectedPost(null);
+        refreshPosts();
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        alert(`Failed to delete post: ${(error as Error).message}`);
       }
-    };
-
-    fetchPosts();
-  }, []);
+    }
+  };
   
-  // Extract unique tags from posts
-  const allTags = posts.length > 0 
-    ? Array.from(new Set(posts.flatMap(post => post.tags)))
-    : [];
+  const handleSavePost = (savedPost: Post) => {
+    refreshPosts();
+    setIsEditing(false);
+    setSelectedPost(savedPost);
+  };
   
-  // Filter posts based on selected tag
-  const filteredPosts = selectedTag && posts.length > 0
-    ? posts.filter(post => post.tags.includes(selectedTag))
-    : posts;
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+  
+  // If editing, render the post form
+  if (isEditing) {
+    return (
+      <div style={{ padding: '1rem' }}>
+        <PostForm 
+          post={editingPost || undefined}
+          onSave={handleSavePost}
+          onCancel={handleCancelEdit}
+        />
+      </div>
+    );
+  }
   
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -79,7 +115,17 @@ export const BlogView = () => {
           )}
         </h2>
         
-        {posts.length > 0 && (
+        {/* Admin Controls */}
+        <AuthContent>
+          <AdminControls
+            entityName="Blog Post"
+            onAdd={handleAddPost}
+            onEdit={selectedPost ? handleEditPost : undefined}
+            onDelete={selectedPost ? handleDeletePost : undefined}
+          />
+        </AuthContent>
+        
+        {filteredPosts.length > 0 && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button 
               style={{ 
@@ -271,8 +317,7 @@ const PostDetail = ({ post, onClose }: PostDetailProps) => {
       borderColor: isDebianTheme ? '#666666' : 'var(--accent-color)', 
       height: '100%',
       backgroundColor: isDebianTheme ? '#0000B3' : 'transparent' 
-    }}>
-      <div style={{ 
+    }}>        <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
@@ -290,21 +335,23 @@ const PostDetail = ({ post, onClose }: PostDetailProps) => {
           }}>{post.title}</h3>
           <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>{post.date}</div>
         </div>
-        <button 
-          onClick={onClose}
-          style={{ 
-            padding: '0.25rem 0.5rem', 
-            borderRadius: isDebianTheme ? '0' : '0.25rem', 
-            fontSize: '0.875rem',
-            border: '1px solid',
-            borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-            backgroundColor: 'transparent',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-          }}
-          aria-label="Close post"
-        >
-          [X]
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            onClick={onClose}
+            style={{ 
+              padding: '0.25rem 0.5rem', 
+              borderRadius: isDebianTheme ? '0' : '0.25rem', 
+              fontSize: '0.875rem',
+              border: '1px solid',
+              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+              backgroundColor: 'transparent',
+              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+            }}
+            aria-label="Close post"
+          >
+            [X]
+          </button>
+        </div>
       </div>
       
       <div>

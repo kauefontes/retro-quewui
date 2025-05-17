@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Project } from '../types/index';
 import { getProjects } from '../data/api';
 import { projects as mockProjects } from '../data/mockData';
@@ -16,27 +16,28 @@ export const useProjects = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch projects data
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const projectsData = await getProjects();
-        setProjects(projectsData);
-        setFilteredProjects(projectsData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching projects:', err);
-        setError('Failed to load projects data. Using fallback data.');
-        // Fallback to mock data
-        setProjects(mockProjects);
-        setFilteredProjects(mockProjects);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
+  const fetchProjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const projectsData = await getProjects();
+      setProjects(projectsData);
+      setFilteredProjects(projectsData);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching projects:', err);
+      setError('Failed to load projects data. Using fallback data.');
+      // Fallback to mock data
+      setProjects(mockProjects);
+      setFilteredProjects(mockProjects);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   // Filter projects when selected tech changes
   useEffect(() => {
@@ -72,7 +73,8 @@ export const useProjects = () => {
     setSelectedTech,
     allTechnologies,
     loading,
-    error
+    error,
+    refreshProjects: fetchProjects
   };
 };
 

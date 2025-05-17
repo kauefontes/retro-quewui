@@ -14,6 +14,10 @@ interface ProjectDetailProps {
   onClose: () => void;
   /** Handler for when a technology tag is clicked */
   onSelectTech: (tech: string | null) => void;
+  /** Optional handler for edit action */
+  onEdit?: () => void;
+  /** Optional handler for delete action */
+  onDelete?: () => void;
   /** Optional additional class name */
   className?: string;
 }
@@ -25,6 +29,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project,
   onClose,
   onSelectTech,
+  onEdit,
+  onDelete,
   className = ''
 }) => {
   const { theme } = useTheme();
@@ -111,10 +117,25 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       <AuthContent fallback={null}>
         <Section title="Admin Actions" collapsible defaultCollapsed>
           <div className="project-detail-admin-actions">
-            <Button variant="primary" size="medium">
+            <Button 
+              variant="primary" 
+              size="medium"
+              onClick={onEdit}
+              disabled={!onEdit}
+            >
               Edit Project
             </Button>
-            <Button variant="secondary" size="medium">
+            <Button 
+              variant="secondary" 
+              size="medium" 
+              onClick={() => {
+                if (onDelete && window.confirm(`Are you sure you want to delete this project?`)) {
+                  onDelete();
+                  onClose();
+                }
+              }}
+              disabled={!onDelete}
+            >
               Delete Project
             </Button>
           </div>

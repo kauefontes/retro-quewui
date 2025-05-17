@@ -1,49 +1,107 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Experience } from '../types/index';
 import { useAppStore } from '../store/appStore';
-import { experiences as mockExperiences } from '../data/mockData';
-import { getExperiences } from '../data/api';
+import { deleteExperience } from '../data/api';
+import { AdminControls } from '../components/common/AdminControls';
+import { ExperienceForm } from '../components/features/experience/ExperienceForm';
+import { AuthContent } from '../components/common/AuthContent/AuthContent';
+import { useExperiences } from '../hooks/useExperiences';
 
 export const ExperiencesView = () => {
-  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
-  const [selectedTech, setSelectedTech] = useState<string | null>(null);
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    filteredExperiences,
+    selectedExperience,
+    setSelectedExperience,
+    selectedTech,
+    setSelectedTech,
+    allTechnologies,
+    loading,
+    error,
+    refreshExperiences
+  } = useExperiences();
+  
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
   
-  useEffect(() => {
-    const fetchExperiences = async () => {
-      try {
-        setLoading(true);
-        const experiencesData = await getExperiences();
-        setExperiences(experiencesData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching experiences:', err);
-        setError('Failed to load experiences data. Using fallback data.');
-        // Importando dados mockados como fallback
-        setExperiences(mockExperiences);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExperiences();
-  }, []);
-
-  // Extract unique technologies from all experiences to create tech tags
-  const allTechnologies = experiences.length > 0 
-    ? Array.from(
-        new Set(experiences.flatMap(exp => exp.technologies))
-      ).sort()
-    : [];
-
-  // Filter experiences based on selected technology
-  const filteredExperiences = selectedTech && experiences.length > 0
-    ? experiences.filter(exp => exp.technologies.includes(selectedTech))
-    : experiences;
+  // Admin state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  
+  // Admin handlers
+  const handleAddExperience = () => {
+    setIsAdding(true);
+    setSelectedExperience(null);
+  };
+  
+  const handleEditExperience = () => {
+    if (!selectedExperience) {
+      alert('Please select an experience first');
+      return;
+    }
+    
+    setIsEditing(true);
+    setEditingExperience(selectedExperience);
+  };
+  
+  const handleDeleteExperience = async () => {
+    if (!selectedExperience) {
+      alert('Please select an experience first');
+      return;
+    }
+    
+    if (!window.confirm(`Are you sure you want to delete "${selectedExperience.position} at ${selectedExperience.company}"?`)) {
+      return;
+    }
+    
+    try {
+      await deleteExperience(selectedExperience.id);
+      setSelectedExperience(null);
+      refreshExperiences();
+    } catch (error) {
+      console.error('Error deleting experience:', error);
+      alert('Failed to delete experience. Please try again.');
+    }
+  };
+  
+  const handleSaveExperience = (savedExperience: Experience) => {
+    refreshExperiences();
+    
+    if (isEditing) {
+      setSelectedExperience(savedExperience);
+    }
+    
+    setIsEditing(false);
+    setIsAdding(false);
+    setEditingExperience(null);
+  };
+  
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setIsAdding(false);
+    setEditingExperience(null);
+  };
+  
+  // Form editing mode
+  if (isEditing || isAdding) {
+    return (
+      <div style={{ padding: '1rem' }}>
+        <h2 style={{ 
+          fontSize: '1.25rem', 
+          fontWeight: 'bold',
+          marginBottom: '1rem'
+        }}>
+          {isEditing ? 'Edit Experience' : 'Add New Experience'}
+        </h2>
+        
+        <ExperienceForm 
+          experience={editingExperience || undefined}
+          onSave={handleSaveExperience}
+          onCancel={handleCancelEdit}
+        />
+      </div>
+    );
+  }
   
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -77,6 +135,16 @@ export const ExperiencesView = () => {
           )}
         </h2>
       </div>
+      
+      {/* Admin Controls */}
+      <AuthContent>
+        <AdminControls 
+          entityName="Experience"
+          onAdd={handleAddExperience}
+          onEdit={handleEditExperience}
+          onDelete={handleDeleteExperience}
+        />
+      </AuthContent>
       
       {loading ? (
         <div style={{ 
@@ -188,6 +256,8 @@ export const ExperiencesView = () => {
                   onClose={() => setSelectedExperience(null)}
                   isDebianTheme={isDebianTheme}
                   setSelectedTech={setSelectedTech}
+                  onEdit={handleEditExperience}
+                  onDelete={handleDeleteExperience}
                 />
               </div>
             )}
@@ -304,9 +374,18 @@ interface ExperienceDetailProps {
   onClose: () => void;
   isDebianTheme: boolean;
   setSelectedTech: (tech: string | null) => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const ExperienceDetail = ({ experience, onClose, isDebianTheme, setSelectedTech }: ExperienceDetailProps) => {
+const ExperienceDetail = ({ 
+  experience, 
+  onClose, 
+  isDebianTheme, 
+  setSelectedTech,
+  onEdit,
+  onDelete
+}: ExperienceDetailProps) => {
   // Handle property name differences between backend and frontend
   const startDate = 'startDate' in experience ? experience.startDate : (experience as { start_date: string }).start_date;
   const endDate = 'endDate' in experience ? experience.endDate : (experience as { end_date: string | null }).end_date;
@@ -335,21 +414,55 @@ const ExperienceDetail = ({ experience, onClose, isDebianTheme, setSelectedTech 
           <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>{experience.company}</div>
           <div style={{ fontSize: '0.875rem', opacity: '0.7' }}>{dateDisplay}</div>
         </div>
-        <button 
-          onClick={onClose}
-          style={{ 
-            padding: '0.25rem 0.5rem', 
-            borderRadius: isDebianTheme ? '0' : '0.25rem', 
-            fontSize: '0.875rem',
-            border: '1px solid',
-            borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-            backgroundColor: 'transparent',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-          }}
-          aria-label="Close experience"
-        >
-          [X]
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <AuthContent>
+            <button 
+              onClick={onEdit}
+              style={{ 
+                padding: '0.25rem 0.5rem', 
+                borderRadius: isDebianTheme ? '0' : '0.25rem', 
+                fontSize: '0.875rem',
+                border: '1px solid',
+                borderColor: '#4CAF50',
+                backgroundColor: 'transparent',
+                color: '#4CAF50'
+              }}
+              aria-label="Edit experience"
+            >
+              Edit
+            </button>
+            <button 
+              onClick={onDelete}
+              style={{ 
+                padding: '0.25rem 0.5rem', 
+                borderRadius: isDebianTheme ? '0' : '0.25rem', 
+                fontSize: '0.875rem',
+                border: '1px solid',
+                borderColor: '#F44336',
+                backgroundColor: 'transparent',
+                color: '#F44336'
+              }}
+              aria-label="Delete experience"
+            >
+              Delete
+            </button>
+          </AuthContent>
+          <button 
+            onClick={onClose}
+            style={{ 
+              padding: '0.25rem 0.5rem', 
+              borderRadius: isDebianTheme ? '0' : '0.25rem', 
+              fontSize: '0.875rem',
+              border: '1px solid',
+              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+              backgroundColor: 'transparent',
+              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+            }}
+            aria-label="Close experience"
+          >
+            [X]
+          </button>
+        </div>
       </div>
       
       <div style={{ 
@@ -375,7 +488,7 @@ const ExperienceDetail = ({ experience, onClose, isDebianTheme, setSelectedTech 
           flexWrap: 'wrap', 
           gap: '0.5rem' 
         }}>
-          {experience.technologies.map((tech, index) => (
+          {experience.technologies.map((tech: string, index: number) => (
             <button 
               key={index} 
               style={{ 
@@ -412,7 +525,7 @@ const ExperienceDetail = ({ experience, onClose, isDebianTheme, setSelectedTech 
           paddingLeft: isDebianTheme ? '0.75rem' : '1rem',
           color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
         }}>
-          {experience.highlights.map((highlight, index) => (
+          {experience.highlights.map((highlight: string, index: number) => (
             <li key={index} style={{
               position: 'relative',
               paddingLeft: '1rem',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthUtils';
 
 interface AuthContentProps {
   /** Content to show when user is authenticated */
