@@ -9,6 +9,7 @@ import { PostForm } from '../components/features/blog/PostForm';
 import { FloatingActionButton } from '../components/common/FloatingActionButton';
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
+import { TechTag } from '../components/common/TechTag';
 import { usePosts } from '../hooks/usePosts';
 
 export const BlogView = () => {
@@ -124,48 +125,21 @@ export const BlogView = () => {
   );
   
   const tagsFilter = filteredPosts.length > 0 && (
-    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-      <button 
-        style={{ 
-          padding: '0.25rem 0.5rem', 
-          borderRadius: isDebianTheme ? '0' : '0.25rem', 
-          fontSize: '0.875rem',
-          opacity: selectedTag === null ? '1' : '0.7',
-          border: '1px solid',
-          borderColor: selectedTag === null 
-            ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-            : (isDebianTheme ? '#666666' : '#103149'),
-          backgroundColor: selectedTag === null 
-            ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-            : 'transparent',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-        }}
+    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>      <TechTag
+        label="All"
         onClick={() => setSelectedTag(null)}
-      >
-        All
-      </button>
+        isSelected={selectedTag === null}
+        size="small"
+      />
       
       {allTags.map(tag => (
-        <button 
+        <TechTag
           key={tag}
-          style={{ 
-            padding: '0.25rem 0.5rem', 
-            borderRadius: isDebianTheme ? '0' : '0.25rem', 
-            fontSize: '0.875rem',
-            opacity: selectedTag === tag ? '1' : '0.7',
-            border: '1px solid',
-            borderColor: selectedTag === tag 
-              ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-              : (isDebianTheme ? '#666666' : '#103149'),
-            backgroundColor: selectedTag === tag 
-              ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-              : 'transparent',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-          }}
+          label={tag}
           onClick={() => setSelectedTag(tag)}
-        >
-          {tag}
-        </button>
+          isSelected={selectedTag === tag}
+          size="small"
+        />
       ))}
     </div>
   );
@@ -246,19 +220,11 @@ const PostCard = ({ post, isSelected, onClick }: PostCardProps) => {
       }}>{post.excerpt}</p>
       <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
         {post.tags.map((tag, index) => (
-          <span 
-            key={index} 
-            style={{ 
-              display: 'inline-block', 
-              padding: '0.25rem 0.5rem', 
-              fontSize: '0.75rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem',
-              backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-          >
-            #{tag}
-          </span>
+          <TechTag
+            key={index}
+            label={`#${tag}`}
+            size="small"
+          />
         ))}
       </div>
     </div>

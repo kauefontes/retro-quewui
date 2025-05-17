@@ -7,6 +7,8 @@ interface TechTagProps {
   label: string;
   /** Optional click handler */
   onClick?: () => void;
+  /** Optional delete handler */
+  onDelete?: () => void;
   /** Whether the tag is in selected state */
   isSelected?: boolean;
   /** Additional class name */
@@ -22,6 +24,7 @@ interface TechTagProps {
 export const TechTag: React.FC<TechTagProps> = ({
   label,
   onClick,
+  onDelete,
   isSelected = false,
   className = '',
   size = 'small'
@@ -37,15 +40,38 @@ export const TechTag: React.FC<TechTagProps> = ({
     className
   ].filter(Boolean).join(' ');
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering onClick
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
   return (
     <span 
       className={tagClasses}
-      onClick={onClick}
+      onClick={handleClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
     >
       {label}
+      {onDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="tech-tag-delete-btn"
+          aria-label={`Remove ${label}`}
+        >
+          ×
+        </button>
+      )}
     </span>
   );
 };

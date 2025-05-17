@@ -3,6 +3,7 @@ import { useAppStore } from '../store/appStore';
 import { skills as mockSkills } from '../data/mockData';
 import { getSkills, getProfile } from '../data/api';
 import type { Skill, Profile, SocialLink, Education, Language } from '../types/index';
+import { TechTag } from '../components/common/TechTag';
 
 // About View Component
 export const AboutView = () => {
@@ -392,26 +393,20 @@ const SkillCategory = ({ title, skills, isDebianTheme }: SkillCategoryProps) => 
         color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
       }}>{title}</h4>
       
-      <ul style={{
-        listStyleType: 'none',
-        paddingLeft: isDebianTheme ? '0.75rem' : '1rem',
-        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '0.5rem',
+        padding: '0.25rem'
       }}>
         {skills.map((skill, index) => (
-          <li key={index} style={{
-            position: 'relative',
-            paddingLeft: '1rem',
-            marginBottom: '0.25rem'
-          }}>
-            <span style={{
-              position: 'absolute',
-              left: '0',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}>›</span>
-            {skill}
-          </li>
+          <TechTag
+            key={index}
+            label={skill}
+            size="small"
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

@@ -49,3 +49,21 @@
 .tech-tag.clickable.theme-light:hover {
   background-color: var(--light-bg-selected);
 }
+
+/* Delete button */
+.tech-tag-delete-btn {
+  margin-left: var(--space-xxs);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: var(--text-md);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.tech-tag-delete-btn:hover {
+  opacity: 0.8;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { type Experience, updateExperience, createExperience } from './utils';
+import { createExperience, updateExperience } from '../../../data/api';
+import { TechTag } from '../../common/TechTag';
 
 interface ExperienceFormProps {
   experience?: Experience;
@@ -214,26 +215,12 @@ export const ExperienceForm: React.FC<ExperienceFormProps> = ({
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {formData.technologies?.map((tech: string, index: number) => (
-              <div
+              <TechTag
                 key={index}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  padding: '0.25rem 0.5rem',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  borderRadius: '4px'
-                }}
-              >
-                {tech}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTech(tech)}
-                  style={{ background: 'none', border: 'none', color: '#ff6666', cursor: 'pointer', padding: '0 0.25rem' }}
-                >
-                  ×
-                </button>
-              </div>
+                label={tech}
+                size="small"
+                onDelete={() => handleRemoveTech(tech)}
+              />
             ))}
           </div>
         </div>

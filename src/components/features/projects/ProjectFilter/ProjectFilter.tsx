@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../../common/Button';
+import { TechTag } from '../../../common/TechTag';
 import { useTheme } from '../../../../hooks/useTheme';
 import './ProjectFilter.css';
 
@@ -27,25 +27,21 @@ export const ProjectFilter: React.FC<ProjectFilterProps> = ({
 
   return (
     <div className={`project-filter theme-${theme} ${className}`}>
-      <Button
-        variant="terminal"
-        size="small"
-        className={`filter-button ${selectedTech === null ? 'selected' : ''}`}
+      <TechTag
+        label="All Technologies"
+        size="medium"
         onClick={() => onSelectTech(null)}
-      >
-        All Technologies
-      </Button>
+        isSelected={selectedTech === null}
+      />
       
       {technologies.map((tech) => (
-        <Button 
+        <TechTag 
           key={tech}
-          variant="terminal"
-          size="small"
-          className={`filter-button ${selectedTech === tech ? 'selected' : ''}`}
+          label={tech}
+          size="medium"
           onClick={() => onSelectTech(tech)}
-        >
-          {tech}
-        </Button>
+          isSelected={selectedTech === tech}
+        />
       ))}
     </div>
   );

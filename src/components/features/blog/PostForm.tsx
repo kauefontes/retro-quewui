@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { type Post, updatePost, createPost } from './utils';
+import { TechTag } from '../../../components/common/TechTag';
 
 interface PostFormProps {
   post?: Post;
@@ -182,36 +183,12 @@ export const PostForm: React.FC<PostFormProps> = ({
         
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
           {(formData.tags || []).map((tag, index) => (
-            <div 
-              key={index} 
-              style={{
-                backgroundColor: 'rgba(0, 255, 217, 0.1)',
-                color: 'var(--accent-color)',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
-            >
-              {tag}
-              <button 
-                type="button" 
-                onClick={() => handleRemoveTag(tag)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'var(--accent-color)',
-                  fontSize: '1rem',
-                  padding: 0,
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                ×
-              </button>
-            </div>
+            <TechTag
+              key={index}
+              label={tag}
+              size="small"
+              onDelete={() => handleRemoveTag(tag)}
+            />
           ))}
         </div>
       </div>

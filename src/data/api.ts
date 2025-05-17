@@ -27,15 +27,29 @@ const convertToCamelCase = <T>(data: unknown): T => {
 };
 
 // Convert camelCase to snake_case for the backend
-const convertToSnakeCase = (obj: JsonObject): JsonObject => {
-  const result: JsonObject = {};
-  Object.keys(obj).forEach(key => {
-    const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-    result[snakeKey] = typeof obj[key] === 'object' && obj[key] !== null
-      ? convertToSnakeCase(obj[key] as JsonObject)
-      : obj[key];
-  });
-  return result;
+const convertToSnakeCase = (obj: JsonObject | unknown): JsonObject | unknown => {
+  // Handle arrays separately to preserve them
+  if (Array.isArray(obj)) {
+    return obj.map(item => {
+      if (typeof item === 'object' && item !== null) {
+        return convertToSnakeCase(item);
+      }
+      return item;
+    });
+  }
+
+  // Handle objects
+  if (typeof obj === 'object' && obj !== null) {
+    const result: JsonObject = {};
+    Object.keys(obj as JsonObject).forEach(key => {
+      const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+      result[snakeKey] = convertToSnakeCase((obj as JsonObject)[key]);
+    });
+    return result;
+  }
+
+  // Return primitives as is
+  return obj;
 };
 
 // Generic fetch function with error handling

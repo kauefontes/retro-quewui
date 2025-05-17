@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { type Project, updateProject, createProject, validateProject } from './utils';
 import { useAppStore } from '../../../store/appStore';
+import { TechTag } from '../../common/TechTag';
 
 interface ProjectFormProps {
   project?: Project;
@@ -409,34 +410,12 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {formData.technologies?.map((tech, index) => (
-              <div 
+              <TechTag
                 key={index}
-                style={{
-                  padding: '0.25rem 0.5rem',
-                  backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                {tech}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTechnology(index)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                    cursor: 'pointer',
-                    padding: '0 0.25rem',
-                    fontSize: '0.75rem'
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
+                label={tech}
+                size="small"
+                onDelete={() => handleRemoveTechnology(index)}
+              />
             ))}
           </div>
         </div>

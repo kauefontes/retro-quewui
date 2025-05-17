@@ -6,6 +6,7 @@ import { ExperienceForm } from '../components/features/experience/ExperienceForm
 import { FloatingActionButton } from '../components/common/FloatingActionButton';
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
+import { TechTag } from '../components/common/TechTag';
 import { useExperiences } from '../hooks/useExperiences';
 
 export const ExperiencesView = () => {
@@ -290,33 +291,17 @@ const ExperienceCard = ({ experience, isSelected, onClick, isDebianTheme }: Expe
         gap: '0.25rem' 
       }}>
         {experience.technologies.slice(0, 5).map((tech, index) => (
-          <span 
-            key={index} 
-            style={{ 
-              display: 'inline-block', 
-              padding: '0.25rem 0.5rem', 
-              fontSize: '0.75rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem',
-              backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-          >
-            {tech}
-          </span>
+          <TechTag
+            key={index}
+            label={tech}
+            size="small"
+          />
         ))}
         {experience.technologies.length > 5 && (
-          <span 
-            style={{ 
-              display: 'inline-block', 
-              padding: '0.25rem 0.5rem', 
-              fontSize: '0.75rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem',
-              backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-          >
-            +{experience.technologies.length - 5}
-          </span>
+          <TechTag
+            label={`+${experience.technologies.length - 5}`}
+            size="small"
+          />
         )}
       </div>
     </div>
@@ -399,22 +384,12 @@ const ExperienceDetail = ({
           gap: '0.5rem' 
         }}>
           {experience.technologies.map((tech: string, index: number) => (
-            <button 
-              key={index} 
-              style={{ 
-                display: 'inline-block', 
-                padding: '0.25rem 0.5rem', 
-                fontSize: '0.875rem', 
-                borderRadius: isDebianTheme ? '0' : '0.25rem',
-                backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                border: 'none',
-                cursor: 'pointer'
-              }}
+            <TechTag
+              key={index}
+              label={tech}
               onClick={() => setSelectedTech(tech)}
-            >
-              {tech}
-            </button>
+              size="medium"
+            />
           ))}
         </div>
       </div>
