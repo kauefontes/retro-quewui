@@ -6,8 +6,9 @@ import remarkGfm from 'remark-gfm';
 import './BlogView.css';
 import { useAppStore } from '../store/appStore';
 import { PostForm } from '../components/features/blog/PostForm';
-import { AdminControls } from '../components/common/AdminControls';
-import { AuthContent } from '../components/common/AuthContent/AuthContent';
+import { FloatingActionButton } from '../components/common/FloatingActionButton';
+import { DetailActionButtons } from '../components/common/DetailActionButtons';
+import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { usePosts } from '../hooks/usePosts';
 
 export const BlogView = () => {
@@ -83,153 +84,116 @@ export const BlogView = () => {
     );
   }
   
+  const postsList = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {filteredPosts.map(post => (
+        <PostCard 
+          key={post.id}
+          post={post}
+          isSelected={selectedPost?.id === post.id}
+          onClick={() => setSelectedPost(post)}
+        />
+      ))}
+        
+      {filteredPosts.length === 0 && (
+        <div style={{ padding: '1rem', textAlign: 'center', opacity: 0.7 }}>
+          No posts found for tag #{selectedTag}
+        </div>
+      )}
+    </div>
+  );
+  
+  const postDetail = selectedPost && (
+    <PostDetail 
+      post={selectedPost} 
+      onClose={() => setSelectedPost(null)} 
+      onEdit={handleEditPost}
+      onDelete={handleDeletePost}
+    />
+  );
+  
+  const titleAction = !loading && !error && (
+    <span style={{ 
+      fontSize: '0.75rem', 
+      backgroundColor: '#00AA00', 
+      color: 'white',
+      padding: '0.1rem 0.3rem',
+      borderRadius: '0.25rem',
+      fontWeight: 'normal'
+    }}>live</span>
+  );
+  
+  const tagsFilter = filteredPosts.length > 0 && (
+    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+      <button 
+        style={{ 
+          padding: '0.25rem 0.5rem', 
+          borderRadius: isDebianTheme ? '0' : '0.25rem', 
+          fontSize: '0.875rem',
+          opacity: selectedTag === null ? '1' : '0.7',
+          border: '1px solid',
+          borderColor: selectedTag === null 
+            ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+            : (isDebianTheme ? '#666666' : '#103149'),
+          backgroundColor: selectedTag === null 
+            ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+            : 'transparent',
+          color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+        }}
+        onClick={() => setSelectedTag(null)}
+      >
+        All
+      </button>
+      
+      {allTags.map(tag => (
+        <button 
+          key={tag}
+          style={{ 
+            padding: '0.25rem 0.5rem', 
+            borderRadius: isDebianTheme ? '0' : '0.25rem', 
+            fontSize: '0.875rem',
+            opacity: selectedTag === tag ? '1' : '0.7',
+            border: '1px solid',
+            borderColor: selectedTag === tag 
+              ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+              : (isDebianTheme ? '#666666' : '#103149'),
+            backgroundColor: selectedTag === tag 
+              ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+              : 'transparent',
+            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+          }}
+          onClick={() => setSelectedTag(tag)}
+        >
+          {tag}
+        </button>
+      ))}
+    </div>
+  );
+  
+  const actionButton = (
+    <FloatingActionButton
+      onClick={handleAddPost}
+      ariaLabel="Add new blog post"
+      label="[New]"
+    />
+  );
+  
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '1rem',
-        borderBottom: '1px solid',
-        borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-        paddingBottom: '0.5rem'
-      }}>
-        <h2 style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: 'bold',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          Blog
-          {!loading && !error && (
-            <span style={{ 
-              fontSize: '0.75rem', 
-              backgroundColor: '#00AA00', 
-              color: 'white',
-              padding: '0.1rem 0.3rem',
-              borderRadius: '0.25rem',
-              fontWeight: 'normal'
-            }}>live</span>
-          )}
-        </h2>
-        
-        {/* Admin Controls */}
-        <AuthContent>
-          <AdminControls
-            entityName="Blog Post"
-            onAdd={handleAddPost}
-            onEdit={selectedPost ? handleEditPost : undefined}
-            onDelete={selectedPost ? handleDeletePost : undefined}
-          />
-        </AuthContent>
-        
-        {filteredPosts.length > 0 && (
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button 
-              style={{ 
-                padding: '0.25rem 0.5rem', 
-                borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                fontSize: '0.875rem',
-                opacity: selectedTag === null ? '1' : '0.7',
-                border: '1px solid',
-                borderColor: selectedTag === null 
-                  ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                  : (isDebianTheme ? '#666666' : '#103149'),
-                backgroundColor: selectedTag === null 
-                  ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                  : 'transparent',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-              }}
-              onClick={() => setSelectedTag(null)}
-            >
-              All
-            </button>
-            
-            {allTags.map(tag => (
-              <button 
-                key={tag}
-                style={{ 
-                  padding: '0.25rem 0.5rem', 
-                  borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                  fontSize: '0.875rem',
-                  opacity: selectedTag === tag ? '1' : '0.7',
-                  border: '1px solid',
-                  borderColor: selectedTag === tag 
-                    ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                    : (isDebianTheme ? '#666666' : '#103149'),
-                  backgroundColor: selectedTag === tag 
-                    ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                    : 'transparent',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-                }}
-                onClick={() => setSelectedTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      {tagsFilter}
       
-      <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
-        {loading ? (
-          <div style={{ 
-            padding: '2rem', 
-            textAlign: 'center', 
-            width: '100%',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            Loading blog posts...
-          </div>
-        ) : error ? (
-          <div style={{ 
-            padding: '1rem', 
-            color: isDebianTheme ? '#FF6666' : '#FF6666',
-            borderLeft: '3px solid #FF6666',
-            width: '100%'
-          }}>
-            {error}
-          </div>
-        ) : (
-          <>
-            {/* Blog Post List */}
-            <div style={{ 
-              width: selectedPost ? '33%' : '100%', 
-              overflowY: 'auto', 
-              paddingRight: '0.75rem'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {filteredPosts.map(post => (
-                  <PostCard 
-                    key={post.id}
-                    post={post}
-                    isSelected={selectedPost?.id === post.id}
-                    onClick={() => setSelectedPost(post)}
-                  />
-                ))}
-                  
-                {filteredPosts.length === 0 && (
-                  <div style={{ padding: '1rem', textAlign: 'center', opacity: 0.7 }}>
-                    No posts found for tag #{selectedTag}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Post Detail */}
-            {selectedPost && (
-              <div style={{ width: '67%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
-                <PostDetail 
-                  post={selectedPost} 
-                  onClose={() => setSelectedPost(null)}
-                />
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      <ListDetailLayout
+        title="Blog"
+        titleAction={titleAction}
+        loading={loading}
+        error={error}
+        listContent={postsList}
+        detailContent={postDetail}
+        hasSelectedItem={!!selectedPost}
+        loadingMessage="Loading blog posts..."
+        emptyMessage="No posts found"
+        actionButton={actionButton}
+      />
     </div>
   );
 };
@@ -304,9 +268,11 @@ const PostCard = ({ post, isSelected, onClick }: PostCardProps) => {
 interface PostDetailProps {
   post: Post;
   onClose: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-const PostDetail = ({ post, onClose }: PostDetailProps) => {
+const PostDetail = ({ post, onClose, onEdit, onDelete }: PostDetailProps) => {
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
   
@@ -317,7 +283,8 @@ const PostDetail = ({ post, onClose }: PostDetailProps) => {
       borderColor: isDebianTheme ? '#666666' : 'var(--accent-color)', 
       height: '100%',
       backgroundColor: isDebianTheme ? '#0000B3' : 'transparent' 
-    }}>        <div style={{ 
+    }}>
+      <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
@@ -335,23 +302,11 @@ const PostDetail = ({ post, onClose }: PostDetailProps) => {
           }}>{post.title}</h3>
           <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>{post.date}</div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button 
-            onClick={onClose}
-            style={{ 
-              padding: '0.25rem 0.5rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem', 
-              fontSize: '0.875rem',
-              border: '1px solid',
-              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              backgroundColor: 'transparent',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-            aria-label="Close post"
-          >
-            [X]
-          </button>
-        </div>
+        <DetailActionButtons
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onClose={onClose}
+        />
       </div>
       
       <div>

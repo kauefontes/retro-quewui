@@ -6,6 +6,33 @@
   flex-direction: column;
   gap: var(--space-md);
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  width: 100%; /* Use full available width */
+  max-width: 100%; /* Ensure it doesn't exceed container width */
+  box-sizing: border-box; /* Include padding in width calculation */
+  word-wrap: break-word; /* Ensure long text wraps */
+}
+
+/* Ensure all content respects container boundaries */
+.project-detail * {
+  max-width: 100%;
+}
+
+.project-detail img,
+.project-detail video,
+.project-detail iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.project-detail pre,
+.project-detail code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.project-detail a {
+  word-break: break-all;
 }
 
 /* Dark theme */
@@ -42,6 +69,16 @@
   flex-direction: column;
 }
 
+.project-detail-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.delete-button {
+  color: #FF6666 !important;
+}
+
 .project-detail-title {
   font-size: var(--text-lg);
   font-weight: bold;
@@ -56,6 +93,9 @@
 
 .project-detail-description {
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
 }
 
 .project-detail-links {
@@ -92,6 +132,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .project-detail-features {

@@ -1,0 +1,48 @@
+.detail-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.action-button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Theme-specific styling */
+.theme-dark .action-button {
+  border-radius: 0.25rem;
+}
+
+.theme-light .action-button {
+  border-radius: 0;
+}
+
+/* Button types - Dark Theme */
+.theme-dark .edit-button {
+  color: #4CAF50;
+}
+
+.theme-dark .delete-button {
+  color: #F44336;
+}
+
+.theme-dark .close-button {
+  color: var(--accent-color);
+}
+
+/* Button types - Light Theme */
+.theme-light .edit-button {
+  color: #00FF00;
+}
+
+.theme-light .delete-button {
+  color: #FF6666;
+}
+
+.theme-light .close-button {
+  color: #FFFFFF;
+}

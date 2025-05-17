@@ -1,0 +1,142 @@
+/* Global theme consistency */
+
+/* Dark theme - Ensures consistent colors across all components */
+.theme-dark {
+  --text-color: #00ffd9;
+  --bg-color: #0c0e14;
+  --border-color: #103149;
+  --accent-color: #00ffd9;
+  --accent-hover: rgba(0, 255, 217, 0.2);
+  --card-bg: transparent;
+  --card-bg-selected: rgba(0, 255, 217, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.3);
+  /* This ensures all text uses the accent color */
+  color: var(--text-color);
+}
+
+.theme-dark h1, 
+.theme-dark h2, 
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark h5,
+.theme-dark h6,
+.theme-dark p,
+.theme-dark span,
+.theme-dark div,
+.theme-dark li,
+.theme-dark label {
+  color: var(--text-color);
+}
+
+/* Force all inputs to have consistent styling */
+.theme-dark input,
+.theme-dark textarea,
+.theme-dark select,
+.theme-dark button {
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+}
+
+/* Light theme (Debian) - Ensures consistent colors across all components */
+.theme-light {
+  --text-color: #FFFFFF;
+  --bg-color: #0000AA;
+  --border-color: #666666;
+  --accent-color: #FFFFFF;
+  --accent-hover: rgba(255, 255, 255, 0.2);
+  --card-bg: #0000B3;
+  --card-bg-selected: #0000D3;
+  --input-bg: rgba(0, 0, 0, 0.2);
+  color: var(--text-color);
+}
+
+.theme-light h1, 
+.theme-light h2, 
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6,
+.theme-light p,
+.theme-light span,
+.theme-light div,
+.theme-light li,
+.theme-light label {
+  color: var(--text-color);
+}
+
+/* Force all inputs to have consistent styling in light theme */
+.theme-light input,
+.theme-light textarea,
+.theme-light select,
+.theme-light button {
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+}
+
+/* Common status colors (regardless of theme) */
+:root {
+  --success: #00AA00;
+  --error: #FF6666;
+  --warning: #FFCC00;
+  --info: #0066FF;
+}
+
+/* Consistent border radius between themes */
+.theme-dark button,
+.theme-dark input,
+.theme-dark textarea,
+.theme-dark select,
+.theme-dark .card,
+.theme-dark .badge {
+  border-radius: 0.25rem;
+}
+
+.theme-light button,
+.theme-light input,
+.theme-light textarea,
+.theme-light select,
+.theme-light .card,
+.theme-light .badge {
+  border-radius: 0;
+}
+
+/* Typography consistency */
+.view-title {
+  font-size: var(--text-lg);
+  font-weight: bold;
+  margin-bottom: var(--space-md);
+  color: var(--text-color);
+}
+
+.section-title {
+  font-size: var(--text-md);
+  font-weight: bold;
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+/* Consistent form styling */
+input, textarea, select {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: var(--space-sm);
+  width: 100%;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Consistent card styling */
+.card {
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  padding: var(--space-md);
+}
+
+.card.selected {
+  background-color: var(--card-bg-selected);
+}

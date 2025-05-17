@@ -42,13 +42,22 @@ export const useExperiences = () => {
   // Filter experiences when selected tech changes
   useEffect(() => {
     if (selectedTech && experiences.length > 0) {
-      setFilteredExperiences(experiences.filter(exp =>
-        exp.technologies.includes(selectedTech)
-      ));
+      const filtered = experiences.filter(exp => exp.technologies.includes(selectedTech));
+      setFilteredExperiences(filtered);
+
+      // If we have filtered experiences and no experience is selected, select the first one
+      if (filtered.length > 0 && !selectedExperience) {
+        setSelectedExperience(filtered[0]);
+      }
     } else {
       setFilteredExperiences(experiences);
+
+      // If we have experiences and no experience is selected, select the first one
+      if (experiences.length > 0 && !selectedExperience) {
+        setSelectedExperience(experiences[0]);
+      }
     }
-  }, [selectedTech, experiences]);
+  }, [selectedTech, experiences, selectedExperience]);
 
   // Get all unique technologies from experiences
   const allTechnologies = experiences.length > 0

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import type { Experience } from '../types/index';
 import { useAppStore } from '../store/appStore';
 import { deleteExperience } from '../data/api';
-import { AdminControls } from '../components/common/AdminControls';
 import { ExperienceForm } from '../components/features/experience/ExperienceForm';
-import { AuthContent } from '../components/common/AuthContent/AuthContent';
+import { FloatingActionButton } from '../components/common/FloatingActionButton';
+import { DetailActionButtons } from '../components/common/DetailActionButtons';
+import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { useExperiences } from '../hooks/useExperiences';
 
 export const ExperiencesView = () => {
@@ -103,167 +104,120 @@ export const ExperiencesView = () => {
     );
   }
   
+  const experiencesList = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {filteredExperiences.map((exp) => (
+        <ExperienceCard 
+          key={exp.id}
+          experience={exp}
+          isSelected={selectedExperience?.id === exp.id}
+          onClick={() => setSelectedExperience(exp)}
+          isDebianTheme={isDebianTheme}
+        />
+      ))}
+    </div>
+  );
+  
+  const experienceDetail = selectedExperience && (
+    <ExperienceDetail 
+      experience={selectedExperience} 
+      onClose={() => setSelectedExperience(null)}
+      isDebianTheme={isDebianTheme}
+      setSelectedTech={setSelectedTech}
+      onEdit={handleEditExperience}
+      onDelete={handleDeleteExperience}
+    />
+  );
+  
+  const titleAction = !loading && !error && (
+    <span style={{ 
+      fontSize: '0.75rem', 
+      backgroundColor: '#00AA00', 
+      color: 'white',
+      padding: '0.1rem 0.3rem',
+      borderRadius: '0.25rem',
+      fontWeight: 'normal'
+    }}>live</span>
+  );
+  
+  const techFilter = (
+    <div style={{ 
+      display: 'flex', 
+      flexWrap: 'wrap', 
+      gap: '0.5rem', 
+      marginBottom: '1rem',
+      overflowX: 'auto',
+      paddingBottom: '0.5rem'
+    }}>
+      <button
+        style={{ 
+          padding: '0.25rem 0.5rem', 
+          borderRadius: isDebianTheme ? '0' : '0.25rem', 
+          fontSize: '0.875rem',
+          opacity: selectedTech === null ? '1' : '0.7',
+          border: '1px solid',
+          borderColor: selectedTech === null 
+            ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+            : (isDebianTheme ? '#666666' : '#103149'),
+          backgroundColor: selectedTech === null 
+            ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+            : 'transparent',
+          color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+        }}
+        onClick={() => setSelectedTech(null)}
+      >
+        All Stacks
+      </button>
+      
+      {allTechnologies.map((tech) => (
+        <button 
+          key={tech}
+          style={{ 
+            padding: '0.25rem 0.5rem', 
+            borderRadius: isDebianTheme ? '0' : '0.25rem', 
+            fontSize: '0.875rem',
+            opacity: selectedTech === tech ? '1' : '0.7',
+            border: '1px solid',
+            borderColor: selectedTech === tech 
+              ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
+              : (isDebianTheme ? '#666666' : '#103149'),
+            backgroundColor: selectedTech === tech 
+              ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
+              : 'transparent',
+            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+          }}
+          onClick={() => setSelectedTech(tech)}
+        >
+          {tech}
+        </button>
+      ))}
+    </div>
+  );
+  
+  const actionButton = (
+    <FloatingActionButton
+      onClick={handleAddExperience}
+      ariaLabel="Add new experience"
+      label="[New]"
+    />
+  );
+  
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '1rem',
-        borderBottom: '1px solid',
-        borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-        paddingBottom: '0.5rem'
-      }}>
-        <h2 style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: 'bold',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          Professional Experience
-          {!loading && !error && (
-            <span style={{ 
-              fontSize: '0.75rem', 
-              backgroundColor: '#00AA00', 
-              color: 'white',
-              padding: '0.1rem 0.3rem',
-              borderRadius: '0.25rem',
-              fontWeight: 'normal'
-            }}>live</span>
-          )}
-        </h2>
-      </div>
+      {techFilter}
       
-      {/* Admin Controls */}
-      <AuthContent>
-        <AdminControls 
-          entityName="Experience"
-          onAdd={handleAddExperience}
-          onEdit={handleEditExperience}
-          onDelete={handleDeleteExperience}
-        />
-      </AuthContent>
-      
-      {loading ? (
-        <div style={{ 
-          padding: '2rem', 
-          textAlign: 'center', 
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-        }}>
-          Loading professional experiences...
-        </div>
-      ) : error ? (
-        <div style={{ 
-          padding: '1rem', 
-          color: isDebianTheme ? '#FF6666' : '#FF6666',
-          borderLeft: '3px solid #FF6666'
-        }}>
-          {error}
-        </div>
-      ) : (
-        <>
-          {/* Tech filter tags */}
-          <div style={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: '0.5rem', 
-            marginBottom: '1rem',
-            overflowX: 'auto',
-            paddingBottom: '0.5rem'
-          }}>
-            <button
-              style={{ 
-                padding: '0.25rem 0.5rem', 
-                borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                fontSize: '0.875rem',
-                opacity: selectedTech === null ? '1' : '0.7',
-                border: '1px solid',
-                borderColor: selectedTech === null 
-                  ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                  : (isDebianTheme ? '#666666' : '#103149'),
-                backgroundColor: selectedTech === null 
-                  ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                  : 'transparent',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-              }}
-              onClick={() => setSelectedTech(null)}
-            >
-              All Stacks
-            </button>
-            
-            {allTechnologies.map((tech) => (
-              <button 
-                key={tech}
-                style={{ 
-                  padding: '0.25rem 0.5rem', 
-                  borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                  fontSize: '0.875rem',
-                  opacity: selectedTech === tech ? '1' : '0.7',
-                  border: '1px solid',
-                  borderColor: selectedTech === tech 
-                    ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-                    : (isDebianTheme ? '#666666' : '#103149'),
-                  backgroundColor: selectedTech === tech 
-                    ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-                    : 'transparent',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-                }}
-                onClick={() => setSelectedTech(tech)}
-              >
-                {tech}
-              </button>
-            ))}
-          </div>
-          
-          <div style={{ display: 'flex', flex: 1, height: '100%', overflow: 'hidden' }}>
-            {/* Experiences List */}
-            <div style={{ 
-              width: selectedExperience ? '35%' : '100%', 
-              overflowY: 'auto', 
-              paddingRight: '0.75rem'
-            }}>
-              {filteredExperiences.length === 0 ? (
-                <div style={{ 
-                  padding: '1rem', 
-                  textAlign: 'center', 
-                  opacity: 0.7,
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' 
-                }}>
-                  No experiences found with {selectedTech} technology
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {filteredExperiences.map((exp) => (
-                    <ExperienceCard 
-                      key={exp.id}
-                      experience={exp}
-                      isSelected={selectedExperience?.id === exp.id}
-                      onClick={() => setSelectedExperience(exp)}
-                      isDebianTheme={isDebianTheme}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Experience Detail */}
-            {selectedExperience && (
-              <div style={{ width: '65%', overflowY: 'auto', paddingLeft: '0.75rem' }}>
-                <ExperienceDetail 
-                  experience={selectedExperience} 
-                  onClose={() => setSelectedExperience(null)}
-                  isDebianTheme={isDebianTheme}
-                  setSelectedTech={setSelectedTech}
-                  onEdit={handleEditExperience}
-                  onDelete={handleDeleteExperience}
-                />
-              </div>
-            )}
-          </div>
-        </>
-      )}
+      <ListDetailLayout
+        title="Professional Experience"
+        titleAction={titleAction}
+        loading={loading}
+        error={error}
+        listContent={experiencesList}
+        detailContent={experienceDetail}
+        hasSelectedItem={!!selectedExperience}
+        loadingMessage="Loading professional experiences..."
+        emptyMessage={selectedTech ? `No experiences found with ${selectedTech} technology` : "No experiences found"}
+        actionButton={actionButton}
+      />
     </div>
   );
 };
@@ -414,55 +368,11 @@ const ExperienceDetail = ({
           <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>{experience.company}</div>
           <div style={{ fontSize: '0.875rem', opacity: '0.7' }}>{dateDisplay}</div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <AuthContent>
-            <button 
-              onClick={onEdit}
-              style={{ 
-                padding: '0.25rem 0.5rem', 
-                borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                fontSize: '0.875rem',
-                border: '1px solid',
-                borderColor: '#4CAF50',
-                backgroundColor: 'transparent',
-                color: '#4CAF50'
-              }}
-              aria-label="Edit experience"
-            >
-              Edit
-            </button>
-            <button 
-              onClick={onDelete}
-              style={{ 
-                padding: '0.25rem 0.5rem', 
-                borderRadius: isDebianTheme ? '0' : '0.25rem', 
-                fontSize: '0.875rem',
-                border: '1px solid',
-                borderColor: '#F44336',
-                backgroundColor: 'transparent',
-                color: '#F44336'
-              }}
-              aria-label="Delete experience"
-            >
-              Delete
-            </button>
-          </AuthContent>
-          <button 
-            onClick={onClose}
-            style={{ 
-              padding: '0.25rem 0.5rem', 
-              borderRadius: isDebianTheme ? '0' : '0.25rem', 
-              fontSize: '0.875rem',
-              border: '1px solid',
-              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              backgroundColor: 'transparent',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-            }}
-            aria-label="Close experience"
-          >
-            [X]
-          </button>
-        </div>
+        <DetailActionButtons
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onClose={onClose}
+        />
       </div>
       
       <div style={{ 

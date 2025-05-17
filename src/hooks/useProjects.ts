@@ -42,13 +42,22 @@ export const useProjects = () => {
   // Filter projects when selected tech changes
   useEffect(() => {
     if (selectedTech && projects.length > 0) {
-      setFilteredProjects(projects.filter(proj =>
-        proj.technologies.includes(selectedTech)
-      ));
+      const filtered = projects.filter(proj => proj.technologies.includes(selectedTech));
+      setFilteredProjects(filtered);
+
+      // If we have filtered projects and no project is selected, select the first one
+      if (filtered.length > 0 && !selectedProject) {
+        setSelectedProject(filtered[0]);
+      }
     } else {
       setFilteredProjects(projects);
+
+      // If we have projects and no project is selected, select the first one
+      if (projects.length > 0 && !selectedProject) {
+        setSelectedProject(projects[0]);
+      }
     }
-  }, [selectedTech, projects]);
+  }, [selectedTech, projects, selectedProject]);
 
   // Get all unique technologies from projects
   const allTechnologies = projects.length > 0

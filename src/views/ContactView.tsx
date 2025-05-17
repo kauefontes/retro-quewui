@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { submitContactForm } from '../data/api';
 import type { ContactFormData } from '../types/index';
+import './ContactView.css';
 
 export const ContactView = () => {
   const [formData, setFormData] = useState({
@@ -101,18 +102,9 @@ export const ContactView = () => {
             <p>{error}</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div>
-              <label 
-                htmlFor="name" 
-                style={{ 
-                  display: 'block', 
-                  marginBottom: '0.25rem',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-                }}
-              >
-                Name:
-              </label>
+          <form onSubmit={handleSubmit} className={`contact-form theme-${theme}`}>
+            <div className="contact-form-field">
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
                 id="name"
@@ -120,29 +112,11 @@ export const ContactView = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.3)',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                  border: '1px solid',
-                  borderColor: isDebianTheme ? '#666666' : '#103149',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem'
-                }}
               />
             </div>
             
-            <div>
-              <label 
-                htmlFor="email" 
-                style={{ 
-                  display: 'block', 
-                  marginBottom: '0.25rem',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-                }}
-              >
-                Email:
-              </label>
+            <div className="contact-form-field">
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
@@ -150,65 +124,27 @@ export const ContactView = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.3)',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                  border: '1px solid',
-                  borderColor: isDebianTheme ? '#666666' : '#103149',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem'
-                }}
               />
             </div>
             
-            <div>
-              <label 
-                htmlFor="message" 
-                style={{ 
-                  display: 'block', 
-                  marginBottom: '0.25rem',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-                }}
-              >
-                Message:
-              </label>
+            <div className="contact-form-field">
+              <label htmlFor="message">Message</label>
               <textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 required
-                rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.3)',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                  border: '1px solid',
-                  borderColor: isDebianTheme ? '#666666' : '#103149',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem'
-                }}
               />
             </div>
             
-            <div>
-              <button 
-                type="submit" 
-                disabled={submitting}
-                style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                  border: '1px solid',
-                  borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem',
-                  cursor: submitting ? 'wait' : 'pointer'
-                }}
-              >
-                {submitting ? 'Sending...' : 'Send Message'}
-              </button>
-            </div>
+            <button 
+              type="submit"
+              className="form-button"
+              disabled={submitting}
+            >
+              {submitting ? 'Sending...' : 'Send Message'}
+            </button>
           </form>
         )}
       </div>

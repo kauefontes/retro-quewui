@@ -1,0 +1,78 @@
+
+/* Global spacing and layout utilities */
+.full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.word-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Container constraints */
+.container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--space-md);
+}
+
+/* Flex utilities */
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-gap-sm {
+  gap: var(--space-sm);
+}
+
+.flex-gap-md {
+  gap: var(--space-md);
+}
+
+/* Text sizing and formatting */
+.text-wrap {
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/* Common section styling */
+.section-container {
+  margin-bottom: var(--space-lg);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Common layout components */
+.detail-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  padding: var(--space-md);
+}

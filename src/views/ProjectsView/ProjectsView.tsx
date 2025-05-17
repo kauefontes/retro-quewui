@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Section } from '../../components/common/Section';
 import { ProjectCard } from '../../components/features/projects/ProjectCard';
 import { ProjectDetail } from '../../components/features/projects/ProjectDetail/ProjectDetail';
 import { ProjectFilter } from '../../components/features/projects/ProjectFilter';
 import { ProjectForm } from '../../components/features/projects/ProjectForm';
 import { useProjects } from '../../hooks/useProjects';
 import { useTheme } from '../../hooks/useTheme';
-import { AdminControls } from '../../components/common/AdminControls';
-import { AuthContent } from '../../components/common/AuthContent/AuthContent';
+import { FloatingActionButton } from '../../components/common/FloatingActionButton';
+import { ListDetailLayout } from '../../components/common/ListDetailLayout';
 import type { Project } from '../../types/index';
 import { deleteProject } from '../../data/api';
 import './ProjectsView.css';
@@ -87,71 +86,65 @@ export const ProjectsView: React.FC = () => {
     );
   }
 
+  const projectsList = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {filteredProjects.map(project => (
+        <ProjectCard
+          key={project.id}
+          project={project}
+          isSelected={selectedProject?.id === project.id}
+          onClick={() => setSelectedProject(project)}
+        />
+      ))}
+    </div>
+  );
+  
+  const projectDetail = selectedProject && (
+    <ProjectDetail
+      project={selectedProject}
+      onClose={() => setSelectedProject(null)}
+      onSelectTech={setSelectedTech}
+      onEdit={handleEditProject}
+      onDelete={handleDeleteProject}
+    />
+  );
+  
+  const titleAction = !loading && !error && (
+    <span className="live-badge">live</span>
+  );
+  
+  const techFilter = (
+    <ProjectFilter 
+      technologies={allTechnologies}
+      selectedTech={selectedTech}
+      onSelectTech={setSelectedTech}
+    />
+  );
+  
+  const actionButton = (
+    <FloatingActionButton
+      onClick={handleAddProject}
+      ariaLabel="Add new project"
+      label="[New]"
+    />
+  );
+  
   return (
     <div className={`projects-view theme-${theme}`}>
-      <Section 
+      {techFilter}
+      
+      <ListDetailLayout
         title="Projects"
-        action={
-          <>
-            {!loading && !error && (
-              <span className="live-badge">live</span>
-            )}
-            <AuthContent>
-              <AdminControls
-                entityName="Project"
-                onAdd={handleAddProject}
-                onEdit={selectedProject ? handleEditProject : undefined}
-                onDelete={selectedProject ? handleDeleteProject : undefined}
-              />
-            </AuthContent>
-          </>
-        }
-      >
-        {loading ? (
-          <div className="loading-state">Loading projects...</div>
-        ) : error ? (
-          <div className="error-state">{error}</div>
-        ) : (
-          <>
-            <ProjectFilter 
-              technologies={allTechnologies}
-              selectedTech={selectedTech}
-              onSelectTech={setSelectedTech}
-            />
-            
-            <div className="projects-content">
-              <div className={`projects-list ${selectedProject ? 'with-details' : ''}`}>
-                {filteredProjects.length === 0 ? (
-                  <div className="empty-state">
-                    No projects found with {selectedTech} technology
-                  </div>
-                ) : (
-                  filteredProjects.map(project => (
-                    <ProjectCard
-                      key={project.id}
-                      project={project}
-                      isSelected={selectedProject?.id === project.id}
-                      onClick={() => setSelectedProject(project)}
-                    />
-                  ))
-                )}
-              </div>
-              
-              {selectedProject && (
-                <div className="project-details">
-                  <ProjectDetail
-                    project={selectedProject}
-                    onClose={() => setSelectedProject(null)}
-                    onSelectTech={setSelectedTech}
-                    onEdit={handleEditProject}
-                    onDelete={handleDeleteProject}
-                  />
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </Section>
+        titleAction={titleAction}
+        loading={loading}
+        error={error}
+        listContent={projectsList}
+        detailContent={projectDetail}
+        hasSelectedItem={!!selectedProject}
+        loadingMessage="Loading projects..."
+        emptyMessage={selectedTech ? `No projects found with ${selectedTech} technology` : "No projects found"}
+        actionButton={actionButton}
+      />
     </div>
   );
 };

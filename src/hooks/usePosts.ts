@@ -42,13 +42,22 @@ export const usePosts = () => {
   // Filter posts when selected tag changes
   useEffect(() => {
     if (selectedTag && posts.length > 0) {
-      setFilteredPosts(posts.filter(post =>
-        post.tags.includes(selectedTag)
-      ));
+      const filtered = posts.filter(post => post.tags.includes(selectedTag));
+      setFilteredPosts(filtered);
+
+      // If we have filtered posts and no post is selected, select the first one
+      if (filtered.length > 0 && !selectedPost) {
+        setSelectedPost(filtered[0]);
+      }
     } else {
       setFilteredPosts(posts);
+
+      // If we have posts and no post is selected, select the first one
+      if (posts.length > 0 && !selectedPost) {
+        setSelectedPost(posts[0]);
+      }
     }
-  }, [selectedTag, posts]);
+  }, [selectedTag, posts, selectedPost]);
 
   // Get all unique tags from posts
   const allTags = posts.length > 0

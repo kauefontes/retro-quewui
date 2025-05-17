@@ -1,9 +1,8 @@
 import React from 'react';
 import type { Project } from '../../../../types/index';
 import { TechTag } from '../../../common/TechTag';
-import { Button } from '../../../common/Button';
 import { Section } from '../../../common/Section';
-import { AuthContent } from '../../../common/AuthContent';
+import { DetailActionButtons } from '../../../common/DetailActionButtons';
 import { useTheme } from '../../../../hooks/useTheme';
 import './ProjectDetail.css';
 
@@ -42,14 +41,11 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           <h3 className="project-detail-title">{project.title}</h3>
           <div className="project-detail-year">Year: {project.year}</div>
         </div>
-        <Button 
-          onClick={onClose}
-          variant="terminal"
-          size="small"
-          aria-label="Close project"
-        >
-          [X]
-        </Button>
+        <DetailActionButtons
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onClose={onClose}
+        />
       </div>
       
       <div className="project-detail-description">
@@ -113,34 +109,6 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         </ul>
       </Section>
       
-      {/* Admin Section - Only visible when logged in */}
-      <AuthContent fallback={null}>
-        <Section title="Admin Actions" collapsible defaultCollapsed>
-          <div className="project-detail-admin-actions">
-            <Button 
-              variant="primary" 
-              size="medium"
-              onClick={onEdit}
-              disabled={!onEdit}
-            >
-              Edit Project
-            </Button>
-            <Button 
-              variant="secondary" 
-              size="medium" 
-              onClick={() => {
-                if (onDelete && window.confirm(`Are you sure you want to delete this project?`)) {
-                  onDelete();
-                  onClose();
-                }
-              }}
-              disabled={!onDelete}
-            >
-              Delete Project
-            </Button>
-          </div>
-        </Section>
-      </AuthContent>
     </div>
   );
 };

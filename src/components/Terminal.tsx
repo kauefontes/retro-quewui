@@ -49,68 +49,69 @@ export const CommandInput = () => {
     }
     
     // Regular command processor
-    if (normalizedCommand.startsWith(':')) {
-      // Tab navigation commands
-      const tabCommand = normalizedCommand.substring(1);
+    // If command starts with ':', remove it (for backward compatibility)
+    const tabCommand = normalizedCommand.startsWith(':') 
+      ? normalizedCommand.substring(1) 
+      : normalizedCommand;
+    
+    switch (tabCommand) {
+      case 'about':
+      case 'projects':
+      case 'blog':
+      case 'contact':
+      case 'stats':
+      case 'experiences':
+        setCurrentTab(tabCommand as TabName);
+        break;
       
-      switch (tabCommand) {
-        case 'about':
-        case 'projects':
-        case 'blog':
-        case 'contact':
-        case 'stats':
-        case 'experiences':
-          setCurrentTab(tabCommand as TabName);
-          break;
+      case 'theme':
+        toggleTheme();
+        break;
         
-        case 'theme':
-          toggleTheme();
-          break;
-          
-        case 'clear':
-          // Add clear functionality if needed
-          break;
-          
-        case 'login':
-          if (isAuthenticated) {
-            console.log('Already logged in');
-          } else {
-            // Start login process
-            console.log('Starting login process, please enter username...');
-            console.log('Press ESC at any time to cancel the login process');
-            setLoginState({ state: 'username' });
-          }
-          break;
-          
-        case 'logout':
-          if (isAuthenticated) {
-            logout();
-            console.log('Logged out successfully');
-          } else {
-            console.log('Not logged in');
-          }
-          break;
-          
-        case 'messages':
-          if (isAuthenticated) {
-            setCurrentTab('messages' as TabName);
-            console.log('Accessing messages view...');
-          } else {
-            console.log('You need to be logged in to access messages. Use :login first.');
-          }
-          break;
-          
-        case 'help':
-          // Show help information
-          console.log("Available commands: :about, :projects, :blog, :contact, :stats, :theme, :help");
-          console.log("Admin commands: :login, :logout, :messages (when logged in)");
-          console.log("Login state:", currentLoginState.state);
-          break;
-          
-        default:
-          // Unknown command
-          console.log(`Unknown command: ${command}`);
-      }
+      case 'clear':
+        // Add clear functionality if needed
+        break;
+        
+      case 'login':
+        if (isAuthenticated) {
+          console.log('Already logged in');
+        } else {
+          // Start login process
+          console.log('Starting login process, please enter username...');
+          console.log('Press ESC at any time to cancel the login process');
+          setLoginState({ state: 'username' });
+        }
+        break;
+        
+      case 'logout':
+        if (isAuthenticated) {
+          logout();
+          console.log('Logged out successfully');
+        } else {
+          console.log('Not logged in');
+        }
+        break;
+        
+      case 'messages':
+        if (isAuthenticated) {
+          setCurrentTab('messages' as TabName);
+          console.log('Accessing messages view...');
+        } else {
+          console.log('You need to be logged in to access messages. Use :login first.');
+        }
+        break;
+        
+      case 'help':
+        // Show help information
+        console.log("Available commands: about, projects, blog, contact, stats, theme, help");
+        console.log("Admin commands: login, logout, messages (when logged in)");
+        console.log("Tip: Use ':' to focus on the command bar, then type a command without the colon");
+        console.log("Login state:", currentLoginState.state);
+        break;
+        
+      default:
+        // Unknown command
+        console.log(`Unknown command: ${command}`);
     }
     
     setInput('');
@@ -156,6 +157,26 @@ export const CommandInput = () => {
     // Log the current login state for debugging
     console.log('Login state currently:', currentLoginState.state);
   }, [currentLoginState]);
+  
+  // Add global keyboard listener for ":" key to focus the command input
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Only handle ":" key when not already focused on an input or textarea
+      if (e.key === ':' && 
+          document.activeElement?.tagName !== 'INPUT' && 
+          document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        inputRef.current?.focus();
+        setInput('');
+      }
+    };
+    
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
 
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
@@ -163,8 +184,8 @@ export const CommandInput = () => {
   // Determine prompt based on login state
   let promptText = isDebianTheme ? '>' : '$';
   let placeholderText = isDebianTheme 
-    ? "Type a command (e.g. :about, :projects)" 
-    : "Type a command (e.g. :about, :projects, :blog)";
+    ? "Type a command (e.g. about, projects) or press ':' to focus" 
+    : "Type a command (e.g. about, projects, blog) or press ':' to focus";
   
   if (currentLoginState.state === 'username') {
     promptText = 'Username:';

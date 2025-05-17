@@ -1,0 +1,22 @@
+.floating-action-button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 10;
+  border: none;
+}
+
+.theme-dark .floating-action-button {
+  color: var(--accent-color);
+  border-radius: 0.25rem;
+}
+
+.theme-light .floating-action-button {
+  color: #FFFFFF;
+  border-radius: 0;
+}
+
+.floating-action-button:hover {
+  opacity: 0.8;
+}

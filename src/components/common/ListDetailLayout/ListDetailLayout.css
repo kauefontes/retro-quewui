@@ -1,0 +1,119 @@
+.list-detail-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.list-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md, 1rem);
+  border-bottom: 1px solid;
+  padding-bottom: var(--space-xs, 0.5rem);
+}
+
+.theme-dark .list-detail-header {
+  border-color: var(--dark-accent-color, #00FFD9);
+}
+
+.theme-light .list-detail-header {
+  border-color: var(--light-border-secondary, #FFFFFF);
+}
+
+.list-detail-title {
+  font-size: var(--text-lg, 1.25rem);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs, 0.5rem);
+}
+
+.list-detail-content {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  max-width: 100%; /* Ensure content doesn't overflow */
+}
+
+.list-detail-list {
+  width: 100%;
+  overflow-y: auto;
+  padding-right: var(--space-sm, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md, 1rem);
+  position: relative;
+}
+
+.list-detail-list.with-details {
+  width: 35%;
+}
+
+.list-detail-detail {
+  width: 65%;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  padding-left: var(--space-sm, 0.75rem);
+  border-left: 1px solid;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.theme-dark .list-detail-detail {
+  border-color: var(--dark-border-primary, #103149);
+  background-color: transparent;
+}
+
+.theme-light .list-detail-detail {
+  border-color: var(--light-border-primary, #666666);
+  background-color: #0000B3;
+}
+
+.list-detail-loading {
+  padding: var(--space-xl, 2rem);
+  text-align: center;
+  opacity: 0.7;
+}
+
+.list-detail-error {
+  padding: var(--space-md, 1rem);
+  color: var(--error-color, #FF6666);
+  border-left: 3px solid var(--error-color, #FF6666);
+}
+
+.list-detail-empty {
+  padding: var(--space-md, 1rem);
+  text-align: center;
+  opacity: 0.7;
+}
+
+.list-detail-action {
+  position: absolute;
+  bottom: 3rem;
+  right: 1rem;
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .list-detail-content {
+    flex-direction: column;
+  }
+  
+  .list-detail-list.with-details {
+    width: 100%;
+    max-height: 30vh;
+    padding-right: 0;
+    padding-bottom: var(--space-md, 1rem);
+  }
+  
+  .list-detail-detail {
+    width: 100%;
+    padding-left: 0;
+    padding-top: var(--space-md, 1rem);
+    border-top: 1px solid var(--border-primary);
+    border-left: none;
+  }
+}
