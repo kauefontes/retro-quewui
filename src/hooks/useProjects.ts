@@ -42,7 +42,7 @@ export const useProjects = () => {
   // Filter projects when selected tech changes
   useEffect(() => {
     if (selectedTech && projects.length > 0) {
-      setFilteredProjects(projects.filter(proj => 
+      setFilteredProjects(projects.filter(proj =>
         proj.technologies.includes(selectedTech)
       ));
     } else {
@@ -51,7 +51,7 @@ export const useProjects = () => {
   }, [selectedTech, projects]);
 
   // Get all unique technologies from projects
-  const allTechnologies = projects.length > 0 
+  const allTechnologies = projects.length > 0
     ? Array.from(new Set(projects.flatMap(proj => proj.technologies))).sort()
     : [];
 

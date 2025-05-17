@@ -42,7 +42,7 @@ export const usePosts = () => {
   // Filter posts when selected tag changes
   useEffect(() => {
     if (selectedTag && posts.length > 0) {
-      setFilteredPosts(posts.filter(post => 
+      setFilteredPosts(posts.filter(post =>
         post.tags.includes(selectedTag)
       ));
     } else {
@@ -51,7 +51,7 @@ export const usePosts = () => {
   }, [selectedTag, posts]);
 
   // Get all unique tags from posts
-  const allTags = posts.length > 0 
+  const allTags = posts.length > 0
     ? Array.from(new Set(posts.flatMap(post => post.tags))).sort()
     : [];
 

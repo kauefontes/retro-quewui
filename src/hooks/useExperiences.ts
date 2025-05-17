@@ -42,7 +42,7 @@ export const useExperiences = () => {
   // Filter experiences when selected tech changes
   useEffect(() => {
     if (selectedTech && experiences.length > 0) {
-      setFilteredExperiences(experiences.filter(exp => 
+      setFilteredExperiences(experiences.filter(exp =>
         exp.technologies.includes(selectedTech)
       ));
     } else {
@@ -51,7 +51,7 @@ export const useExperiences = () => {
   }, [selectedTech, experiences]);
 
   // Get all unique technologies from experiences
-  const allTechnologies = experiences.length > 0 
+  const allTechnologies = experiences.length > 0
     ? Array.from(new Set(experiences.flatMap(exp => exp.technologies))).sort()
     : [];
 
