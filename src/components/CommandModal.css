@@ -1,0 +1,164 @@
+/* Estilos para o CommandModal */
+.command-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.command-modal {
+  width: 90%;
+  max-width: 500px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.theme-dark.command-modal {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border-primary);
+}
+
+.theme-light.command-modal {
+  background-color: #000080;
+  border-color: #FFFFFF;
+}
+
+.command-modal-input-container {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.command-modal-prompt {
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  color: var(--accent-color);
+}
+
+.command-modal-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.command-modal-input {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.25rem 0;
+  caret-color: transparent;
+}
+
+.command-modal-input.error {
+  color: var(--error-color, #FF5555);
+}
+
+.command-modal-input::placeholder {
+  color: var(--error-color, #FF5555);
+  opacity: 0.7;
+}
+
+.command-modal-cursor {
+  position: absolute;
+  top: 0;
+  left: calc(var(--cursor-position) * 0.6rem);
+  width: 0.6rem;
+  height: 1.2rem;
+  background-color: var(--accent-color);
+  opacity: 0.7;
+  animation: blink 1s step-end infinite;
+}
+
+.command-shortcut-help {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  background-color: var(--bg-primary);
+}
+
+.login-message {
+  width: 100%;
+  text-align: center;
+  color: var(--accent-color);
+  font-weight: bold;
+  opacity: 1;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ajustes para o tema luz */
+.theme-light .command-modal-prompt {
+  color: #FFFFFF;
+}
+
+.theme-light .command-modal-input {
+  color: #FFFFFF;
+}
+
+.theme-light .command-modal-input.error {
+  color: #FFCC00;
+}
+
+.theme-light .command-modal-input::placeholder {
+  color: #FFCC00;
+}
+
+.theme-light .command-modal-cursor {
+  background-color: #FFFFFF;
+}
+
+.theme-light .command-shortcut-help {
+  background-color: #000080;
+  color: #FFFFFF;
+}
+
+/* Estilo para notificação quando o HelpModal está aberto */
+.help-modal-active {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  background-color: rgba(255, 255, 0, 0.2);
+  border: 1px solid #ffcc00;
+  color: #ffcc00;
+  text-align: center;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+}
+
+/* Estilo para a mensagem de help */
+.help-message {
+  color: #ffcc00;
+  text-align: center;
+  font-style: italic;
+  padding: 0.5rem;
+}

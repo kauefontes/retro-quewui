@@ -3,6 +3,7 @@ import { useAppStore } from '../../../store/appStore';
 import { NavTabs } from '../../NavTabs';
 import { StatusBar } from '../../StatusBar';
 import { TerminalHeader } from '../TerminalHeader';
+import CommandBar from '../../CommandBar';
 import './TerminalLayout.css';
 
 interface TerminalLayoutProps {
@@ -33,6 +34,7 @@ export const TerminalLayout: React.FC<TerminalLayoutProps> = ({
         <div className="terminal-content-wrapper">
           {children}
         </div>
+        <CommandBar />
         <StatusBar />
       </div>
     </div>

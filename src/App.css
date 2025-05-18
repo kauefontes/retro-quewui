@@ -205,14 +205,22 @@
 }
 
 .nav-tab-indicator {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 1rem;
   background-color: var(--accent-color);
-  right: 5px;
-  top: 5px;
-  animation: var(--blink-animation);
+  margin-left: 0.25rem;
+  animation: blink 1s step-end infinite;
+}
+
+.theme-light .nav-tab-indicator {
+  background-color: #FFFFFF;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Destaque de itens ativos */

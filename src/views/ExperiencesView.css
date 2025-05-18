@@ -1,0 +1,11 @@
+/* ExperiencesView.css */
+.experiences-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.experiences-view .experience-filter {
+  margin-bottom: var(--space-md);
+}

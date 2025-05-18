@@ -1,0 +1,28 @@
+/* MainContent.css */
+.main-content-container {
+  padding: 1rem;
+  height: calc(100vh - 160px); /* Altura adequada considerando header e footer */
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Garante que ProjectsView tenha altura máxima adequada */
+.main-content-container .projects-view {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Garante que o layout de lista/detalhe respeite as dimensões do contêiner */
+.main-content-container .list-detail-layout {
+  height: calc(100% - 70px); /* Considerando o espaço das tags de filtro */
+  max-height: calc(100% - 70px);
+  overflow: hidden;
+}
+
+/* Limita o tamanho das imagens no detalhe do projeto */
+.project-detail-image {
+  max-height: 300px;
+  object-fit: contain;
+}

@@ -42,10 +42,12 @@ export const NavTabs = () => {
           }}
         >
           {isDebianTheme && <span style={{ marginRight: '0.5rem', visibility: currentTab === tab.id ? 'visible' : 'hidden' }}>›</span>}
-          {tab.label}
-          {currentTab === tab.id && isCommandMode && (
-            <span className="nav-tab-indicator"></span>
-          )}
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            {tab.label}
+            {currentTab === tab.id && isCommandMode && (
+              <span className="nav-tab-indicator"></span>
+            )}
+          </span>
         </button>
       ))}
     </div>

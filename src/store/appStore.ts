@@ -45,6 +45,10 @@ interface AppState {
   // Login state machine
   currentLoginState: LoginState;
   setLoginState: (state: LoginState) => void;
+
+  // Help modal state
+  isHelpModalOpen: boolean;
+  setHelpModalOpen: (isOpen: boolean) => void;
 }
 
 // Create the store
@@ -82,4 +86,8 @@ export const useAppStore = create<AppState>((set) => ({
   // Login state machine
   currentLoginState: { state: 'none' },
   setLoginState: (loginState) => set({ currentLoginState: loginState }),
+
+  // Help modal state
+  isHelpModalOpen: false,
+  setHelpModalOpen: (isOpen) => set({ isHelpModalOpen: isOpen }),
 }));

@@ -168,6 +168,88 @@
   margin-top: var(--space-xs);
 }
 
+/* Project images styling */
+.project-detail-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+  width: 100%;
+  margin-top: var(--space-sm);
+}
+
+.project-detail-image-container {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.project-detail-image-container:hover {
+  transform: translateY(-5px);
+}
+
+.project-detail.theme-dark .project-detail-image-container {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--dark-accent-color);
+}
+
+.project-detail.theme-light .project-detail-image-container {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--light-border-secondary);
+}
+
+.project-detail-image {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  display: block;
+  object-fit: contain;
+  transition: filter 0.3s;
+}
+
+.project-detail-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.project-detail-image-container:hover .project-detail-image-overlay {
+  opacity: 1;
+}
+
+.project-detail-image-container:hover .project-detail-image {
+  filter: brightness(0.8);
+}
+
+.project-detail-image-zoom {
+  font-size: 1.5rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  transition: transform 0.3s;
+}
+
+.project-detail-image-container:hover .project-detail-image-zoom {
+  transform: scale(1);
+}
+
 @media (max-width: 768px) {
   .project-detail {
     padding: var(--space-sm);
@@ -181,5 +263,9 @@
   .project-detail-admin-actions {
     flex-direction: column;
     gap: var(--space-xs);
+  }
+
+  .project-detail-images {
+    grid-template-columns: 1fr;
   }
 }

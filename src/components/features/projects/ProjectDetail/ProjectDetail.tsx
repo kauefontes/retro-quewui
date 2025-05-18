@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Project } from '../../../../types/index';
 import { TechTag } from '../../../common/TechTag';
 import { Section } from '../../../common/Section';
 import { DetailActionButtons } from '../../../common/DetailActionButtons';
+import { ImageModal } from '../../../common/ImageModal';
 import { useTheme } from '../../../../hooks/useTheme';
 import './ProjectDetail.css';
 
@@ -33,6 +34,19 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   className = ''
 }) => {
   const { theme } = useTheme();
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  
+  // Prepare all image URLs in a single array
+  const allImages = project.imageUrls 
+    ? project.imageUrls 
+    : (project.imageUrl ? [project.imageUrl] : []);
+    
+  // Handler for opening the image modal
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setIsImageModalOpen(true);
+  };
 
   return (
     <div className={`project-detail theme-${theme} ${className}`}>
@@ -109,6 +123,62 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         </ul>
       </Section>
       
+      {/* Project Images Section */}
+      {(project.imageUrls && project.imageUrls.length > 0) && (
+        <Section title="Project Screenshots">
+          <div className="project-detail-images">
+            {project.imageUrls.map((imageUrl: string, index: number) => (
+              <div 
+                key={index} 
+                className="project-detail-image-container"
+                onClick={() => handleImageClick(index)}
+                role="button"
+                aria-label={`View ${project.title} screenshot ${index + 1}`}
+              >
+                <img 
+                  src={imageUrl} 
+                  alt={`${project.title} screenshot ${index + 1}`} 
+                  className="project-detail-image"
+                />
+                <div className="project-detail-image-overlay">
+                  <span className="project-detail-image-zoom">🔍</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+      
+      {/* Single Image Fallback */}
+      {(!project.imageUrls || project.imageUrls.length === 0) && project.imageUrl && (
+        <Section title="Project Screenshot">
+          <div className="project-detail-images">
+            <div 
+              className="project-detail-image-container"
+              onClick={() => handleImageClick(0)}
+              role="button"
+              aria-label={`View ${project.title} screenshot`}
+            >
+              <img 
+                src={project.imageUrl} 
+                alt={`${project.title} screenshot`} 
+                className="project-detail-image"
+              />
+              <div className="project-detail-image-overlay">
+                <span className="project-detail-image-zoom">🔍</span>
+              </div>
+            </div>
+          </div>
+        </Section>
+      )}
+      
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={isImageModalOpen}
+        images={allImages}
+        initialIndex={selectedImageIndex}
+        onClose={() => setIsImageModalOpen(false)}
+      />
     </div>
   );
 };

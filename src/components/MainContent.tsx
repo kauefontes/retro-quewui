@@ -13,6 +13,9 @@ import { ContactView } from '../views/ContactView';
 import { StatsView } from '../views/StatsView';
 import { MessagesView } from '../views/MessagesView';
 
+// Import CSS
+import './MainContent.css';
+
 export const MainContent: React.FC = () => {
   const { 
     currentTab, 
@@ -121,7 +124,11 @@ export const MainContent: React.FC = () => {
     }
   };
 
-  return <>{renderContent()}</>;
+  return (
+    <div className="main-content-container">
+      {renderContent()}
+    </div>
+  );
 };
 
 export default MainContent;

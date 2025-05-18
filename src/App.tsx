@@ -1,5 +1,5 @@
 import { useAppStore } from './store/appStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { TabName } from './types';
 import './App.css';
 import { useAuth } from './contexts/AuthUtils';
@@ -7,8 +7,10 @@ import { useAuth } from './contexts/AuthUtils';
 // Import layout components
 import { TerminalLayout } from './components/layout/TerminalLayout';
 import { BootScreen } from './components/layout/BootScreen';
-import { CommandInput, TerminalContent } from './components/Terminal';
+import { TerminalContent } from './components/Terminal';
 import { AuthProvider } from './contexts/AuthContext';
+import CommandModal from './components/CommandModal';
+import HelpModal from './components/HelpModal';
 
 // Import views
 import { HomeView } from './views/HomeView';
@@ -26,12 +28,17 @@ const MainContent = () => {
     currentTab, 
     setCurrentTab, 
     isCommandMode,
-    toggleCommandMode
+    toggleCommandMode,
+    isHelpModalOpen,
+    setHelpModalOpen
   } = useAppStore();
   
   const { isAuthenticated } = useAuth();
   
-  // Global keyboard event handler for vim-like navigation
+  // Add state for command modal
+  const [isCommandModalOpen, setCommandModalOpen] = useState(false);
+
+  // Global keyboard event handler for vim-like navigation and command modal
   useEffect(() => {
     const handleKeyDown = (e: globalThis.KeyboardEvent) => {
       const { currentLoginState } = useAppStore.getState();
@@ -41,13 +48,54 @@ const MainContent = () => {
         return;
       }
       
+      // Handle ":" key to open command modal regardless of command mode
+      if (e.key === ':' && 
+          document.activeElement?.tagName !== 'INPUT' && 
+          document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        setCommandModalOpen(true);
+        return;
+      }
+      
       // Only handle navigation when in command mode
       if (isCommandMode) {
+        // Handle single-letter tab navigation shortcuts
+        const tabShortcuts: { [key: string]: TabName | null } = {
+          'a': 'about' as TabName,
+          'p': 'projects' as TabName,
+          'e': 'experiences' as TabName,
+          'b': 'blog' as TabName,
+          'c': 'contact' as TabName,
+          's': 'stats' as TabName,
+          'm': isAuthenticated ? 'messages' as TabName : null,
+          'h': null // For help - this will open help modal
+        };
+        
+        if (Object.prototype.hasOwnProperty.call(tabShortcuts, e.key) && 
+            document.activeElement?.tagName !== 'INPUT' && 
+            document.activeElement?.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          
+          if (e.key === 'h') {
+            // Toggle help modal
+            setHelpModalOpen(!isHelpModalOpen);
+            
+            // Se o CommandModal estiver aberto, feche-o
+            if (isCommandModalOpen) {
+              setCommandModalOpen(false);
+            }
+            
+            return;
+          }
+          
+          const targetTab = tabShortcuts[e.key];
+          if (targetTab) {
+            setCurrentTab(targetTab);
+            return;
+          }
+        }
+        
         switch (e.key) {
-          case ':':
-            // Enter command input mode
-            // Focus command input if we implement it separately
-            break;
             
           case 'Escape':
             toggleCommandMode();
@@ -105,27 +153,36 @@ const MainContent = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCommandMode, toggleCommandMode, currentTab, setCurrentTab, isAuthenticated]);
+  }, [isCommandMode, toggleCommandMode, currentTab, setCurrentTab, isAuthenticated, isHelpModalOpen, setHelpModalOpen, isCommandModalOpen, setCommandModalOpen]);
 
-  // Render the active tab content
-  switch (currentTab) {
-    case 'about':
-      return <AboutView />;
-    case 'projects':
-      return <ProjectsView />;
-    case 'experiences':
-      return <ExperiencesView />;
-    case 'blog':
-      return <BlogView />;
-    case 'contact':
-      return <ContactView />;
-    case 'stats':
-      return <StatsView />;
-    case 'messages':
-      return <MessagesView />;
-    default:
-      return <HomeView />;
-  }
+  useEffect(() => {
+    // Adicionar mensagem de feedback quando o HelpModal estiver aberto
+    if (isHelpModalOpen && isCommandModalOpen) {
+      // Se ambos modais estiverem abertos, fechamos o CommandModal
+      setCommandModalOpen(false);
+    }
+  }, [isHelpModalOpen, isCommandModalOpen, setCommandModalOpen]);
+
+  // Render the active tab content and modals
+  return (
+    <>
+      {/* Command modal that appears in the center of the screen when ":" is pressed */}
+      <CommandModal isOpen={isCommandModalOpen} onClose={() => setCommandModalOpen(false)} />
+      
+      {/* Help modal that appears when 'h' is pressed in command mode */}
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} />
+      
+      {/* Active tab content */}
+      {currentTab === 'about' && <AboutView />}
+      {currentTab === 'projects' && <ProjectsView />}
+      {currentTab === 'experiences' && <ExperiencesView />}
+      {currentTab === 'blog' && <BlogView />}
+      {currentTab === 'contact' && <ContactView />}
+      {currentTab === 'stats' && <StatsView />}
+      {currentTab === 'messages' && <MessagesView />}
+      {!currentTab && <HomeView />}
+    </>
+  );
 };
 
 /**
@@ -149,7 +206,6 @@ function App() {
         <TerminalContent>
           <MainContent />
         </TerminalContent>
-        <CommandInput />
       </TerminalLayout>
     </AuthProvider>
   );

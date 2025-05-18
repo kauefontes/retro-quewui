@@ -68,3 +68,21 @@
   flex-wrap: wrap;
   gap: 0.25rem;
 }
+
+.project-card-image-container {
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-radius: 4px;
+  max-height: 120px;
+}
+
+.project-card-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-card-image {
+  transform: scale(1.05);
+}

@@ -28,12 +28,14 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       highlights: [],
       githubUrl: '',
       liveUrl: '',
-      imageUrl: ''
+      imageUrl: '',
+      imageUrls: []
     }
   );
   
   const [techInput, setTechInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
+  const [imageInput, setImageInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   
@@ -83,6 +85,23 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     setFormData((prev) => ({
       ...prev,
       highlights: prev.highlights?.filter((_, i) => i !== index) || []
+    }));
+  };
+
+  const handleAddImage = () => {
+    if (imageInput.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        imageUrls: [...(prev.imageUrls || []), imageInput.trim()]
+      }));
+      setImageInput('');
+    }
+  };
+  
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      imageUrls: prev.imageUrls?.filter((_, i) => i !== index) || []
     }));
   };
   
@@ -330,7 +349,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
             }}
           >
-            Image URL
+            Main Image URL
           </label>
           <input
             id="imageUrl"
@@ -354,6 +373,89 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               {errors.imageUrl}
             </div>
           )}
+        </div>
+        
+        {/* Additional Images */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label 
+            style={{ 
+              display: 'block', 
+              marginBottom: '0.5rem',
+              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+            }}
+          >
+            Additional Images
+          </label>
+          <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
+            <input
+              type="url"
+              value={imageInput}
+              onChange={(e) => setImageInput(e.target.value)}
+              placeholder="Add image URL..."
+              style={{
+                flex: 1,
+                padding: '0.5rem',
+                backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                border: '1px solid',
+                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
+            />
+            <button
+              type="button"
+              onClick={handleAddImage}
+              style={{
+                padding: '0.5rem 1rem',
+                marginLeft: '0.5rem',
+                backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
+                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                border: '1px solid',
+                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                cursor: 'pointer'
+              }}
+            >
+              Add
+            </button>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {formData.imageUrls?.map((url, index) => (
+              <div 
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.5rem',
+                  backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.3)',
+                  borderLeft: '2px solid',
+                  borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
+                }}
+              >
+                <div style={{ 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis', 
+                  whiteSpace: 'nowrap',
+                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                }}>
+                  {url}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* Technologies */}

@@ -40,6 +40,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         <span className="project-year">{project.year}</span>
       </div>
       
+      {project.imageUrl && (
+        <div className="project-card-image-container">
+          <img 
+            src={project.imageUrl} 
+            alt={project.title} 
+            className="project-card-image" 
+          />
+        </div>
+      )}
+      
       <p className="project-description">{project.description}</p>
       
       <div className="project-tech-tags">

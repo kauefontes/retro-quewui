@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import './BlogView.css';
 import { useAppStore } from '../store/appStore';
 import { PostForm } from '../components/features/blog/PostForm';
+import { BlogFilter } from '../components/features/blog/BlogFilter';
 import { FloatingActionButton } from '../components/common/FloatingActionButton';
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
@@ -125,23 +126,11 @@ export const BlogView = () => {
   );
   
   const tagsFilter = filteredPosts.length > 0 && (
-    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>      <TechTag
-        label="All"
-        onClick={() => setSelectedTag(null)}
-        isSelected={selectedTag === null}
-        size="small"
-      />
-      
-      {allTags.map(tag => (
-        <TechTag
-          key={tag}
-          label={tag}
-          onClick={() => setSelectedTag(tag)}
-          isSelected={selectedTag === tag}
-          size="small"
-        />
-      ))}
-    </div>
+    <BlogFilter
+      tags={allTags}
+      selectedTag={selectedTag}
+      onSelectTag={setSelectedTag}
+    />
   );
   
   const actionButton = (
@@ -223,7 +212,7 @@ const PostCard = ({ post, isSelected, onClick }: PostCardProps) => {
           <TechTag
             key={index}
             label={`#${tag}`}
-            size="small"
+            size="medium"
           />
         ))}
       </div>

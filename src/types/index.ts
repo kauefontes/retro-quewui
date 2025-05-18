@@ -8,6 +8,7 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   imageUrl?: string;
+  imageUrls?: string[]; // Array of image URLs for project screenshots
   year: number;
   highlights: string[];
 }

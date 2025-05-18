@@ -3,11 +3,13 @@ import type { Experience } from '../types/index';
 import { useAppStore } from '../store/appStore';
 import { deleteExperience } from '../data/api';
 import { ExperienceForm } from '../components/features/experience/ExperienceForm';
+import { ExperienceFilter } from '../components/features/experience/ExperienceFilter';
 import { FloatingActionButton } from '../components/common/FloatingActionButton';
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { TechTag } from '../components/common/TechTag';
 import { useExperiences } from '../hooks/useExperiences';
+import './ExperiencesView.css';
 
 export const ExperiencesView = () => {
   const {
@@ -142,57 +144,11 @@ export const ExperiencesView = () => {
   );
   
   const techFilter = (
-    <div style={{ 
-      display: 'flex', 
-      flexWrap: 'wrap', 
-      gap: '0.5rem', 
-      marginBottom: '1rem',
-      overflowX: 'auto',
-      paddingBottom: '0.5rem'
-    }}>
-      <button
-        style={{ 
-          padding: '0.25rem 0.5rem', 
-          borderRadius: isDebianTheme ? '0' : '0.25rem', 
-          fontSize: '0.875rem',
-          opacity: selectedTech === null ? '1' : '0.7',
-          border: '1px solid',
-          borderColor: selectedTech === null 
-            ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-            : (isDebianTheme ? '#666666' : '#103149'),
-          backgroundColor: selectedTech === null 
-            ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-            : 'transparent',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-        }}
-        onClick={() => setSelectedTech(null)}
-      >
-        All Stacks
-      </button>
-      
-      {allTechnologies.map((tech) => (
-        <button 
-          key={tech}
-          style={{ 
-            padding: '0.25rem 0.5rem', 
-            borderRadius: isDebianTheme ? '0' : '0.25rem', 
-            fontSize: '0.875rem',
-            opacity: selectedTech === tech ? '1' : '0.7',
-            border: '1px solid',
-            borderColor: selectedTech === tech 
-              ? (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)') 
-              : (isDebianTheme ? '#666666' : '#103149'),
-            backgroundColor: selectedTech === tech 
-              ? (isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)')
-              : 'transparent',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-          }}
-          onClick={() => setSelectedTech(tech)}
-        >
-          {tech}
-        </button>
-      ))}
-    </div>
+    <ExperienceFilter
+      technologies={allTechnologies}
+      selectedTech={selectedTech}
+      onSelectTech={setSelectedTech}
+    />
   );
   
   const actionButton = (
@@ -204,7 +160,7 @@ export const ExperiencesView = () => {
   );
   
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className={`experiences-view theme-${theme}`}>
       {techFilter}
       
       <ListDetailLayout
