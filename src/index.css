@@ -127,6 +127,7 @@ body {
 
 .command-input {
   width: 100%;
+  max-width: 100%;
   background-color: transparent;
   outline: none;
   padding-left: 0.5rem;

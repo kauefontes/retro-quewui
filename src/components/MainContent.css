@@ -1,5 +1,7 @@
 /* MainContent.css */
 .main-content-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   padding: 1rem;
   height: calc(100vh - 160px); /* Altura adequada considerando header e footer */
   overflow: hidden;

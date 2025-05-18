@@ -7,7 +7,9 @@
   gap: var(--space-md);
   overflow-y: auto;
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  width: 100%; /* Use full available width */
+  width: 100%;
+  max-width: 100%; /* Use full available width */
+  max-width: 100%;
   max-width: 100%; /* Ensure it doesn't exceed container width */
   box-sizing: border-box; /* Include padding in width calculation */
   word-wrap: break-word; /* Ensure long text wraps */
@@ -16,11 +18,13 @@
 /* Ensure all content respects container boundaries */
 .project-detail * {
   max-width: 100%;
+  max-width: 100%;
 }
 
 .project-detail img,
 .project-detail video,
 .project-detail iframe {
+  max-width: 100%;
   max-width: 100%;
   height: auto;
 }
@@ -92,10 +96,12 @@
 }
 
 .project-detail-description {
+  word-wrap: break-word;
   line-height: 1.5;
   word-wrap: break-word;
   overflow-wrap: break-word;
   width: 100%;
+  max-width: 100%;
 }
 
 .project-detail-links {
@@ -133,6 +139,7 @@
   flex-wrap: wrap;
   gap: var(--space-xs);
   width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
 }
 
@@ -174,10 +181,13 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--space-md);
   width: 100%;
+  max-width: 100%;
   margin-top: var(--space-sm);
 }
 
 .project-detail-image-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -191,17 +201,22 @@
 }
 
 .project-detail.theme-dark .project-detail-image-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--dark-accent-color);
 }
 
 .project-detail.theme-light .project-detail-image-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid var(--light-border-secondary);
 }
 
 .project-detail-image {
   width: 100%;
+  max-width: 100%;
   height: auto;
   max-height: 250px;
   display: block;

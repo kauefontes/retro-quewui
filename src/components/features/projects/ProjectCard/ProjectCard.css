@@ -56,6 +56,7 @@
 }
 
 .project-description {
+  word-wrap: break-word;
   font-size: 0.875rem;
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
@@ -70,6 +71,8 @@
 }
 
 .project-card-image-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   margin: 0.5rem 0;
   overflow: hidden;
   border-radius: 4px;
@@ -78,6 +81,7 @@
 
 .project-card-image {
   width: 100%;
+  max-width: 100%;
   height: auto;
   object-fit: cover;
   transition: transform 0.3s ease;

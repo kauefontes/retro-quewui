@@ -3,6 +3,8 @@
 .full-width {
   width: 100%;
   max-width: 100%;
+  max-width: 100%;
+  max-width: 100%;
 }
 
 .overflow-hidden {
@@ -24,7 +26,10 @@
 
 /* Container constraints */
 .container {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  max-width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   padding: 0 var(--space-md);
@@ -61,8 +66,11 @@
 
 /* Common section styling */
 .section-container {
+  box-sizing: border-box;
   margin-bottom: var(--space-lg);
   width: 100%;
+  max-width: 100%;
+  max-width: 100%;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -70,7 +78,10 @@
 /* Common layout components */
 .detail-container {
   box-sizing: border-box;
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  max-width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   word-wrap: break-word;

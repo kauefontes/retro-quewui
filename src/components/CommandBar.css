@@ -61,6 +61,8 @@
 }
 
 .command-items-container {
+  box-sizing: border-box;
+  overflow-x: hidden;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* Organização em duas colunas - apenas para os dois comandos */
   gap: 0.5rem;
