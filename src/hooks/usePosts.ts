@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Post } from '../types/index';
 import { getPosts } from '../data/api';
 import { posts as mockPosts } from '../data/mockData';
@@ -34,9 +34,13 @@ export const usePosts = () => {
     }
   }, []);
 
-  // Initial fetch
+  // Initial fetch with useRef to prevent duplicate fetches
+  const hasFetchedRef = useRef(false);
   useEffect(() => {
-    fetchPosts();
+    if (!hasFetchedRef.current) {
+      fetchPosts();
+      hasFetchedRef.current = true;
+    }
   }, [fetchPosts]);
 
   // Filter posts when selected tag changes

@@ -23,7 +23,7 @@
 .projects-list {
   width: 100%;
   max-width: 100%;
-  overflow-y: auto;
+  /* Removido overflow-y para evitar barras de rolagem aninhadas */
   padding-right: var(--space-sm);
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@
 
 .project-details-panel {
   width: 65%;
-  overflow-y: auto;
+  /* Removido overflow-y para evitar barras de rolagem aninhadas */
   padding-left: var(--space-sm);
 }
 

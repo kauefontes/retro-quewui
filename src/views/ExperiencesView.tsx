@@ -8,6 +8,7 @@ import { FloatingActionButton } from '../components/common/FloatingActionButton'
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { TechTag } from '../components/common/TechTag';
+import { EmptyState, EmptyProjectState } from '../components/common/EmptyState';
 import { useExperiences } from '../hooks/useExperiences';
 import './ExperiencesView.css';
 
@@ -109,15 +110,41 @@ export const ExperiencesView = () => {
   
   const experiencesList = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {filteredExperiences.map((exp) => (
-        <ExperienceCard 
-          key={exp.id}
-          experience={exp}
-          isSelected={selectedExperience?.id === exp.id}
-          onClick={() => setSelectedExperience(exp)}
-          isDebianTheme={isDebianTheme}
+      {loading ? (
+        <EmptyState 
+          title="Carregando experiências"
+          message="Aguarde enquanto carregamos as experiências profissionais..."
+          isLoading={true}
         />
-      ))}
+      ) : error ? (
+        <EmptyState 
+          title="Erro ao carregar"
+          message={error || "Ocorreu um erro ao carregar as experiências. Tente novamente mais tarde."}
+          isError={true}
+        />
+      ) : filteredExperiences.length > 0 ? (
+        filteredExperiences.map((exp) => (
+          <ExperienceCard 
+            key={exp.id}
+            experience={exp}
+            isSelected={selectedExperience?.id === exp.id}
+            onClick={() => setSelectedExperience(exp)}
+            isDebianTheme={isDebianTheme}
+          />
+        ))
+      ) : selectedTech ? (
+        <EmptyProjectState
+          type="experience"
+          isFiltered={true}
+          filterName={selectedTech}
+          onClearFilter={() => setSelectedTech(null)}
+        />
+      ) : (
+        <EmptyProjectState
+          type="experience"
+          isFiltered={false}
+        />
+      )}
     </div>
   );
   

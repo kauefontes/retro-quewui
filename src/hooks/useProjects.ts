@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Project } from '../types/index';
 import { getProjects } from '../data/api';
 import { projects as mockProjects } from '../data/mockData';
@@ -34,9 +34,13 @@ export const useProjects = () => {
     }
   }, []);
 
-  // Initial fetch
+  // Initial fetch with useRef to prevent duplicate fetches
+  const hasFetchedRef = useRef(false);
   useEffect(() => {
-    fetchProjects();
+    if (!hasFetchedRef.current) {
+      fetchProjects();
+      hasFetchedRef.current = true;
+    }
   }, [fetchProjects]);
 
   // Filter projects when selected tech changes

@@ -9,11 +9,11 @@ export const CommandBar: React.FC = () => {
   const isDebianTheme = theme === 'light';
   const [visible, setVisible] = useState(true);
   
-  // Controla a visibilidade da barra de comando
+  // Controls the visibility of the command bar
   useEffect(() => {
-    // Verificar a cada 500ms o estado de login
+    // Check login state every 500ms
     const interval = setInterval(() => {
-      // Esconde a barra quando o login está sendo processado
+      // Hide the bar when login is in progress
       const { currentLoginState } = useAppStore.getState();
       if (currentLoginState.state === 'username' || currentLoginState.state === 'password') {
         setVisible(false);
@@ -23,7 +23,7 @@ export const CommandBar: React.FC = () => {
     }, 500);
     
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Tecla ESC alterna visibilidade apenas quando não estiver em processo de login
+      // ESC key toggles visibility only when not in login process
       const { currentLoginState } = useAppStore.getState();
       if (e.key === 'Escape' && currentLoginState.state === 'none') {
         setVisible(prev => !prev);
@@ -37,7 +37,7 @@ export const CommandBar: React.FC = () => {
     };
   }, []);
   
-  // Define apenas os comandos essenciais
+  // Define only the essential commands
   const commands = [
     { key: ':', description: 'Command', onClick: null },
     { key: 'h', description: 'Help', onClick: null }
@@ -53,7 +53,7 @@ export const CommandBar: React.FC = () => {
     }
   };
 
-  // Exibe o painel somente se o command mode estiver ativado e não estiver no processo de login
+  // Display panel only if command mode is active and not in login process
   if (!visible || !isCommandMode) return null;
 
   return (

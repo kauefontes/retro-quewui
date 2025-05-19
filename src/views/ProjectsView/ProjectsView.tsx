@@ -7,6 +7,7 @@ import { useProjects } from '../../hooks/useProjects';
 import { useTheme } from '../../hooks/useTheme';
 import { FloatingActionButton } from '../../components/common/FloatingActionButton';
 import { ListDetailLayout } from '../../components/common/ListDetailLayout';
+import { EmptyState, EmptyProjectState } from '../../components/common/EmptyState';
 import type { Project } from '../../types/index';
 import { deleteProject } from '../../data/api';
 import './ProjectsView.css';
@@ -87,15 +88,41 @@ export const ProjectsView: React.FC = () => {
   }
 
   const projectsList = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {filteredProjects.map(project => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-          isSelected={selectedProject?.id === project.id}
-          onClick={() => setSelectedProject(project)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', height: '100%' }}>
+      {loading ? (
+        <EmptyState 
+          title="Loading Projects"
+          message="Please wait while we load the projects..."
+          isLoading={true}
         />
-      ))}
+      ) : error ? (
+        <EmptyState 
+          title="Error Loading"
+          message={error || "An error occurred while loading projects. Please try again later."}
+          isError={true}
+        />
+      ) : filteredProjects.length > 0 ? (
+        filteredProjects.map(project => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            isSelected={selectedProject?.id === project.id}
+            onClick={() => setSelectedProject(project)}
+          />
+        ))
+      ) : selectedTech ? (
+        <EmptyProjectState
+          type="project"
+          isFiltered={true}
+          filterName={selectedTech}
+          onClearFilter={() => setSelectedTech(null)}
+        />
+      ) : (
+        <EmptyProjectState
+          type="project"
+          isFiltered={false}
+        />
+      )}
     </div>
   );
   

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { skills as mockSkills } from '../data/mockData';
 import { getSkills, getProfile } from '../data/api';
-import type { Skill, Profile, SocialLink, Education, Language } from '../types/index';
+import type { Skill, Profile, SocialLink } from '../types/index';
 import { TechTag } from '../components/common/TechTag';
+import { EmptyState } from '../components/common/EmptyState';
 
 // About View Component
 export const AboutView = () => {
@@ -56,8 +57,7 @@ export const AboutView = () => {
     <div style={{
       padding: '0.75rem',
       backgroundColor: isDebianTheme ? '#0000B3' : 'transparent',
-      height: '100%',
-      overflowY: 'auto'
+      height: '100%'
     }}>
       {/* Header with title */}
       <div style={{ 
@@ -85,29 +85,43 @@ export const AboutView = () => {
         {/* Bio section */}
         <section>
           {profileLoading ? (
-            <div style={{ 
-              padding: '1rem', 
-              textAlign: 'center', 
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}>
-              Loading bio...
-            </div>
+            <EmptyState 
+              title="Carregando perfil"
+              message="Aguarde enquanto carregamos as informações do perfil..."
+              isLoading={true}
+            />
           ) : profileError ? (
+            <EmptyState 
+              title="Erro ao carregar perfil"
+              message={profileError || "Não foi possível carregar as informações do perfil."}
+              isError={true}
+            />
+          ) : profile ? (
             <div style={{ 
-              padding: '1rem', 
-              color: isDebianTheme ? '#FF6666' : '#FF6666',
-              borderLeft: '3px solid #FF6666'
+              padding: '1rem',
+              backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '4px'
             }}>
-              {profileError}
+              <div style={{
+                fontSize: '1.1rem',
+                marginBottom: '0.5rem',
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+              }}>
+                {profile.bio.map((paragraph, index) => (
+                  <p key={index} style={{ marginBottom: index < profile.bio.length - 1 ? '1rem' : '0' }}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
-          ) : profile && profile.bio.map((paragraph, index) => (
-            <p key={index} style={{
-              marginBottom: index < profile.bio.length - 1 ? '0.75rem' : '0',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+          ) : (
+            <div style={{
+              padding: '1rem',
+              color: isDebianTheme ? '#FFFFFF99' : 'var(--text-color-secondary)'
             }}>
-              {paragraph}
-            </p>
-          ))}
+              Bio não disponível.
+            </div>
+          )}
         </section>
         
         {/* Main content grid */}
@@ -151,22 +165,20 @@ export const AboutView = () => {
                   gap: '1rem'
                 }}>
                   {loading ? (
-                    <div style={{ 
-                      gridColumn: 'span 2',
-                      padding: '1rem', 
-                      textAlign: 'center', 
-                      color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-                    }}>
-                      Loading skills...
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <EmptyState 
+                        title="Carregando habilidades"
+                        message="Aguarde enquanto carregamos as habilidades técnicas..."
+                        isLoading={true}
+                      />
                     </div>
                   ) : error ? (
-                    <div style={{ 
-                      gridColumn: 'span 2',
-                      padding: '1rem', 
-                      color: isDebianTheme ? '#FF6666' : '#FF6666',
-                      borderLeft: '3px solid #FF6666'
-                    }}>
-                      {error}
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <EmptyState 
+                        title="Erro ao carregar"
+                        message={error || "Ocorreu um erro ao carregar as habilidades."}
+                        isError={true}
+                      />
                     </div>
                   ) : (
                     skills.map((skillCategory) => (

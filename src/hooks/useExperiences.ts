@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Experience } from '../types/index';
 import { getExperiences } from '../data/api';
 import { experiences as mockExperiences } from '../data/mockData';
@@ -34,9 +34,13 @@ export const useExperiences = () => {
     }
   }, []);
 
-  // Initial fetch
+  // Initial fetch with useRef to prevent duplicate fetches
+  const hasFetchedRef = useRef(false);
   useEffect(() => {
-    fetchExperiences();
+    if (!hasFetchedRef.current) {
+      fetchExperiences();
+      hasFetchedRef.current = true;
+    }
   }, [fetchExperiences]);
 
   // Filter experiences when selected tech changes

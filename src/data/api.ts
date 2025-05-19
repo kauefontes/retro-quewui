@@ -136,51 +136,90 @@ const authenticatedRequest = async <T>(
   return convertToCamelCase<T>(responseData);
 };
 
+// Import our cache utility
+import { apiCache } from '../utils/apiCache';
+
+// Set cache TTL for different types of data
+// These are reasonable values that balance freshness and performance
+apiCache.setTTL(300000); // 5 minutes default TTL
+
 // Projects
 export const getProjects = async (): Promise<Project[]> => {
-  return fetchFromApi<Project[]>('/projects');
+  return apiCache.getOrFetch<Project[]>('/projects', () => 
+    fetchFromApi<Project[]>('/projects')
+  );
 };
 
 export const getProjectById = async (id: string): Promise<Project> => {
-  return fetchFromApi<Project>(`/projects/${id}`);
+  return apiCache.getOrFetch<Project>(`/projects/${id}`, () => 
+    fetchFromApi<Project>(`/projects/${id}`)
+  );
 };
 
 export const createProject = async (project: Omit<Project, 'id'>): Promise<Project> => {
-  return authenticatedRequest<Project>('/projects', 'POST', project as unknown as JsonObject);
+  const result = await authenticatedRequest<Project>('/projects', 'POST', project as unknown as JsonObject);
+  // Invalidate cache after create
+  apiCache.clear('/projects');
+  return result;
 };
 
 export const updateProject = async (id: string, project: Partial<Project>): Promise<Project> => {
-  return authenticatedRequest<Project>(`/projects/${id}`, 'PUT', project as unknown as JsonObject);
+  const result = await authenticatedRequest<Project>(`/projects/${id}`, 'PUT', project as unknown as JsonObject);
+  // Invalidate cache after update
+  apiCache.clear('/projects');
+  apiCache.clear(`/projects/${id}`);
+  return result;
 };
 
 export const deleteProject = async (id: string): Promise<void> => {
-  return authenticatedRequest<void>(`/projects/${id}`, 'DELETE');
+  const result = await authenticatedRequest<void>(`/projects/${id}`, 'DELETE');
+  // Invalidate cache after delete
+  apiCache.clear('/projects');
+  apiCache.clear(`/projects/${id}`);
+  return result;
 };
 
 // Experiences
 export const getExperiences = async (): Promise<Experience[]> => {
-  return fetchFromApi<Experience[]>('/experiences');
+  return apiCache.getOrFetch<Experience[]>('/experiences', () => 
+    fetchFromApi<Experience[]>('/experiences')
+  );
 };
 
 export const getExperienceById = async (id: string): Promise<Experience> => {
-  return fetchFromApi<Experience>(`/experiences/${id}`);
+  return apiCache.getOrFetch<Experience>(`/experiences/${id}`, () => 
+    fetchFromApi<Experience>(`/experiences/${id}`)
+  );
 };
 
 export const createExperience = async (experience: Omit<Experience, 'id'>): Promise<Experience> => {
-  return authenticatedRequest<Experience>('/experiences', 'POST', experience as unknown as JsonObject);
+  const result = await authenticatedRequest<Experience>('/experiences', 'POST', experience as unknown as JsonObject);
+  // Invalidate cache after create
+  apiCache.clear('/experiences');
+  return result;
 };
 
 export const updateExperience = async (id: string, experience: Partial<Experience>): Promise<Experience> => {
-  return authenticatedRequest<Experience>(`/experiences/${id}`, 'PUT', experience as unknown as JsonObject);
+  const result = await authenticatedRequest<Experience>(`/experiences/${id}`, 'PUT', experience as unknown as JsonObject);
+  // Invalidate cache after update
+  apiCache.clear('/experiences');
+  apiCache.clear(`/experiences/${id}`);
+  return result;
 };
 
 export const deleteExperience = async (id: string): Promise<void> => {
-  return authenticatedRequest<void>(`/experiences/${id}`, 'DELETE');
+  const result = await authenticatedRequest<void>(`/experiences/${id}`, 'DELETE');
+  // Invalidate cache after delete
+  apiCache.clear('/experiences');
+  apiCache.clear(`/experiences/${id}`);
+  return result;
 };
 
 // Skills
 export const getSkills = async (): Promise<Skill[]> => {
-  return fetchFromApi<Skill[]>('/skills');
+  return apiCache.getOrFetch<Skill[]>('/skills', () => 
+    fetchFromApi<Skill[]>('/skills')
+  );
 };
 
 export const updateSkill = async (category: string, skill: Partial<Skill>): Promise<Skill> => {
@@ -189,33 +228,52 @@ export const updateSkill = async (category: string, skill: Partial<Skill>): Prom
 
 // Blog Posts
 export const getPosts = async (): Promise<Post[]> => {
-  return fetchFromApi<Post[]>('/posts');
+  return apiCache.getOrFetch<Post[]>('/posts', () => 
+    fetchFromApi<Post[]>('/posts')
+  );
 };
 
 export const getPostById = async (id: string): Promise<Post> => {
-  return fetchFromApi<Post>(`/posts/${id}`);
+  return apiCache.getOrFetch<Post>(`/posts/${id}`, () => 
+    fetchFromApi<Post>(`/posts/${id}`)
+  );
 };
 
 export const createPost = async (post: Omit<Post, 'id'>): Promise<Post> => {
-  return authenticatedRequest<Post>('/posts', 'POST', post as unknown as JsonObject);
+  const result = await authenticatedRequest<Post>('/posts', 'POST', post as unknown as JsonObject);
+  // Invalidate cache after create
+  apiCache.clear('/posts');
+  return result;
 };
 
 export const updatePost = async (id: string, post: Partial<Post>): Promise<Post> => {
-  return authenticatedRequest<Post>(`/posts/${id}`, 'PUT', post as unknown as JsonObject);
+  const result = await authenticatedRequest<Post>(`/posts/${id}`, 'PUT', post as unknown as JsonObject);
+  // Invalidate cache after update
+  apiCache.clear('/posts');
+  apiCache.clear(`/posts/${id}`);
+  return result;
 };
 
 export const deletePost = async (id: string): Promise<void> => {
-  return authenticatedRequest<void>(`/posts/${id}`, 'DELETE');
+  const result = await authenticatedRequest<void>(`/posts/${id}`, 'DELETE');
+  // Invalidate cache after delete
+  apiCache.clear('/posts');
+  apiCache.clear(`/posts/${id}`);
+  return result;
 };
 
 // GitHub Stats
 export const getGithubStats = async (): Promise<GithubStats> => {
-  return fetchFromApi<GithubStats>('/github-stats');
+  return apiCache.getOrFetch<GithubStats>('/github-stats', () => 
+    fetchFromApi<GithubStats>('/github-stats')
+  );
 };
 
 // Profile
 export const getProfile = async (): Promise<Profile> => {
-  return fetchFromApi<Profile>('/profile');
+  return apiCache.getOrFetch<Profile>('/profile', () => 
+    fetchFromApi<Profile>('/profile')
+  );
 };
 
 export const updateProfile = async (profile: Partial<Profile>): Promise<Profile> => {

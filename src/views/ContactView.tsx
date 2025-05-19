@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { submitContactForm } from '../data/api';
 import type { ContactFormData } from '../types/index';
+import { EmptyState } from '../components/common/EmptyState';
 import './ContactView.css';
 
 export const ContactView = () => {
@@ -85,22 +86,24 @@ export const ContactView = () => {
           color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
         }}>Send a Message</h3>
         
-        {submitted ? (
-          <div style={{
-            padding: '1rem',
-            backgroundColor: isDebianTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 255, 217, 0.1)',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            <p>Message sent successfully! I'll get back to you soon.</p>
-          </div>
+        {submitting ? (
+          <EmptyState 
+            title="Enviando mensagem"
+            message="Aguarde enquanto sua mensagem está sendo enviada..."
+            isLoading={true}
+          />
+        ) : submitted ? (
+          <EmptyState 
+            title="Mensagem enviada"
+            message="Sua mensagem foi enviada com sucesso! Entraremos em contato em breve."
+            icon="✅"
+          />
         ) : error ? (
-          <div style={{
-            padding: '1rem',
-            backgroundColor: isDebianTheme ? 'rgba(255, 100, 100, 0.2)' : 'rgba(255, 50, 50, 0.1)',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-          }}>
-            <p>{error}</p>
-          </div>
+          <EmptyState 
+            title="Erro ao enviar"
+            message={error || "Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente."}
+            isError={true}
+          />
         ) : (
           <form onSubmit={handleSubmit} className={`contact-form theme-${theme}`}>
             <div className="contact-form-field">

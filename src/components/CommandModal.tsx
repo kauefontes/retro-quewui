@@ -33,9 +33,9 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
     // Reset error state
     setCommandError(null);
 
-    // Verificar se o modal de ajuda está aberto
+    // Check if help modal is open
     if (isHelpModalOpen) {
-      setCommandError('Feche o modal de ajuda antes de executar comandos');
+      setCommandError('Close the help modal before executing commands');
       setTimeout(() => setCommandError(null), 2000);
       return;
     }
@@ -92,6 +92,14 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
       case 'experiences':
         setCurrentTab(tabCommand as TabName);
         break;
+        
+      case '?': // Additional aliases for help
+      case 'h':
+        // Show help information via modal
+        console.log("Opening help modal via alias");
+        useAppStore.getState().setHelpModalOpen(true);
+        onClose();
+        break;
       
       case 'theme':
         toggleTheme();
@@ -136,11 +144,12 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
         break;
         
       case 'help':
-        // Show help information
-        console.log("Available commands: about, projects, blog, contact, stats, theme, help");
-        console.log("Admin commands: login, logout, messages (when logged in)");
-        console.log("Tip: Use ':' to focus on the command bar, then type a command without the colon");
-        console.log("Login state:", currentLoginState.state);
+        // Show help information via modal
+        console.log("Opening help modal");
+        // Set help modal open in app store
+        useAppStore.getState().setHelpModalOpen(true);
+        // Close command modal as we're opening help modal
+        onClose();
         break;
         
       default:
@@ -149,10 +158,10 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
         setTimeout(() => setCommandError(null), 2000);
     }
     
-    // Não fecha o modal se houver erro
+    // Don't close the modal if there's an error
     if (!commandError) {
       setInput('');
-      // Não fechamos o modal se estivermos no processo de login
+      // Don't close the modal if we're in the login process
       if (currentLoginState.state === 'none') {
         onClose();
       }
@@ -166,8 +175,8 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
       e.preventDefault();
       
       if (currentLoginState.state === 'username' || currentLoginState.state === 'password') {
-        // Durante o login, confirmar antes de cancelar
-        if (confirm('Deseja cancelar o processo de login?')) {
+        // During login, confirm before canceling
+        if (confirm('Do you want to cancel the login process?')) {
           console.log('Canceling login process');
           setLoginState({ state: 'none' });
           setInput('');
@@ -182,9 +191,9 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
     }
     
     if (e.key === 'Enter') {
-      // Verificar se o modal de ajuda está aberto antes de executar comando
+      // Check if help modal is open before executing commands
       if (isHelpModalOpen) {
-        setCommandError('Feche o modal de ajuda antes de executar comandos');
+        setCommandError('Close the help modal before executing commands');
         setTimeout(() => setCommandError(null), 2000);
         return;
       }
@@ -264,9 +273,9 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
               aria-label="Command input"
               placeholder={
                 currentLoginState.state === 'username' 
-                  ? "Digite seu nome de usuário" 
+                  ? "Enter your username" 
                   : currentLoginState.state === 'password'
-                    ? "Digite sua senha" 
+                    ? "Enter your password" 
                     : commandError || ""
               }
               className={`command-modal-input ${commandError ? 'error' : ''}`}
@@ -287,8 +296,8 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
           ) : currentLoginState.state !== 'none' ? (
             <div className="login-message">
               {currentLoginState.state === 'username' 
-                ? "Digite o nome de usuário e pressione Enter" 
-                : "Digite a senha e pressione Enter"}
+                ? "Enter username and press Enter" 
+                : "Enter password and press Enter"}
             </div>
           ) : (
             <>

@@ -3,6 +3,7 @@ import { useAppStore } from '../store/appStore';
 import { githubStats as mockGithubStats } from '../data/mockData';
 import { getGithubStats } from '../data/api';
 import type { GithubStats } from '../types/index';
+import { EmptyState } from '../components/common/EmptyState';
 
 export const StatsView = () => {
   const [stats, setStats] = useState<GithubStats>(mockGithubStats);
@@ -37,8 +38,7 @@ export const StatsView = () => {
       display: 'flex',
       flexDirection: 'column',
       gap: '1.5rem',
-      height: '100%',
-      overflow: 'auto'
+      height: '100%'
     }}>
       <div style={{ 
         display: 'flex', 
@@ -79,21 +79,17 @@ export const StatsView = () => {
 
       {/* Key Stats */}
       {loading ? (
-        <div style={{ 
-          padding: '2rem', 
-          textAlign: 'center', 
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-        }}>
-          Loading GitHub stats...
-        </div>
+        <EmptyState 
+          title="Carregando estatísticas"
+          message="Aguarde enquanto carregamos as estatísticas do GitHub..."
+          isLoading={true}
+        />
       ) : error ? (
-        <div style={{ 
-          padding: '1rem', 
-          color: isDebianTheme ? '#FF6666' : '#FF6666',
-          borderLeft: '3px solid #FF6666'
-        }}>
-          {error}
-        </div>
+        <EmptyState 
+          title="Erro ao carregar"
+          message={error || "Ocorreu um erro ao carregar as estatísticas do GitHub."}
+          isError={true}
+        />
       ) : (
         <div style={{
           display: 'grid',
@@ -181,9 +177,7 @@ export const StatsView = () => {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.75rem',
-            maxHeight: '300px',
-            overflowY: 'auto'
+            gap: '0.75rem'
           }}>
             {stats.recentActivity.map((activity, index) => (
               <div 

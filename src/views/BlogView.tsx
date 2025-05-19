@@ -11,6 +11,7 @@ import { FloatingActionButton } from '../components/common/FloatingActionButton'
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { TechTag } from '../components/common/TechTag';
+import { EmptyState, EmptyProjectState } from '../components/common/EmptyState';
 import { usePosts } from '../hooks/usePosts';
 
 export const BlogView = () => {
@@ -25,9 +26,6 @@ export const BlogView = () => {
     error,
     refreshPosts 
   } = usePosts();
-  
-  const { theme } = useAppStore();
-  const isDebianTheme = theme === 'light';
   
   // Admin state
   const [isEditing, setIsEditing] = useState(false);
@@ -87,20 +85,40 @@ export const BlogView = () => {
   }
   
   const postsList = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {filteredPosts.map(post => (
-        <PostCard 
-          key={post.id}
-          post={post}
-          isSelected={selectedPost?.id === post.id}
-          onClick={() => setSelectedPost(post)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
+      {loading ? (
+        <EmptyState 
+          title="Carregando posts"
+          message="Aguarde enquanto carregamos os posts do blog..."
+          isLoading={true}
         />
-      ))}
-        
-      {filteredPosts.length === 0 && (
-        <div style={{ padding: '1rem', textAlign: 'center', opacity: 0.7 }}>
-          No posts found for tag #{selectedTag}
-        </div>
+      ) : error ? (
+        <EmptyState 
+          title="Erro ao carregar"
+          message={error || "Ocorreu um erro ao carregar os posts. Tente novamente mais tarde."}
+          isError={true}
+        />
+      ) : filteredPosts.length > 0 ? (
+        filteredPosts.map(post => (
+          <PostCard 
+            key={post.id}
+            post={post}
+            isSelected={selectedPost?.id === post.id}
+            onClick={() => setSelectedPost(post)}
+          />
+        ))
+      ) : selectedTag ? (
+        <EmptyProjectState
+          type="blog"
+          isFiltered={true}
+          filterName={selectedTag}
+          onClearFilter={() => setSelectedTag(null)}
+        />
+      ) : (
+        <EmptyProjectState
+          type="blog"
+          isFiltered={false}
+        />
       )}
     </div>
   );

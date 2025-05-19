@@ -21,7 +21,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
     { key: 'blog', description: 'View blog page' },
     { key: 'contact', description: 'View contact page' },
     { key: 'stats', description: 'View stats page' },
-    { key: 'theme', description: 'Toggle light/dark theme' }
+    { key: 'theme', description: 'Toggle light/dark theme' },
+    { key: 'help', description: 'Show this help' }
   ];
   
   // Define admin commands
@@ -86,7 +87,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             <div className="help-commands-grid">
               {commands.map((cmd, index) => (
                 <div key={index} className="help-command-item">
-                  <span className="help-command-key">:{cmd.key}</span>
+                  <span className="help-command-key">{cmd.key}</span>
                   <span className="help-command-desc">{cmd.description}</span>
                 </div>
               ))}

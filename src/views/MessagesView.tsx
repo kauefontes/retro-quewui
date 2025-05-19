@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthUtils';
 import { AuthContent } from '../components/common/AuthContent/AuthContent';
 import { DetailActionButtons } from '../components/common/DetailActionButtons';
 import { ListDetailLayout } from '../components/common/ListDetailLayout';
-import { FloatingActionButton } from '../components/common/FloatingActionButton';
+import { EmptyProjectState } from '../components/common/EmptyState';
 
 export const MessagesView = () => {
   const [messages, setMessages] = useState<ContactFormData[]>([]);
@@ -67,15 +67,22 @@ export const MessagesView = () => {
 
   const messagesList = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {messages.map((message) => (
-        <MessageCard 
-          key={message.id} 
-          message={message}
-          isSelected={selectedMessage?.id === message.id}
-          onClick={() => setSelectedMessage(message)}
-          isDebianTheme={isDebianTheme}
+      {messages.length > 0 ? (
+        messages.map((message) => (
+          <MessageCard 
+            key={message.id} 
+            message={message}
+            isSelected={selectedMessage?.id === message.id}
+            onClick={() => setSelectedMessage(message)}
+            isDebianTheme={isDebianTheme}
+          />
+        ))
+      ) : (
+        <EmptyProjectState
+          type="message"
+          isFiltered={false}
         />
-      ))}
+      )}
     </div>
   );
   
@@ -100,14 +107,6 @@ export const MessagesView = () => {
       {messages.length}
     </span>
   );
-  
-  const actionButton = (
-    <FloatingActionButton
-      onClick={() => {}} // No add functionality for messages
-      ariaLabel="Add new message"
-      label="[New]"
-    />
-  );
 
   return (
     <AuthContent 
@@ -127,7 +126,6 @@ export const MessagesView = () => {
         hasSelectedItem={!!selectedMessage}
         loadingMessage="Loading messages..."
         emptyMessage="No messages found"
-        actionButton={actionButton}
       />
     </AuthContent>
   );

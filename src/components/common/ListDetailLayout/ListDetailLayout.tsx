@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ReactNode } from 'react';
 import { useTheme } from '../../../hooks/useTheme';
+import { EmptyState } from '../EmptyState';
 import './ListDetailLayout.css';
 
 interface ListDetailLayoutProps {
@@ -54,27 +55,41 @@ export const ListDetailLayout: React.FC<ListDetailLayoutProps> = ({
       
       {loading ? (
         <div className="list-detail-loading">
-          {loadingMessage}
+          <EmptyState 
+            title="Loading"
+            message={loadingMessage}
+            isLoading={true}
+          />
         </div>
       ) : error ? (
         <div className="list-detail-error">
-          {error}
+          <EmptyState 
+            title="Error"
+            message={error || "An error occurred while loading data."}
+            isError={true}
+          />
         </div>
       ) : (
         <div className="list-detail-content">
           <div className={`list-detail-list ${hasSelectedItem ? 'with-details' : ''}`}>
-            {React.Children.count(listContent) === 0 ? (
-              <div className="list-detail-empty">
-                {emptyMessage}
-              </div>
-            ) : (
-              listContent
-            )}
+            <div className="list-scrollable-content">
+              {React.Children.count(listContent) === 0 ? (
+                <EmptyState 
+                  title="No items found"
+                  message={emptyMessage}
+                  icon="📂"
+                />
+              ) : (
+                listContent
+              )}
+            </div>
           </div>
           
           {hasSelectedItem && detailContent && (
             <div className="list-detail-detail">
-              {detailContent}
+              <div className="detail-scrollable-content">
+                {detailContent}
+              </div>
             </div>
           )}
         </div>

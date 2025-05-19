@@ -38,12 +38,37 @@ export const NavTabs = () => {
             padding: isDebianTheme ? '0.35rem 0.75rem' : undefined,
             textTransform: isDebianTheme ? 'none' : undefined,
             fontWeight: isDebianTheme && currentTab === tab.id ? 'bold' : undefined,
-            backgroundColor: isDebianTheme && currentTab === tab.id ? '#000080' : undefined
+            backgroundColor: isDebianTheme && currentTab === tab.id ? '#000080' : undefined,
+            borderBottom: currentTab === tab.id 
+              ? isDebianTheme 
+                ? '2px solid #FFFFFF'
+                : '2px solid var(--accent-color, #00FFD9)'
+              : undefined
           }}
         >
-          {isDebianTheme && <span style={{ marginRight: '0.5rem', visibility: currentTab === tab.id ? 'visible' : 'hidden' }}>›</span>}
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            {tab.label}
+          <span style={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            {isDebianTheme && <span style={{ 
+              visibility: currentTab === tab.id ? 'visible' : 'hidden',
+              marginRight: '0.25rem'
+            }}>›</span>}
+            <span className="tab-icon" style={{ 
+              fontSize: '0.95rem', 
+              marginRight: '0.35rem', 
+              display: 'inline-block' 
+            }}>
+              {tab.id === 'about' && '👤'}
+              {tab.id === 'projects' && '💼'}
+              {tab.id === 'experiences' && '💻'}
+              {tab.id === 'blog' && '📝'}
+              {tab.id === 'contact' && '📧'}
+              {tab.id === 'stats' && '📊'}
+              {tab.id === 'messages' && '💬'}
+            </span>
+            <span>{tab.label}</span>
             {currentTab === tab.id && isCommandMode && (
               <span className="nav-tab-indicator"></span>
             )}
