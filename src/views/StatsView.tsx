@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { getGithubStats, getGithubProfile } from '../data/api';
 import type { GithubStats, GitHubProfile } from '../types/index';
-import { EmptyState } from '../components/common/EmptyState';
+import { EmptyState } from '../components/common/EmptyState/EmptyState';
 import { LazyImage } from '../components/common/LazyImage';
 import { formatRelativeTime, formatDate } from '../utils/dateUtils';
 
@@ -20,8 +20,8 @@ export const StatsView = () => {
     const fetchGithubStats = async () => {
       try {
         setLoading(true);
-        const githubStatsData = await getGithubStats();
-        setStats(githubStatsData);
+        const statsData = await getGithubStats();
+        setStats(statsData);
         setError(null);
       } catch (err) {
         console.error('Error fetching GitHub stats:', err);
@@ -40,30 +40,30 @@ export const StatsView = () => {
           setGithubProfile(profileData);
           setProfileError(null);
           setProfileLoading(false);
-        
+
           // Log successful fetch
           console.log(`GitHub profile data loaded successfully at ${new Date().toLocaleTimeString()}`);
         } catch (err) {
           console.error('Error fetching GitHub profile:', err);
-        
+
           // Log more detailed error information for debugging
           if (err instanceof Error) {
             console.error(`GitHub profile error details: ${err.message}`);
           }
-        
+
           // Retry logic with exponential backoff
           if (retryCount < maxRetries) {
             const backoffDelay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s, ...
             console.log(`Retrying GitHub profile fetch in ${backoffDelay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-          
+
             setTimeout(() => {
               fetchGithubProfile(retryCount + 1, maxRetries);
             }, backoffDelay);
-          
+
             // Don't set error message during retry attempts
             return;
           }
-        
+
           // Only set error message after all retries have failed
           setProfileError('Failed to load GitHub profile data. Please check your connection or try again later.');
           setProfileLoading(false);
@@ -75,28 +75,17 @@ export const StatsView = () => {
   }, []);
 
   return (
-    <div style={{
-      padding: '0.75rem',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1.5rem',
-      height: '100%'
-    }}>
+    <div style={{ padding: '1rem' }}>
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
-        alignItems: 'center',
-        borderBottom: '1px solid',
-        borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-        paddingBottom: '0.5rem'
+        alignItems: 'center', 
+        marginBottom: '1rem' 
       }}>
-        <h2 style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: 'bold',
-          color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '0.5rem' 
         }}>
           GitHub Profile
           {((!loading && !error && stats) || (!profileLoading && !profileError && githubProfile)) && (
@@ -109,9 +98,9 @@ export const StatsView = () => {
               fontWeight: 'normal'
             }}>live</span>
           )}
-        </h2>
-        <span style={{
-          fontSize: '0.875rem',
+        </div>
+        <span style={{ 
+          fontSize: '0.8rem', 
           opacity: 0.7,
           fontFamily: isDebianTheme ? 'monospace' : 'inherit'
         }}>
@@ -148,8 +137,8 @@ export const StatsView = () => {
             gap: '1rem',
             alignItems: 'flex-start'
           }}>
-            <LazyImage 
-              src={githubProfile.avatarUrl} 
+            <LazyImage
+              src={githubProfile.avatarUrl}
               alt={`${githubProfile.displayName} avatar`}
               style={{
                 width: '80px',
@@ -180,7 +169,7 @@ export const StatsView = () => {
                   color: isDebianTheme ? '#FFFFFFDD' : 'var(--text-color-secondary)'
                 }}>{githubProfile.bio}</p>
               )}
-              
+
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -194,15 +183,15 @@ export const StatsView = () => {
                     <span>{githubProfile.location}</span>
                   </div>
                 )}
-                
+
                 {githubProfile.blog && (
-                  <a 
+                  <a
                     href={githubProfile.blog.startsWith('http') ? githubProfile.blog : `https://${githubProfile.blog}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: '0.25rem',
                       color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
                       textDecoration: 'none'
@@ -212,15 +201,15 @@ export const StatsView = () => {
                     <span>{githubProfile.blog.replace(/^https?:\/\//, '')}</span>
                   </a>
                 )}
-                
+
                 {githubProfile.twitterUsername && (
-                  <a 
+                  <a
                     href={`https://twitter.com/${githubProfile.twitterUsername}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: '0.25rem',
                       color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
                       textDecoration: 'none'
@@ -230,7 +219,7 @@ export const StatsView = () => {
                     <span>@{githubProfile.twitterUsername}</span>
                   </a>
                 )}
-                
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', opacity: 0.8 }}>
                   <span>🕒</span>
                   <span title={`Joined GitHub on ${formatDate(githubProfile.createdAt)}`}>
@@ -258,142 +247,174 @@ export const StatsView = () => {
         />
       ) : (
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1rem',
-        }}>
-          <StatCard 
-            label="Repositories" 
-            value={githubProfile ? githubProfile.publicRepos.toString() : stats?.repoCount?.toString() || '0'}
-            isDebianTheme={isDebianTheme}
-          />
-          <StatCard 
-            label="Followers" 
-            value={githubProfile ? githubProfile.followers.toString() : stats?.followers?.toString() || '0'}
-            isDebianTheme={isDebianTheme}
-          />
-          <StatCard 
-            label="Following" 
-            value={githubProfile ? githubProfile.following.toString() : stats?.contributions?.toString() || '0'}
-            isDebianTheme={isDebianTheme}
-          />
-        </div>
-      )}
-
-      {/* Top Languages */}
-      {!loading && !error && (
-        <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '1.5rem',
+          marginTop: '1.5rem'
         }}>
-          <h3 style={{ 
-            fontSize: '1rem', 
-            opacity: 0.9,
-            borderBottom: '1px solid',
-            borderColor: isDebianTheme ? '#FFFFFF' : '#103149',
-            paddingBottom: '0.25rem'
-          }}>
-            Top Languages
-          </h3>
           <div style={{
             display: 'flex',
-            gap: '0.5rem',
-            flexWrap: 'wrap'
+            gap: '1rem',
+            justifyContent: 'space-between'
           }}>
-            {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats?.topLanguages || []).map(lang => (
-              <div 
-                key={lang.name}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(0, 255, 217, 0.1)',
-                  border: '1px solid',
-                  borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                  borderRadius: isDebianTheme ? '0' : '0.25rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                <span>{lang.name}</span>
-                <span style={{ opacity: 0.7 }}>{lang.percentage}%</span>
-              </div>
-            ))}
+            <StatCard 
+              label="Repositories" 
+              value={githubProfile ? githubProfile.publicRepos.toString() : stats?.repoCount?.toString() || '0'}
+              isDebianTheme={isDebianTheme}
+            />
+            <StatCard 
+              label="Followers" 
+              value={githubProfile ? githubProfile.followers.toString() : stats?.followers?.toString() || '0'}
+              isDebianTheme={isDebianTheme}
+            />
+            <StatCard 
+              label="Following" 
+              value={githubProfile ? githubProfile.following.toString() : stats?.contributions?.toString() || '0'}
+              isDebianTheme={isDebianTheme}
+            />
           </div>
-        </div>
-      )}
-
-      {/* Recent Activity */}
-      {!loading && !error && (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-          flex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '1rem', 
-            opacity: 0.9,
-            borderBottom: '1px solid',
-            borderColor: isDebianTheme ? '#FFFFFF' : '#103149',
-            paddingBottom: '0.25rem'
-          }}>
-            Recent Activity
-          </h3>
+          
+          {/* Languages Section */}
           <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem'
+            marginTop: '1rem'
           }}>
-            {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
-                // Determinar quais propriedades usar com base no tipo de objeto
-                const isGitHubActivity = 'repoName' in activity;
-                const repoName = isGitHubActivity ? activity.repoName : activity.repo;
-                const repoShortName = repoName.includes('/') ? repoName.split('/')[1] : repoName;
-                const displayDate = isGitHubActivity
-                  ? (activity.date || new Date(activity.createdAt).toISOString().split('T')[0])
-                  : activity.date;
-                // Garantir que message é sempre uma string
-                let messageText = '';
-                if (isGitHubActivity) {
-                  if (activity.message) {
-                    messageText = activity.message;
-                  } else if (activity.details && typeof activity.details === 'object' && 'message' in activity.details) {
-                    messageText = String(activity.details.message || '');
-                  } else {
-                    messageText = `${activity.eventType} em ${repoName}`;
-                  }
-                } else {
-                  messageText = activity.message || '';
-                }
-
-                return (
-                  <div
-                    key={index}
+            <h3 style={{ 
+              fontSize: '1rem', 
+              opacity: 0.9,
+              borderBottom: '1px solid',
+              borderColor: isDebianTheme ? '#FFFFFF' : '#103149',
+              paddingBottom: '0.25rem'
+            }}>
+              Top Languages
+            </h3>
+            
+            {(githubProfile?.topLanguages?.length || stats?.topLanguages?.length) ? (
+              <div style={{
+                display: 'flex',
+                gap: '0.5rem',
+                flexWrap: 'wrap'
+              }}>
+                {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats?.topLanguages || []).map(lang => (
+                  <div 
+                    key={lang.name}
                     style={{
-                      padding: '0.75rem',
+                      padding: '0.5rem 0.75rem',
                       backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.5)',
                       border: '1px solid',
                       borderColor: isDebianTheme ? '#666666' : '#103149',
-                      borderLeft: '3px solid',
-                      borderLeftColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                      borderRadius: isDebianTheme ? '0' : '0.25rem',
                       display: 'flex',
-                      flexDirection: 'column',
+                      alignItems: 'center',
                       gap: '0.5rem'
                     }}
                   >
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '0.875rem'
+                    <span style={{ 
+                      fontWeight: 'bold',
+                      fontSize: '0.875rem',
+                      color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
                     }}>
-                      <span style={{ fontWeight: 'bold' }}>{repoShortName}</span>
-                      <span style={{ opacity: 0.7 }}>{displayDate}</span>
+                      {lang.name}
+                    </span>
+                    <div style={{
+                      backgroundColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                      borderRadius: '0.25rem',
+                      padding: '0.1rem 0.3rem',
+                      fontSize: '0.75rem',
+                      color: isDebianTheme ? '#0000B3' : '#000000',
+                      fontWeight: 'bold'
+                    }}>
+                      {lang.percentage}%
                     </div>
-                    <p style={{ margin: 0 }}>{messageText}</p>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                title="No language data"
+                message="No language usage statistics available yet."
+                icon="💻"
+              />
+            )}
+          </div>
+          
+          {/* Recent Activity Section */}
+          <div style={{
+            marginTop: '2rem'
+          }}>
+            <h3 style={{ 
+              fontSize: '1rem', 
+              opacity: 0.9,
+              borderBottom: '1px solid',
+              borderColor: isDebianTheme ? '#FFFFFF' : '#103149',
+              paddingBottom: '0.25rem'
+            }}>
+              Recent Activity
+            </h3>
+            
+            {(githubProfile?.recentActivity?.length || stats?.recentActivity?.length) ? (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem'
+              }}>
+                {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
+                  // Determinar quais propriedades usar com base no tipo de objeto
+                  const isGitHubActivity = 'repoName' in activity;
+                  const repoName = isGitHubActivity ? activity.repoName : activity.repo;
+                  const repoShortName = repoName.includes('/') ? repoName.split('/')[1] : repoName;
+                  const displayDate = isGitHubActivity
+                    ? (activity.date || new Date(activity.createdAt).toISOString().split('T')[0])
+                    : activity.date;
+                  
+                  // Garantir que message é sempre uma string
+                  let messageText = '';
+                  if (isGitHubActivity) {
+                    if (activity.message) {
+                      messageText = activity.message;
+                    } else if (activity.details && typeof activity.details === 'object' && 'message' in activity.details) {
+                      messageText = String(activity.details.message || '');
+                    } else {
+                      messageText = `${activity.eventType} em ${repoName}`;
+                    }
+                  } else {
+                    messageText = activity.message || '';
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        padding: '0.75rem',
+                        backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.5)',
+                        border: '1px solid',
+                        borderColor: isDebianTheme ? '#666666' : '#103149',
+                        borderLeft: '3px solid',
+                        borderLeftColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '0.875rem'
+                      }}>
+                        <span style={{ fontWeight: 'bold' }}>{repoShortName}</span>
+                        <span style={{ opacity: 0.7 }}>{displayDate}</span>
+                      </div>
+                      <p style={{ margin: 0 }}>{messageText}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <EmptyState
+                title="No activity data"
+                message="No recent GitHub activity available yet."
+                icon="📅"
+              />
+            )}
           </div>
         </div>
       )}
@@ -410,26 +431,25 @@ interface StatCardProps {
 const StatCard = ({ label, value, isDebianTheme }: StatCardProps) => {
   return (
     <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '1rem',
-      backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(0, 255, 217, 0.05)',
-      border: '1px solid',
-      borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
+      backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.5)',
+      padding: '0.75rem',
       borderRadius: isDebianTheme ? '0' : '0.25rem',
-      gap: '0.5rem'
+      border: '1px solid',
+      borderColor: isDebianTheme ? '#666666' : '#103149',
+      textAlign: 'center',
+      flex: 1
     }}>
-      <div style={{
-        fontSize: '1.75rem',
+      <div style={{ 
+        fontSize: '1.75rem', 
         fontWeight: 'bold',
         color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
       }}>
         {value}
       </div>
-      <div style={{
-        fontSize: '0.875rem',
-        opacity: 0.8
+      <div style={{ 
+        fontSize: '0.875rem', 
+        opacity: 0.7,
+        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
       }}>
         {label}
       </div>
