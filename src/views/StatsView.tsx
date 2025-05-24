@@ -237,7 +237,8 @@ export const StatsView = () => {
           <div style={{
             display: 'flex',
             gap: '1rem',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+                padding: '0rem 1rem',
           }}>
             <StatCard 
               label="Repositories" 
@@ -274,7 +275,8 @@ export const StatsView = () => {
               <div style={{
                 display: 'flex',
                 gap: '0.5rem',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                padding: '0rem 1rem',
               }}>
                 {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats?.topLanguages || []).map(lang => (
                   <div 
@@ -337,7 +339,8 @@ export const StatsView = () => {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.75rem'
+                gap: '0.75rem',
+                padding: '0rem 1rem',
               }}>
                 {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
                   // Determine which properties to use based on the object type
