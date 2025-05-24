@@ -1,17 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
+import { getGithubProfile } from '../data/api';
+import type { GitHubProfile } from '../types/githubProfile';
 
 export const StatusBar = () => {
   const { theme, isCommandMode } = useAppStore();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
   
-  // Social media links - would ideally come from an API
-  const githubUrl = 'https://github.com/kauefontes'; 
-  const linkedinUrl = 'https://linkedin.com/in/kauefontes';
+  // Social media links - fallback values that will be updated by API
+  const [githubUrl, setGithubUrl] = useState('https://github.com/kauefontes');
+  const [linkedinUrl, setLinkedinUrl] = useState('https://linkedin.com/in/kauefontes');
   
   useEffect(() => {
     // Update time every minute
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    
+    // Fetch GitHub profile to get user URLs with retry mechanism
+    const fetchGithubProfile = async (retryCount = 0, maxRetries = 3) => {
+      try {
+        const profileData = await getGithubProfile();
+        setGithubProfile(profileData);
+        
+        // Set GitHub URL from profile data
+        if (profileData.htmlUrl) {
+          setGithubUrl(profileData.htmlUrl);
+        }
+        
+        // Try to find LinkedIn URL in profile data
+        if (profileData.blog?.includes('linkedin.com')) {
+          setLinkedinUrl(profileData.blog);
+        }
+      } catch (error) {
+        console.error('Error fetching GitHub profile for StatusBar:', error);
+        
+        // Retry logic with exponential backoff
+        if (retryCount < maxRetries) {
+          const backoffDelay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s, ...
+          console.log(`Retrying GitHub profile fetch in ${backoffDelay}ms (attempt ${retryCount + 1}/${maxRetries})`);
+          
+          setTimeout(() => {
+            fetchGithubProfile(retryCount + 1, maxRetries);
+          }, backoffDelay);
+        } else {
+          // Keep using default values on error after max retries
+          console.warn('Failed to fetch GitHub profile after maximum retry attempts');
+        }
+      }
+    };
+    
+    fetchGithubProfile();
+    
     return () => clearInterval(timer);
   }, []);
   
@@ -59,7 +98,7 @@ export const StatusBar = () => {
           }}
           className="hover:underline"
         >
-          GitHub
+          GitHub{githubProfile ? `: @${githubProfile.username}` : ''}
         </a>
         <span>|</span>
         <a 
