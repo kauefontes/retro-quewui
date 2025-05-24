@@ -84,7 +84,8 @@ export const ContactView = () => {
       
       <p style={{ 
         marginBottom: '1.5rem',
-        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+        padding: '0rem 0.5rem'
       }}>
         Feel free to reach out for collaborations, questions, or just to say hello.
       </p>

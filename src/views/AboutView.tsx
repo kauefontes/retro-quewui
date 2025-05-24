@@ -160,7 +160,8 @@ export const AboutView = () => {
               <div style={{ 
                   display: 'grid', 
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '1rem'
+                  gap: '1rem',
+                  paddingLeft: '0.5rem'
                 }}>
                   {loading ? (
                     <div style={{ gridColumn: 'span 2' }}>
@@ -298,7 +299,8 @@ export const AboutView = () => {
                   key={index}
                   style={{
                     marginBottom: index < profile.education.length - 1 ? '0.75rem' : '0',
-                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
+                    paddingLeft: '0.5rem'
                   }}
                 >
                   <div style={{ fontWeight: 'bold' }}>{edu.degree}</div>
@@ -439,7 +441,8 @@ const SocialLink = ({ title, url, icon, isDebianTheme }: SocialLinkProps) => {
         alignItems: 'center',
         gap: '0.5rem',
         color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-        textDecoration: 'none'
+        textDecoration: 'none',
+        paddingLeft: '0.5rem'
       }}
     >
       <span style={{ fontFamily: 'monospace' }}>{icon}</span>
