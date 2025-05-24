@@ -10,7 +10,7 @@ interface CacheEntry<T> {
 
 class ApiCache {
   private cache: Record<string, CacheEntry<unknown>> = {};
-  private ttl: number = 60000; // Default: 1 minute cache
+  private ttl: number = 30000; // Default: 30 seconds cache TTL
 
   /**
    * Set the Time To Live for cache entries
@@ -36,12 +36,12 @@ class ApiCache {
   get<T>(key: string): T | null {
     const entry = this.cache[key];
     const now = Date.now();
-    
+
     if (entry && now - entry.timestamp < this.ttl) {
       console.log(`[Cache] Hit for ${key}`);
       return entry.data as T;
     }
-    
+
     console.log(`[Cache] Miss for ${key}`);
     return null;
   }
@@ -86,7 +86,7 @@ class ApiCache {
     if (cachedData !== null) {
       return cachedData;
     }
-    
+
     // If not in cache, fetch and store
     const data = await fetchFn();
     this.set(key, data);
