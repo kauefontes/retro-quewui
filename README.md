@@ -1,4 +1,4 @@
-# Retro Quewui
+# Quewui
 
 A retro terminal-style UI built with React, TypeScript, and Vite. This interactive web application mimics a classic terminal interface with a modern twist, offering both a neon-inspired dark theme and a Debian installer-inspired light theme.
 
@@ -69,7 +69,7 @@ To improve type-checking and linting, you can update the ESLint configuration:
 // eslint.config.js
 import { javascriptESLint } from "@eslint/js";
 import tseslint from "typescript-eslint";
- 
+
 export default tseslint.config({
   extends: [
     ...tseslint.configs.recommendedTypeChecked,

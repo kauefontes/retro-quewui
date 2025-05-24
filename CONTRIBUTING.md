@@ -1,6 +1,6 @@
-# Contributing to Retro Quewui
+# Contributing to Quewui
 
-Thank you for considering contributing to Retro Quewui! This document provides guidelines and instructions for contributing to this project.
+Thank you for considering contributing to Quewui! This document provides guidelines and instructions for contributing to this project.
 
 ## Code of Conduct
 
@@ -64,4 +64,4 @@ Close #123
 
 ## License
 
-By contributing to Retro Quewui, you agree that your contributions will be licensed under the project's MIT license.
+By contributing to Quewui, you agree that your contributions will be licensed under the project's MIT license.
