@@ -21,6 +21,14 @@ class ApiCache {
   }
 
   /**
+   * Get the current Time To Live setting
+   * @returns TTL in milliseconds
+   */
+  getTTL(): number {
+    return this.ttl;
+  }
+
+  /**
    * Get a value from cache if it exists and is not expired
    * @param key Cache key
    * @returns The cached value or null if not found or expired
