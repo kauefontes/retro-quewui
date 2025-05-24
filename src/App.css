@@ -206,12 +206,12 @@
 }
 
 .nav-tab-indicator {
-  position: relative;
+  /* position: relative; */
   display: inline-block;
   width: 0.5rem;
   height: 1rem;
   background-color: var(--accent-color);
-  margin-left: 0.25rem;
+  margin-left: -0.6rem;
   animation: blink 1s step-end infinite;
 }
 
