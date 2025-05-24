@@ -3,7 +3,7 @@ import { useAppStore } from '../store/appStore';
 import { getSkills, getProfile } from '../data/api';
 import type { Skill, Profile, SocialLink } from '../types/index';
 import { TechTag } from '../components/common/TechTag';
-import { EmptyState } from '../components/common/EmptyState';
+import { EmptyState } from '../components/common/EmptyState/EmptyState';
 
 // About View Component
 export const AboutView = () => {
