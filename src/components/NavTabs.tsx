@@ -1,6 +1,7 @@
 import { useAppStore } from '../store/appStore';
 import type { TabName } from '../types';
 import { useAuth } from '../contexts/AuthUtils';
+import { TabIcon } from './TabIcon';
 
 export const NavTabs = () => {
   const { currentTab, setCurrentTab, isCommandMode } = useAppStore();
@@ -49,24 +50,23 @@ export const NavTabs = () => {
           <span style={{ 
             display: 'flex', 
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.6rem'
           }}>
             {isDebianTheme && <span style={{ 
               visibility: currentTab === tab.id ? 'visible' : 'hidden',
               marginRight: '0.25rem'
             }}>›</span>}
             <span className="tab-icon" style={{ 
-              fontSize: '0.95rem', 
               marginRight: '0.35rem', 
-              display: 'inline-block' 
+              display: 'inline-block',
+              width: '20px',
+              height: '20px'
             }}>
-              {tab.id === 'about' && '👤'}
-              {tab.id === 'projects' && '💼'}
-              {tab.id === 'experiences' && '💻'}
-              {tab.id === 'blog' && '📝'}
-              {tab.id === 'contact' && '📧'}
-              {tab.id === 'stats' && '📊'}
-              {tab.id === 'messages' && '💬'}
+              <TabIcon 
+                iconName={tab.id}
+                isActive={currentTab === tab.id}
+                isDebianTheme={isDebianTheme}
+              />
             </span>
             <span>{tab.label}</span>
             {currentTab === tab.id && isCommandMode && (
