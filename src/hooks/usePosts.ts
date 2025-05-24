@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Post } from '../types/index';
 import { getPosts } from '../data/api';
-import { posts as mockPosts } from '../data/mockData';
 
 /**
  * Custom hook for managing posts data
@@ -25,10 +24,10 @@ export const usePosts = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching posts:', err);
-      setError('Failed to load blog posts. Using fallback data.');
-      // Fallback to mock data
-      setPosts(mockPosts);
-      setFilteredPosts(mockPosts);
+      setError('Failed to load blog posts. Please try again later.');
+      // Reset to empty arrays instead of using mock data
+      setPosts([]);
+      setFilteredPosts([]);
     } finally {
       setLoading(false);
     }

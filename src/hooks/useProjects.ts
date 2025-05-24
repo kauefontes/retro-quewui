@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Project } from '../types/index';
 import { getProjects } from '../data/api';
-import { projects as mockProjects } from '../data/mockData';
 
 /**
  * Custom hook for managing projects data
@@ -25,10 +24,10 @@ export const useProjects = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Failed to load projects data. Using fallback data.');
-      // Fallback to mock data
-      setProjects(mockProjects);
-      setFilteredProjects(mockProjects);
+      setError('Failed to load projects data. Please try again later.');
+      // Reset to empty arrays instead of using mock data
+      setProjects([]);
+      setFilteredProjects([]);
     } finally {
       setLoading(false);
     }

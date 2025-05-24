@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Experience } from '../types/index';
 import { getExperiences } from '../data/api';
-import { experiences as mockExperiences } from '../data/mockData';
 
 /**
  * Custom hook for managing experiences data
@@ -25,10 +24,10 @@ export const useExperiences = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching experiences:', err);
-      setError('Failed to load experiences data. Using fallback data.');
-      // Fallback to mock data
-      setExperiences(mockExperiences);
-      setFilteredExperiences(mockExperiences);
+      setError('Failed to load experiences data. Please try again later.');
+      // Reset to empty arrays instead of using mock data
+      setExperiences([]);
+      setFilteredExperiences([]);
     } finally {
       setLoading(false);
     }

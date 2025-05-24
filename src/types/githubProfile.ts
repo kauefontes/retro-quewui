@@ -47,5 +47,5 @@ export interface GitHubActivityItem {
   createdAt: string;
   date?: string;
   message?: string;
-  details: any;
+  details: Record<string, unknown>;
 }

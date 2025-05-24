@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { githubStats as mockGithubStats } from '../data/mockData';
 import { getGithubStats, getGithubProfile } from '../data/api';
 import type { GithubStats, GitHubProfile } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState';
@@ -8,7 +7,7 @@ import { LazyImage } from '../components/common/LazyImage';
 import { formatRelativeTime, formatDate } from '../utils/dateUtils';
 
 export const StatsView = () => {
-  const [stats, setStats] = useState<GithubStats>(mockGithubStats);
+  const [stats, setStats] = useState<GithubStats | null>(null);
   const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -26,9 +25,9 @@ export const StatsView = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching GitHub stats:', err);
-        setError('Failed to load GitHub stats. Using fallback data.');
-        // Usando dados mockados como fallback
-        setStats(mockGithubStats);
+        setError('Failed to load GitHub stats. Please try again later.');
+        // Não usamos dados mockados, mantemos como null
+        setStats(null);
       } finally {
         setLoading(false);
       }
@@ -100,7 +99,7 @@ export const StatsView = () => {
           gap: '0.5rem'
         }}>
           GitHub Profile
-          {((!loading && !error) || (!profileLoading && !profileError)) && (
+          {((!loading && !error && stats) || (!profileLoading && !profileError && githubProfile)) && (
             <span style={{ 
               fontSize: '0.75rem', 
               backgroundColor: '#00AA00', 
@@ -116,7 +115,7 @@ export const StatsView = () => {
           opacity: 0.7,
           fontFamily: isDebianTheme ? 'monospace' : 'inherit'
         }}>
-          @{githubProfile ? githubProfile.username : stats.username}
+          @{githubProfile ? githubProfile.username : stats?.username || 'loading...'}
         </span>
       </div>
 
@@ -245,7 +244,7 @@ export const StatsView = () => {
       )}
 
       {/* Key Stats */}
-      {loading ? (
+      {loading || !stats ? (
         <EmptyState 
           title="Carregando estatísticas"
           message="Aguarde enquanto carregamos as estatísticas do GitHub..."
@@ -265,17 +264,17 @@ export const StatsView = () => {
         }}>
           <StatCard 
             label="Repositories" 
-            value={githubProfile ? githubProfile.publicRepos.toString() : stats.repoCount.toString()} 
+            value={githubProfile ? githubProfile.publicRepos.toString() : stats?.repoCount?.toString() || '0'}
             isDebianTheme={isDebianTheme}
           />
           <StatCard 
             label="Followers" 
-            value={githubProfile ? githubProfile.followers.toString() : stats.followers.toString()} 
+            value={githubProfile ? githubProfile.followers.toString() : stats?.followers?.toString() || '0'}
             isDebianTheme={isDebianTheme}
           />
           <StatCard 
             label="Following" 
-            value={githubProfile ? githubProfile.following.toString() : stats.contributions.toString()} 
+            value={githubProfile ? githubProfile.following.toString() : stats?.contributions?.toString() || '0'}
             isDebianTheme={isDebianTheme}
           />
         </div>
@@ -302,7 +301,7 @@ export const StatsView = () => {
             gap: '0.5rem',
             flexWrap: 'wrap'
           }}>
-            {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats.topLanguages).map(lang => (
+            {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats?.topLanguages || []).map(lang => (
               <div 
                 key={lang.name}
                 style={{
@@ -346,20 +345,30 @@ export const StatsView = () => {
             flexDirection: 'column',
             gap: '0.75rem'
           }}>
-            {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats.recentActivity).map((activity, index) => {
+            {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
                 // Determinar quais propriedades usar com base no tipo de objeto
                 const isGitHubActivity = 'repoName' in activity;
                 const repoName = isGitHubActivity ? activity.repoName : activity.repo;
                 const repoShortName = repoName.includes('/') ? repoName.split('/')[1] : repoName;
-                const displayDate = isGitHubActivity 
-                  ? (activity.date || new Date(activity.createdAt).toISOString().split('T')[0]) 
+                const displayDate = isGitHubActivity
+                  ? (activity.date || new Date(activity.createdAt).toISOString().split('T')[0])
                   : activity.date;
-                const message = isGitHubActivity
-                  ? (activity.message || (activity.details && 'message' in activity.details ? activity.details.message : null) || `${activity.eventType} em ${repoName}`)
-                  : activity.message;
-              
+                // Garantir que message é sempre uma string
+                let messageText = '';
+                if (isGitHubActivity) {
+                  if (activity.message) {
+                    messageText = activity.message;
+                  } else if (activity.details && typeof activity.details === 'object' && 'message' in activity.details) {
+                    messageText = String(activity.details.message || '');
+                  } else {
+                    messageText = `${activity.eventType} em ${repoName}`;
+                  }
+                } else {
+                  messageText = activity.message || '';
+                }
+
                 return (
-                  <div 
+                  <div
                     key={index}
                     style={{
                       padding: '0.75rem',
@@ -381,7 +390,7 @@ export const StatsView = () => {
                       <span style={{ fontWeight: 'bold' }}>{repoShortName}</span>
                       <span style={{ opacity: 0.7 }}>{displayDate}</span>
                     </div>
-                    <p style={{ margin: 0 }}>{message}</p>
+                    <p style={{ margin: 0 }}>{messageText}</p>
                   </div>
                 );
               })}

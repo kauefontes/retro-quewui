@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { skills as mockSkills } from '../data/mockData';
 import { getSkills, getProfile } from '../data/api';
 import type { Skill, Profile, SocialLink } from '../types/index';
 import { TechTag } from '../components/common/TechTag';
@@ -26,9 +25,9 @@ export const AboutView = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching skills:', err);
-        setError('Failed to load skills data. Using fallback data.');
-        // Usando dados mockados como fallback
-        setSkills(mockSkills);
+        setError('Failed to load skills data. Please try again later.');
+        // Não usamos dados mockados, mantemos vazio
+        setSkills([]);
       } finally {
         setLoading(false);
       }
