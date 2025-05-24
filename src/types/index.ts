@@ -1,16 +1,15 @@
-// Centralized type definitions for the portfolio
-import type { 
-  GitHubProfile, 
-  GitHubOrganization, 
-  GitHubRepository, 
-  GitHubActivityItem 
+import type {
+  GitHubProfile,
+  GitHubOrganization,
+  GitHubRepository,
+  GitHubActivityItem
 } from './githubProfile';
 
-export type { 
-  GitHubProfile, 
-  GitHubOrganization, 
-  GitHubRepository, 
-  GitHubActivityItem 
+export type {
+  GitHubProfile,
+  GitHubOrganization,
+  GitHubRepository,
+  GitHubActivityItem
 };
 
 export interface Project {

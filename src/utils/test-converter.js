@@ -41,14 +41,14 @@ const convertToSnakeCase_Fixed = (obj) => {
 // Test object with arrays
 const testProject = {
   id: "project-2",
-  title: "Developer Terminal Portfolio",
-  description: "Interactive terminal-style portfolio website with vim-like navigation",
+  title: "Developer Terminal Website",
+  description: "Interactive terminal-style website with vim-like navigation",
   technologies: ["React", "Vite", "Zustand", "Tailwind CSS"],
   githubUrl: "https://github.com/kauefontes/retro-quewui-backend",
   liveUrl: "https://quewui.com",
   imageUrl: "https://user-images.githubusercontent.com/2405099/67417164-ce9e6300-f5d0-11e9-83e9-0e3e6714cfff.png",
   year: 2025,
-  highlights: ["Retro terminal UI with NEON-inspired aesthetics", "Vim-like keyboard navigation", "Responsive design for all device sizes", "Animated terminal boot sequence"]
+  highlights: ["Terminal UI with NEON-inspired aesthetics", "Vim-like keyboard navigation", "Responsive design for all device sizes", "Animated terminal boot sequence"]
 };
 
 console.log("Original function result:");

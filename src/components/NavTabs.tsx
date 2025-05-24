@@ -65,7 +65,6 @@ export const NavTabs = () => {
               <TabIcon 
                 iconName={tab.id}
                 isActive={currentTab === tab.id}
-                isDebianTheme={isDebianTheme}
               />
             </span>
             <span>{tab.label}</span>

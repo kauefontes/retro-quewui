@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { getGithubProfile } from '../data/api';
+import { getGithubProfile, getProfile } from '../data/api';
 import type { GitHubProfile } from '../types/githubProfile';
+import type { SocialLink, Profile } from '../types/index';
 
 export const StatusBar = () => {
   const { theme, isCommandMode } = useAppStore();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   
   // Social media links - fallback values that will be updated by API
   const [githubUrl, setGithubUrl] = useState('https://github.com/kauefontes');
@@ -17,7 +19,7 @@ export const StatusBar = () => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     
     // Fetch GitHub profile to get user URLs with retry mechanism
-    const fetchGithubProfile = async (retryCount = 0, maxRetries = 3) => {
+    const fetchGithubProfile = async () => {
       try {
         const profileData = await getGithubProfile();
         setGithubProfile(profileData);
@@ -26,30 +28,43 @@ export const StatusBar = () => {
         if (profileData.htmlUrl) {
           setGithubUrl(profileData.htmlUrl);
         }
-        
-        // Try to find LinkedIn URL in profile data
-        if (profileData.blog?.includes('linkedin.com')) {
-          setLinkedinUrl(profileData.blog);
-        }
       } catch (error) {
         console.error('Error fetching GitHub profile for StatusBar:', error);
-        
-        // Retry logic with exponential backoff
-        if (retryCount < maxRetries) {
-          const backoffDelay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s, ...
-          console.log(`Retrying GitHub profile fetch in ${backoffDelay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-          
-          setTimeout(() => {
-            fetchGithubProfile(retryCount + 1, maxRetries);
-          }, backoffDelay);
-        } else {
-          // Keep using default values on error after max retries
-          console.warn('Failed to fetch GitHub profile after maximum retry attempts');
-        }
       }
     };
     
+    // Fetch profile data to get social links
+    const fetchProfile = async () => {
+      try {
+        const profileData = await getProfile();
+        setProfile(profileData);
+        
+        // Find GitHub and LinkedIn URLs from profile social links
+        if (profileData && profileData.socialLinks) {
+          // Look for GitHub link
+          const githubLink = profileData.socialLinks.find(
+            link => link.title.toLowerCase().includes('github') || link.url.includes('github.com')
+          );
+          if (githubLink) {
+            setGithubUrl(githubLink.url);
+          }
+          
+          // Look for LinkedIn link
+          const linkedinLink = profileData.socialLinks.find(
+            link => link.title.toLowerCase().includes('linkedin') || link.url.includes('linkedin.com')
+          );
+          if (linkedinLink) {
+            setLinkedinUrl(linkedinLink.url);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile for StatusBar:', error);
+      }
+    };
+    
+    // Fetch both GitHub profile and general profile data
     fetchGithubProfile();
+    fetchProfile();
     
     return () => clearInterval(timer);
   }, []);

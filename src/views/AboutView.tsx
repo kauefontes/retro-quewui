@@ -25,9 +25,8 @@ export const AboutView = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching skills:', err);
-        setError('Failed to load skills data. Please try again later.');
-        // Não usamos dados mockados, mantemos vazio
-        setSkills([]);
+        setError('Failed to load skills data. Please try again later.');      // We don't use mock data, keep it empty
+      setSkills([]);
       } finally {
         setLoading(false);
       }
@@ -42,7 +41,7 @@ export const AboutView = () => {
       } catch (err) {
         console.error('Error fetching profile:', err);
         setProfileError('Failed to load profile data.');
-        // Não temos dados mockados para o perfil, então vamos deixar como null
+        // We don't have mock data for the profile, so we keep it as null
       } finally {
         setProfileLoading(false);
       }
@@ -85,14 +84,14 @@ export const AboutView = () => {
         <section>
           {profileLoading ? (
             <EmptyState 
-              title="Carregando perfil"
-              message="Aguarde enquanto carregamos as informações do perfil..."
+              title="Loading profile"
+              message="Please wait while we load profile information..."
               isLoading={true}
             />
           ) : profileError ? (
             <EmptyState 
-              title="Erro ao carregar perfil"
-              message={profileError || "Não foi possível carregar as informações do perfil."}
+              title="Error loading profile"
+              message={profileError || "Unable to load profile information."}
               isError={true}
             />
           ) : profile ? (
@@ -118,7 +117,7 @@ export const AboutView = () => {
               padding: '1rem',
               color: isDebianTheme ? '#FFFFFF99' : 'var(--text-color-secondary)'
             }}>
-              Bio não disponível.
+              Bio not available.
             </div>
           )}
         </section>
@@ -166,16 +165,16 @@ export const AboutView = () => {
                   {loading ? (
                     <div style={{ gridColumn: 'span 2' }}>
                       <EmptyState 
-                        title="Carregando habilidades"
-                        message="Aguarde enquanto carregamos as habilidades técnicas..."
+                        title="Loading skills"
+                        message="Please wait while we load technical skills..."
                         isLoading={true}
                       />
                     </div>
                   ) : error ? (
                     <div style={{ gridColumn: 'span 2' }}>
                       <EmptyState 
-                        title="Erro ao carregar"
-                        message={error || "Ocorreu um erro ao carregar as habilidades."}
+                        title="Error loading"
+                        message={error || "An error occurred while loading skills."}
                         isError={true}
                       />
                     </div>

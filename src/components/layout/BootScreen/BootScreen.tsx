@@ -61,7 +61,7 @@ export const BootScreen: React.FC = () => {
     ░▒▓██▓▒░                                                                              
 `}
         </pre>
-        <h1 className="boot-title">Portfolio Terminal v1.0</h1>
+        <h1 className="boot-title">Quewui TUI v0.8</h1>
         <div className="boot-subtitle">Loading system components...</div>
       </div>
       

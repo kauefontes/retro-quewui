@@ -12,7 +12,7 @@ export const HomeView = () => {
         <h1 className={`text-4xl font-bold mb-2 ${
           isDebianTheme ? 'text-white' : 'text-[var(--text-color)]'
         }`}>
-          Developer Portfolio
+          Quewui TUI
         </h1>
         <p className={`text-lg mb-6 ${
           isDebianTheme ? 'text-white' : 'text-[var(--text-color)]'
@@ -35,7 +35,7 @@ export const HomeView = () => {
         <p className={`text-center mb-4 ${
           isDebianTheme ? 'text-white' : 'text-[var(--text-color)]'
         }`}>
-          Welcome to my terminal-style portfolio. Use the command line below or navigate with the following commands:
+          Welcome to my terminal-style website. Use the command line below or navigate with the following commands:
         </p>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mx-auto">

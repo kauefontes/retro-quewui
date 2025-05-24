@@ -134,7 +134,7 @@ export const BootScreen = () => {
     ░▒▓██▓▒░                                                                              
 `}
         </pre>
-        <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Portfolio Terminal v1.0</h1>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Quewui TUI v0.8</h1>
         <div style={{ marginBottom: '1rem' }}>Loading system components...</div>
       </div>
       

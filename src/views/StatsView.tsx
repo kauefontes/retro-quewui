@@ -26,7 +26,7 @@ export const StatsView = () => {
       } catch (err) {
         console.error('Error fetching GitHub stats:', err);
         setError('Failed to load GitHub stats. Please try again later.');
-        // Não usamos dados mockados, mantemos como null
+        // We don't use mock data, keep it as null
         setStats(null);
       } finally {
         setLoading(false);
@@ -111,14 +111,14 @@ export const StatsView = () => {
       {/* GitHub Profile Section */}
       {profileLoading && !githubProfile ? (
         <EmptyState 
-          title="Carregando perfil do GitHub"
-          message="Aguarde enquanto carregamos os dados de perfil do GitHub..."
+          title="Loading GitHub Profile"
+          message="Please wait while we load your GitHub profile data..."
           isLoading={true}
         />
       ) : profileError ? (
         <EmptyState 
-          title="Erro ao carregar perfil"
-          message={profileError || "Ocorreu um erro ao carregar os dados de perfil do GitHub."}
+          title="Error Loading Profile"
+          message={profileError || "An error occurred while loading GitHub profile data."}
           isError={true}
         />
       ) : githubProfile && (
@@ -202,24 +202,6 @@ export const StatsView = () => {
                   </a>
                 )}
 
-                {githubProfile.twitterUsername && (
-                  <a
-                    href={`https://twitter.com/${githubProfile.twitterUsername}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    <span>🐦</span>
-                    <span>@{githubProfile.twitterUsername}</span>
-                  </a>
-                )}
-
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', opacity: 0.8 }}>
                   <span>🕒</span>
                   <span title={`Joined GitHub on ${formatDate(githubProfile.createdAt)}`}>
@@ -235,14 +217,14 @@ export const StatsView = () => {
       {/* Key Stats */}
       {loading || !stats ? (
         <EmptyState 
-          title="Carregando estatísticas"
-          message="Aguarde enquanto carregamos as estatísticas do GitHub..."
+          title="Loading statistics"
+          message="Please wait while we load GitHub statistics..."
           isLoading={true}
         />
       ) : error ? (
         <EmptyState 
-          title="Erro ao carregar"
-          message={error || "Ocorreu um erro ao carregar as estatísticas do GitHub."}
+          title="Error loading"
+          message={error || "An error occurred while loading GitHub statistics."}
           isError={true}
         />
       ) : (
@@ -358,7 +340,7 @@ export const StatsView = () => {
                 gap: '0.75rem'
               }}>
                 {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
-                  // Determinar quais propriedades usar com base no tipo de objeto
+                  // Determine which properties to use based on the object type
                   const isGitHubActivity = 'repoName' in activity;
                   const repoName = isGitHubActivity ? activity.repoName : activity.repo;
                   const repoShortName = repoName.includes('/') ? repoName.split('/')[1] : repoName;
@@ -366,7 +348,7 @@ export const StatsView = () => {
                     ? (activity.date || new Date(activity.createdAt).toISOString().split('T')[0])
                     : activity.date;
                   
-                  // Garantir que message é sempre uma string
+                  // Ensure message is always a string
                   let messageText = '';
                   if (isGitHubActivity) {
                     if (activity.message) {
@@ -374,7 +356,7 @@ export const StatsView = () => {
                     } else if (activity.details && typeof activity.details === 'object' && 'message' in activity.details) {
                       messageText = String(activity.details.message || '');
                     } else {
-                      messageText = `${activity.eventType} em ${repoName}`;
+                      messageText = `${activity.eventType} in ${repoName}`;
                     }
                   } else {
                     messageText = activity.message || '';

@@ -269,7 +269,7 @@ export const getGithubStats = async (): Promise<GithubStats> => {
   );
 };
 
-// GitHub Profile - busca dados do backend
+// GitHub Profile - fetches data from the backend
 export const getGithubProfile = async (): Promise<GitHubProfile> => {
   return apiCache.getOrFetch<GitHubProfile>('/github/profile', () =>
     fetchFromApi<GitHubProfile>('/github/profile')

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { submitContactForm } from '../data/api';
-import type { ContactFormData } from '../types/index';
+import { submitContactForm, getProfile } from '../data/api';
+import type { ContactFormData, Profile } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState';
 import './ContactView.css';
 
@@ -14,8 +14,27 @@ export const ContactView = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
+  
+  useEffect(() => {
+    // Fetch profile data to get social links
+    const fetchProfile = async () => {
+      try {
+        setProfileLoading(true);
+        const profileData = await getProfile();
+        setProfile(profileData);
+      } catch (error) {
+        console.error('Error fetching profile for ContactView:', error);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+    
+    fetchProfile();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -88,20 +107,20 @@ export const ContactView = () => {
         
         {submitting ? (
           <EmptyState 
-            title="Enviando mensagem"
-            message="Aguarde enquanto sua mensagem está sendo enviada..."
+            title="Sending message"
+            message="Please wait while your message is being sent..."
             isLoading={true}
           />
         ) : submitted ? (
           <EmptyState 
-            title="Mensagem enviada"
-            message="Sua mensagem foi enviada com sucesso! Entraremos em contato em breve."
+            title="Message sent"
+            message="Your message was sent successfully! We'll get back to you soon."
             icon="✅"
           />
         ) : error ? (
           <EmptyState 
-            title="Erro ao enviar"
-            message={error || "Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente."}
+            title="Error sending"
+            message={error || "An error occurred while sending your message. Please try again."}
             isError={true}
           />
         ) : (
@@ -162,24 +181,43 @@ export const ContactView = () => {
           color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
         }}>Connect With Me</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <SocialLink 
-            command="github" 
-            url="https://github.com/username" 
-            label="GitHub" 
-            isDebianTheme={isDebianTheme}
-          />
-          <SocialLink 
-            command="linkedin" 
-            url="https://linkedin.com/in/username" 
-            label="LinkedIn" 
-            isDebianTheme={isDebianTheme}
-          />
-          <SocialLink 
-            command="twitter" 
-            url="https://twitter.com/username" 
-            label="Twitter" 
-            isDebianTheme={isDebianTheme}
-          />
+          {profileLoading ? (
+            <div style={{ padding: '1rem', color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' }}>
+              Loading social links...
+            </div>
+          ) : profile?.socialLinks ? (
+            profile.socialLinks
+              .filter(link => 
+                link.title.toLowerCase().includes('github') || 
+                link.title.toLowerCase().includes('linkedin') ||
+                link.url.includes('github.com') ||
+                link.url.includes('linkedin.com')
+              )
+              .map((link, index) => (
+                <SocialLink 
+                  key={index}
+                  command={link.title.toLowerCase().includes('github') ? 'github' : 'linkedin'} 
+                  url={link.url} 
+                  label={link.title} 
+                  isDebianTheme={isDebianTheme}
+                />
+              ))
+          ) : (
+            <>
+              <SocialLink 
+                command="github" 
+                url="https://github.com/username" 
+                label="GitHub" 
+                isDebianTheme={isDebianTheme}
+              />
+              <SocialLink 
+                command="linkedin" 
+                url="https://linkedin.com/in/username" 
+                label="LinkedIn" 
+                isDebianTheme={isDebianTheme}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
