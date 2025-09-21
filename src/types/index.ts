@@ -67,6 +67,27 @@ export interface ContactFormData {
   date?: string;
 }
 
+// Simplified Profile interface aligned with Go backend
+export interface Profile {
+  id: string;
+  name: string;
+  title: string;
+  bio: string;                    // Single string instead of array
+  email: string;
+  phone?: string;
+  location: string;
+  avatarUrl?: string;             // Renamed from avatar_url
+  resumeUrl?: string;             // Renamed from resume_url  
+  linkedinUrl?: string;           // Individual URL fields
+  githubUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
+  availableForHire: boolean;      // Professional status
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Legacy interfaces - to be removed gradually
 export interface SocialLink {
   title: string;
   url: string;
@@ -82,13 +103,6 @@ export interface Education {
 export interface Language {
   name: string;
   level: string;
-}
-
-export interface Profile {
-  bio: string[];
-  socialLinks: SocialLink[];
-  education: Education[];
-  languages: Language[];
 }
 
 export interface User {

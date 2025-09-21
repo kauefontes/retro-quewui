@@ -1,22 +1,25 @@
-// Interface TypeScript para GitHub Profile baseada na implementação do backend
+// Interface TypeScript para GitHub Profile baseada na resposta real da API
 export interface GitHubProfile {
-  username: string;
-  displayName: string;
+  id: number;
+  login: string;           // GitHub username
+  name: string;            // Display name
   avatarUrl: string;
   bio?: string;
   location?: string;
   blog?: string;
-  twitterUsername?: string;
   company?: string;
+  email?: string;
+  htmlUrl: string;
   followers: number;
   following: number;
   publicRepos: number;
-  publicGists: number;
-  htmlUrl: string;
   createdAt: string;
-  organizations: GitHubOrganization[];
-  topRepositories: GitHubRepository[];
-  recentActivity: GitHubActivityItem[];
+  updatedAt: string;
+  
+  // These fields will be added later when backend implements them
+  organizations?: GitHubOrganization[];
+  topRepositories?: GitHubRepository[];
+  recentActivity?: GitHubActivityItem[];
   topLanguages?: { name: string; percentage: number }[];
 }
 
