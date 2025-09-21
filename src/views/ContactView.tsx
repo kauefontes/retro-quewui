@@ -46,6 +46,19 @@ export const ContactView = () => {
     setSubmitting(true);
     setError(null);
     
+    // Frontend validation
+    if (formData.message.length < 10) {
+      setError('Message must be at least 10 characters long');
+      setSubmitting(false);
+      return;
+    }
+    
+    if (formData.message.length > 5000) {
+      setError('Message must be no more than 5000 characters long');
+      setSubmitting(false);
+      return;
+    }
+    
     try {
       // Send data to the API
       await submitContactForm(formData as ContactFormData);
@@ -151,13 +164,28 @@ export const ContactView = () => {
             </div>
             
             <div className="contact-form-field">
-              <label htmlFor="message">Message</label>
+              <label htmlFor="message">
+                Message 
+                <span style={{ 
+                  fontSize: '0.75rem', 
+                  marginLeft: '0.5rem',
+                  opacity: 0.7,
+                  color: formData.message.length < 10 ? 'red' : 'inherit'
+                }}>
+                  ({formData.message.length}/5000 characters, min 10)
+                </span>
+              </label>
               <textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 required
+                rows={4}
+                style={{
+                  resize: 'vertical',
+                  minHeight: '100px'
+                }}
               />
             </div>
             
@@ -184,40 +212,47 @@ export const ContactView = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {profileLoading ? (
             <div style={{ padding: '1rem', color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' }}>
-              Loading social links...
+              Loading contact info...
             </div>
-          ) : profile?.socialLinks ? (
-            profile.socialLinks
-              .filter(link => 
-                link.title.toLowerCase().includes('github') || 
-                link.title.toLowerCase().includes('linkedin') ||
-                link.url.includes('github.com') ||
-                link.url.includes('linkedin.com')
-              )
-              .map((link, index) => (
+          ) : profile ? (
+            <>
+              {profile.githubUrl && (
                 <SocialLink 
-                  key={index}
-                  command={link.title.toLowerCase().includes('github') ? 'github' : 'linkedin'} 
-                  url={link.url} 
-                  label={link.title} 
+                  command="github" 
+                  url={profile.githubUrl} 
+                  label="GitHub" 
                   isDebianTheme={isDebianTheme}
                 />
-              ))
-          ) : (
-            <>
-              <SocialLink 
-                command="github" 
-                url="https://github.com/username" 
-                label="GitHub" 
-                isDebianTheme={isDebianTheme}
-              />
-              <SocialLink 
-                command="linkedin" 
-                url="https://linkedin.com/in/username" 
-                label="LinkedIn" 
-                isDebianTheme={isDebianTheme}
-              />
+              )}
+              {profile.linkedinUrl && (
+                <SocialLink 
+                  command="linkedin" 
+                  url={profile.linkedinUrl} 
+                  label="LinkedIn" 
+                  isDebianTheme={isDebianTheme}
+                />
+              )}
+              {profile.websiteUrl && (
+                <SocialLink 
+                  command="website" 
+                  url={profile.websiteUrl} 
+                  label="Website" 
+                  isDebianTheme={isDebianTheme}
+                />
+              )}
+              {profile.email && (
+                <SocialLink 
+                  command="email" 
+                  url={`mailto:${profile.email}`} 
+                  label="Email" 
+                  isDebianTheme={isDebianTheme}
+                />
+              )}
             </>
+          ) : (
+            <div style={{ padding: '1rem', color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)' }}>
+              Contact information not available.
+            </div>
           )}
         </div>
       </div>

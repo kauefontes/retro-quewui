@@ -104,7 +104,7 @@ export const StatsView = () => {
           opacity: 0.7,
           fontFamily: isDebianTheme ? 'monospace' : 'inherit'
         }}>
-          @{githubProfile ? githubProfile.username : stats?.username || 'loading...'}
+          @{githubProfile ? githubProfile.login : stats?.username || 'loading...'}
         </span>
       </div>
 
@@ -139,7 +139,7 @@ export const StatsView = () => {
           }}>
             <LazyImage
               src={githubProfile.avatarUrl}
-              alt={`${githubProfile.displayName} avatar`}
+              alt={`${githubProfile.name} avatar`}
               style={{
                 width: '80px',
                 height: '80px',
@@ -155,12 +155,12 @@ export const StatsView = () => {
                 fontWeight: 'bold',
                 marginBottom: '0.25rem',
                 color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>{githubProfile.displayName}</h3>
+              }}>{githubProfile.name}</h3>
               <div style={{
                 fontSize: '0.875rem',
                 color: isDebianTheme ? '#FFFFFF99' : 'var(--text-color-secondary)',
                 marginBottom: '0.5rem'
-              }}>@{githubProfile.username}</div>
+              }}>@{githubProfile.login}</div>
               {githubProfile.bio && (
                 <p style={{
                   fontSize: '0.9rem',
@@ -278,7 +278,7 @@ export const StatsView = () => {
                 flexWrap: 'wrap',
                 padding: '0rem 1rem',
               }}>
-                {(githubProfile && githubProfile.topLanguages ? githubProfile.topLanguages : stats?.topLanguages || []).map(lang => (
+                {(githubProfile?.topLanguages || stats?.topLanguages || []).map(lang => (
                   <div 
                     key={lang.name}
                     style={{
@@ -307,7 +307,7 @@ export const StatsView = () => {
                       color: isDebianTheme ? '#0000B3' : '#000000',
                       fontWeight: 'bold'
                     }}>
-                      {lang.percentage}%
+                      {Math.round(lang.percentage)}%
                     </div>
                   </div>
                 ))}
@@ -342,7 +342,7 @@ export const StatsView = () => {
                 gap: '0.75rem',
                 padding: '0rem 1rem',
               }}>
-                {(githubProfile && githubProfile.recentActivity ? githubProfile.recentActivity : stats?.recentActivity || []).map((activity, index) => {
+                {(githubProfile?.recentActivity || stats?.recentActivity || []).map((activity, index) => {
                   // Determine which properties to use based on the object type
                   const isGitHubActivity = 'repoName' in activity;
                   const repoName = isGitHubActivity ? activity.repoName : activity.repo;
