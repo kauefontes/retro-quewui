@@ -53,7 +53,7 @@ describe('GitHub Profile API', () => {
     const profile = await getGithubProfile();
     
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/github/profile');
+    expect(fetch).toHaveBeenCalledWith('http://localhost:8081/github/profile');
     
     // Verify response is processed correctly
     expect(profile.username).toBe(mockProfile.username);
