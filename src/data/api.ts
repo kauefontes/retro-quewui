@@ -1,6 +1,6 @@
 import type { Project, Experience, Skill, Post, GithubStats, ContactFormData, Profile, User, GitHubProfile } from '../types/index';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 // Define generic type for object records
 type JsonObject = Record<string, unknown>;
@@ -55,7 +55,7 @@ const convertToSnakeCase = (obj: JsonObject | unknown): JsonObject | unknown => 
 // Generic fetch function with error handling
 const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE_URL}/api/v1${endpoint}`);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -72,7 +72,7 @@ const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
 
 // Authentication
 export const login = async (username: string, password: string): Promise<{ token: string; user: User }> => {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ const authenticatedRequest = async <T>(
     options.body = JSON.stringify(convertToSnakeCase(data));
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+  const response = await fetch(`${API_BASE_URL}/api/v1${endpoint}`, options);
 
   if (!response.ok) {
     if (response.status === 401) {
@@ -217,9 +217,25 @@ export const deleteExperience = async (id: string): Promise<void> => {
 
 // Skills
 export const getSkills = async (): Promise<Skill[]> => {
-  return apiCache.getOrFetch<Skill[]>('/skills', () =>
-    fetchFromApi<Skill[]>('/skills')
+  const response = await apiCache.getOrFetch<{skills: any[], count: number}>('/skills', () =>
+    fetchFromApi<{skills: any[], count: number}>('/skills')
   );
+  
+  // Transform API response to frontend format
+  const skillsByCategory: Record<string, string[]> = {};
+  
+  response.skills.forEach(skill => {
+    if (!skillsByCategory[skill.category]) {
+      skillsByCategory[skill.category] = [];
+    }
+    skillsByCategory[skill.category].push(skill.name);
+  });
+  
+  // Convert to expected format
+  return Object.entries(skillsByCategory).map(([category, items]) => ({
+    category,
+    items
+  }));
 };
 
 export const updateSkill = async (category: string, skill: Partial<Skill>): Promise<Skill> => {
@@ -264,15 +280,46 @@ export const deletePost = async (id: string): Promise<void> => {
 
 // GitHub Stats
 export const getGithubStats = async (): Promise<GithubStats> => {
-  return apiCache.getOrFetch<GithubStats>('/github-stats', () =>
-    fetchFromApi<GithubStats>('/github-stats')
-  );
+  return apiCache.getOrFetch<GithubStats>('/github/stats', async () => {
+    const rawData = await fetchFromApi<any>('/github/stats');
+    
+    // Parse top_languages if it's a JSON string
+    if (rawData.topLanguages && typeof rawData.topLanguages === 'string') {
+      try {
+        const parsedLanguages = JSON.parse(rawData.topLanguages);
+        // Extract the top_languages array from the parsed JSON
+        rawData.topLanguages = parsedLanguages.top_languages || [];
+      } catch (error) {
+        console.error('Error parsing top_languages JSON:', error);
+        rawData.topLanguages = [];
+      }
+    }
+    
+    // Parse recent_activity if it's a JSON string
+    if (rawData.recentActivity && typeof rawData.recentActivity === 'string') {
+      try {
+        const parsedActivity = JSON.parse(rawData.recentActivity);
+        // Transform the activity data to match expected format
+        rawData.recentActivity = parsedActivity.map((activity: any) => ({
+          date: new Date(activity.created_at).toISOString().split('T')[0],
+          message: `${activity.action} ${activity.repo}`,
+          repo: activity.repo
+        }));
+      } catch (error) {
+        console.error('Error parsing recent_activity JSON:', error);
+        rawData.recentActivity = [];
+      }
+    }
+    
+    return rawData as GithubStats;
+  });
 };
 
 // GitHub Profile - fetches data from the backend
 export const getGithubProfile = async (): Promise<GitHubProfile> => {
-  return apiCache.getOrFetch<GitHubProfile>('/github/profile', () =>
-    fetchFromApi<GitHubProfile>('/github/profile')
+  const username = import.meta.env.VITE_GITHUB_USERNAME || 'quewui';
+  return apiCache.getOrFetch<GitHubProfile>(`/github/profile/${username}`, () =>
+    fetchFromApi<GitHubProfile>(`/github/profile/${username}`)
   );
 };
 
@@ -289,7 +336,7 @@ export const updateProfile = async (profile: Partial<Profile>): Promise<Profile>
 
 // Contact Form
 export const submitContactForm = async (data: ContactFormData): Promise<{ message: string }> => {
-  const response = await fetch(`${API_BASE_URL}/contact`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/contact`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
