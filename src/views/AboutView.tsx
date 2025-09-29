@@ -5,6 +5,9 @@ import type { Tool, Profile, GitHubProfile } from '../types/index';
 import { TechTag } from '../components/common/TechTag';
 import { EmptyState } from '../components/common/EmptyState/EmptyState';
 import { GitHubProfileCard } from '../components/common/GitHubProfileCard';
+import { PageContainer } from '../components/layout/PageContainer';
+import { TwoColumnLayout } from '../components/layout/TwoColumnLayout';
+import { PageSection } from '../components/common/PageSection';
 
 // About View Component - Simplified for Go backend
 export const AboutView = () => {
@@ -135,12 +138,7 @@ export const AboutView = () => {
   );
 
   return (
-    <div style={{ 
-      padding: '1.5rem', 
-      maxWidth: '1200px', 
-      margin: '0 auto',
-      color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-    }}>
+    <PageContainer>
       {/* GitHub Profile Section - Top */}
       <section style={{ marginBottom: '2rem' }}>
         <GitHubProfileCard
@@ -154,75 +152,45 @@ export const AboutView = () => {
         />
       </section>
 
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', 
-        gap: '2rem'
-      }}>
-        {/* Left column - Skills */}
-        <div>
-          <section>
-            <h2 style={{ 
-              fontSize: '1.5rem',
-              fontWeight: 'bold', 
-              marginBottom: '1.5rem',
-              paddingBottom: '0.5rem',
-              borderBottom: '2px solid',
-              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem'
-            }}>
-              My Toolbox
-              {!loading && !error && (
-                <span style={{ 
-                  fontSize: '0.75rem', 
-                  backgroundColor: '#00AA00', 
-                  color: 'white',
-                  padding: '0.15rem 0.4rem',
-                  borderRadius: '0.25rem',
-                  fontWeight: 'normal'
-                }}>live</span>
-              )}
-            </h2>
-            
-            <div>
-              {loading ? (
-                <div style={{ 
-                  padding: '2rem', 
-                  textAlign: 'center', 
-                  color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-                }}>
-                  Loading toolbox...
-                </div>
-              ) : error ? (
-                <EmptyState
-                  title="Unable to load toolbox"
-                  message={error}
-                  isError={true}
+      <TwoColumnLayout
+        leftColumn={
+          <PageSection 
+            title="My Toolbox" 
+            showLiveBadge={!loading && !error}
+          >
+            {loading ? (
+              <div style={{ 
+                padding: '2rem', 
+                textAlign: 'center', 
+                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+              }}>
+                Loading toolbox...
+              </div>
+            ) : error ? (
+              <EmptyState
+                title="Unable to load toolbox"
+                message={error}
+                isError={true}
+              />
+            ) : tools.length === 0 ? (
+              <EmptyState
+                title="No tools data"
+                message="Toolbox information is not available at the moment."
+              />
+            ) : (
+              tools.map((toolCategory) => (
+                <SkillCategory 
+                  key={toolCategory.category}
+                  title={toolCategory.category} 
+                  skills={toolCategory.items} 
+                  isDebianTheme={isDebianTheme}
                 />
-              ) : tools.length === 0 ? (
-                <EmptyState
-                  title="No tools data"
-                  message="Toolbox information is not available at the moment."
-                />
-              ) : (
-                tools.map((toolCategory) => (
-                  <SkillCategory 
-                    key={toolCategory.category}
-                    title={toolCategory.category} 
-                    skills={toolCategory.items} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                ))
-              )}
-            </div>
-          </section>
-        </div>
-        
-        {/* Right column - Profile Info */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              ))
+            )}
+          </PageSection>
+        }
+        rightColumn={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Bio section */}
           {profile && (
             <section>
@@ -393,9 +361,10 @@ export const AboutView = () => {
               {profileError}
             </div>
           )}
-        </div>
-      </div>
-    </div>
+          </div>
+        }
+      />
+    </PageContainer>
   );
 };
 

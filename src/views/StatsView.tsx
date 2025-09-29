@@ -5,6 +5,8 @@ import type { GithubStats } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState/EmptyState';
 import { StatCard } from '../components/common/Card';
 import { PageSection } from '../components/common/PageSection';
+import { PageContainer } from '../components/layout/PageContainer';
+import { ContentGrid } from '../components/layout/ContentGrid';
 
 export const StatsView = () => {
   const [stats, setStats] = useState<GithubStats | null>(null);
@@ -34,7 +36,7 @@ export const StatsView = () => {
   }, []);
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <PageContainer padding="medium">
       <PageSection
         title="GitHub Stats"
         showLiveBadge={true}
@@ -69,12 +71,7 @@ export const StatsView = () => {
           gap: '1.5rem',
           marginTop: '1.5rem'
         }}>
-          <div style={{
-            display: 'flex',
-            gap: '1rem',
-            justifyContent: 'space-between',
-                padding: '0rem 1rem',
-          }}>
+          <ContentGrid columns={3} gap="medium">
             <StatCard 
               label="Repositories" 
               value={stats?.repoCount?.toString() || '0'}
@@ -87,7 +84,7 @@ export const StatsView = () => {
               label="Stars" 
               value={stats?.totalStars?.toString() || '0'}
             />
-          </div>
+          </ContentGrid>
           
           {/* Languages Section */}
           <div style={{
@@ -216,7 +213,7 @@ export const StatsView = () => {
         </div>
       )}
       </PageSection>
-    </div>
+    </PageContainer>
   );
 };
 
