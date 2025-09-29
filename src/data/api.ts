@@ -181,9 +181,10 @@ export const deleteProject = async (id: string): Promise<void> => {
 
 // Experiences
 export const getExperiences = async (): Promise<Experience[]> => {
-  return apiCache.getOrFetch<Experience[]>('/experiences', () =>
-    fetchFromApi<Experience[]>('/experiences')
-  );
+  return apiCache.getOrFetch<Experience[]>('/experiences', async () => {
+    const response = await fetchFromApi<{experiences: Experience[], count: number}>('/experiences');
+    return response.experiences || [];
+  });
 };
 
 export const getExperienceById = async (id: string): Promise<Experience> => {
