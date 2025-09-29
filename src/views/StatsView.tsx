@@ -3,6 +3,8 @@ import { useAppStore } from '../store/appStore';
 import { getGithubStats } from '../data/api';
 import type { GithubStats } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState/EmptyState';
+import { StatCard } from '../components/common/Card';
+import { PageSection } from '../components/common/PageSection';
 
 export const StatsView = () => {
   const [stats, setStats] = useState<GithubStats | null>(null);
@@ -33,39 +35,21 @@ export const StatsView = () => {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '1rem' 
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '0.5rem' 
-        }}>
-          GitHub Stats
-          {!loading && !error && stats && (
-            <span style={{ 
-              fontSize: '0.75rem', 
-              backgroundColor: '#00AA00', 
-              color: 'white',
-              padding: '0.1rem 0.3rem',
-              borderRadius: '0.25rem',
-              fontWeight: 'normal'
-            }}>live</span>
-          )}
-        </div>
-        <span style={{ 
-          fontSize: '0.8rem', 
-          opacity: 0.7,
-          fontFamily: isDebianTheme ? 'monospace' : 'inherit'
-        }}>
-          @{stats?.username || 'loading...'}
-        </span>
-      </div>
-
-      {/* Key Stats */}
+      <PageSection
+        title="GitHub Stats"
+        showLiveBadge={true}
+        liveCondition={!loading && !error && !!stats}
+        action={
+          <span style={{ 
+            fontSize: '0.8rem', 
+            opacity: 0.7,
+            fontFamily: isDebianTheme ? 'monospace' : 'inherit'
+          }}>
+            @{stats?.username || 'loading...'}
+          </span>
+        }
+      >
+        {/* Key Stats */}
       {loading || !stats ? (
         <EmptyState 
           title="Loading statistics"
@@ -94,17 +78,14 @@ export const StatsView = () => {
             <StatCard 
               label="Repositories" 
               value={stats?.repoCount?.toString() || '0'}
-              isDebianTheme={isDebianTheme}
             />
             <StatCard 
               label="Followers" 
               value={stats?.followers?.toString() || '0'}
-              isDebianTheme={isDebianTheme}
             />
             <StatCard 
               label="Stars" 
               value={stats?.totalStars?.toString() || '0'}
-              isDebianTheme={isDebianTheme}
             />
           </div>
           
@@ -234,41 +215,8 @@ export const StatsView = () => {
           </div>
         </div>
       )}
+      </PageSection>
     </div>
   );
 };
 
-interface StatCardProps {
-  label: string;
-  value: string;
-  isDebianTheme: boolean;
-}
-
-const StatCard = ({ label, value, isDebianTheme }: StatCardProps) => {
-  return (
-    <div style={{
-      backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.5)',
-      padding: '0.75rem',
-      borderRadius: isDebianTheme ? '0' : '0.25rem',
-      border: '1px solid',
-      borderColor: isDebianTheme ? '#666666' : '#103149',
-      textAlign: 'center',
-      flex: 1
-    }}>
-      <div style={{ 
-        fontSize: '1.75rem', 
-        fontWeight: 'bold',
-        color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-      }}>
-        {value}
-      </div>
-      <div style={{ 
-        fontSize: '0.875rem', 
-        opacity: 0.7,
-        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-      }}>
-        {label}
-      </div>
-    </div>
-  );
-};
