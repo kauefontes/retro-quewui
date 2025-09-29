@@ -4,7 +4,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 // Define base URL for API requests  
-const BASE_URL = process.env.VITE_API_URL || 'http://localhost:8081/api/v1';
+const BASE_URL = process.env.VITE_API_URL || 'http://localhost:8080/api/v1';
 
 // Track in-flight requests to prevent duplicates
 const inFlightRequests = new Map<string, Promise<any>>();

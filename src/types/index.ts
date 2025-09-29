@@ -36,7 +36,7 @@ export interface Experience {
   highlights: string[];
 }
 
-export interface Skill {
+export interface Tool {
   category: string;
   items: string[];
 }
@@ -54,7 +54,10 @@ export interface GithubStats {
   username: string;
   repoCount: number;
   followers: number;
-  contributions: number; // e.g., contributions in the last year
+  following: number;
+  totalStars: number;            // Total stars across all repos
+  totalForks: number;            // Total forks across all repos
+  contributions: number;         // e.g., contributions in the last year
   topLanguages: { name: string; percentage: number }[]; // Top languages by repo or commit
   recentActivity: { date: string; message: string; repo: string }[]; // Recent commits or PRs
 }

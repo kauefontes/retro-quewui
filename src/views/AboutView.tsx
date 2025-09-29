@@ -1,32 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { getSkills, getProfile } from '../data/api';
-import type { Skill, Profile } from '../types/index';
+import { getTools, getProfile, getGithubProfile } from '../data/api';
+import type { Tool, Profile, GitHubProfile } from '../types/index';
 import { TechTag } from '../components/common/TechTag';
 import { EmptyState } from '../components/common/EmptyState/EmptyState';
+import { GitHubProfileCard } from '../components/common/GitHubProfileCard';
 
 // About View Component - Simplified for Go backend
 export const AboutView = () => {
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [tools, setTools] = useState<Tool[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [githubLoading, setGithubLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [githubError, setGithubError] = useState<string | null>(null);
   const { theme } = useAppStore();
   const isDebianTheme = theme === 'light';
 
   useEffect(() => {
-    const fetchSkills = async () => {
+    const fetchTools = async () => {
       try {
         setLoading(true);
-        const skillsData = await getSkills();
-        setSkills(skillsData);
+        const toolsData = await getTools();
+        setTools(toolsData);
         setError(null);
       } catch (err) {
-        console.error('Error fetching skills:', err);
-        setError('Failed to load skills data. Please try again later.');
-        setSkills([]);
+        console.error('Error fetching tools:', err);
+        setError('Failed to load toolbox data. Please try again later.');
+        setTools([]);
       } finally {
         setLoading(false);
       }
@@ -46,8 +50,23 @@ export const AboutView = () => {
       }
     };
 
-    fetchSkills();
+    const fetchGithubProfile = async () => {
+      try {
+        setGithubLoading(true);
+        const githubData = await getGithubProfile();
+        setGithubProfile(githubData);
+        setGithubError(null);
+      } catch (err) {
+        console.error('Error fetching GitHub profile:', err);
+        setGithubError('Failed to load GitHub profile data.');
+      } finally {
+        setGithubLoading(false);
+      }
+    };
+
+    fetchTools();
     fetchProfile();
+    fetchGithubProfile();
   }, []);
 
   const SkillCategory = ({ title, skills, isDebianTheme }: { 
@@ -122,6 +141,19 @@ export const AboutView = () => {
       margin: '0 auto',
       color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
     }}>
+      {/* GitHub Profile Section - Top */}
+      <section style={{ marginBottom: '2rem' }}>
+        <GitHubProfileCard
+          githubProfile={githubProfile}
+          loading={githubLoading}
+          error={githubError}
+          isDebianTheme={isDebianTheme}
+          variant="compact"
+          showTitle={false}
+          showStats={true}
+        />
+      </section>
+
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', 
@@ -142,7 +174,7 @@ export const AboutView = () => {
               alignItems: 'center',
               gap: '0.75rem'
             }}>
-              Skills & Technologies
+              My Toolbox
               {!loading && !error && (
                 <span style={{ 
                   fontSize: '0.75rem', 
@@ -162,25 +194,25 @@ export const AboutView = () => {
                   textAlign: 'center', 
                   color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
                 }}>
-                  Loading skills...
+                  Loading toolbox...
                 </div>
               ) : error ? (
                 <EmptyState
-                  title="Unable to load skills"
+                  title="Unable to load toolbox"
                   message={error}
                   isError={true}
                 />
-              ) : skills.length === 0 ? (
+              ) : tools.length === 0 ? (
                 <EmptyState
-                  title="No skills data"
-                  message="Skills information is not available at the moment."
+                  title="No tools data"
+                  message="Toolbox information is not available at the moment."
                 />
               ) : (
-                skills.map((skillCategory) => (
+                tools.map((toolCategory) => (
                   <SkillCategory 
-                    key={skillCategory.category}
-                    title={skillCategory.category} 
-                    skills={skillCategory.items} 
+                    key={toolCategory.category}
+                    title={toolCategory.category} 
+                    skills={toolCategory.items} 
                     isDebianTheme={isDebianTheme}
                   />
                 ))
@@ -238,19 +270,6 @@ export const AboutView = () => {
                 }}>
                   {profile.bio}
                 </p>
-                {profile.availableForHire && (
-                  <div style={{
-                    marginTop: '1rem',
-                    padding: '0.5rem',
-                    backgroundColor: '#00AA00',
-                    color: 'white',
-                    borderRadius: '0.25rem',
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                    ✅ Available for hire
-                  </div>
-                )}
               </div>
             </section>
           )}

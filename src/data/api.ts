@@ -1,4 +1,4 @@
-import type { Project, Experience, Skill, Post, GithubStats, ContactFormData, Profile, User, GitHubProfile } from '../types/index';
+import type { Project, Experience, Tool, Post, GithubStats, ContactFormData, Profile, User, GitHubProfile } from '../types/index';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
@@ -215,8 +215,8 @@ export const deleteExperience = async (id: string): Promise<void> => {
   return result;
 };
 
-// Skills
-export const getSkills = async (): Promise<Skill[]> => {
+// Tools
+export const getTools = async (): Promise<Tool[]> => {
   const response = await apiCache.getOrFetch<{skills: any[], count: number}>('/skills', () =>
     fetchFromApi<{skills: any[], count: number}>('/skills')
   );
@@ -238,8 +238,8 @@ export const getSkills = async (): Promise<Skill[]> => {
   }));
 };
 
-export const updateSkill = async (category: string, skill: Partial<Skill>): Promise<Skill> => {
-  return authenticatedRequest<Skill>(`/skills/${category}`, 'PUT', skill as unknown as JsonObject);
+export const updateTool = async (category: string, tool: Partial<Tool>): Promise<Tool> => {
+  return authenticatedRequest<Tool>(`/skills/${category}`, 'PUT', tool as unknown as JsonObject);
 };
 
 // Blog Posts
@@ -299,16 +299,23 @@ export const getGithubStats = async (): Promise<GithubStats> => {
     if (rawData.recentActivity && typeof rawData.recentActivity === 'string') {
       try {
         const parsedActivity = JSON.parse(rawData.recentActivity);
-        // Transform the activity data to match expected format
-        rawData.recentActivity = parsedActivity.map((activity: any) => ({
-          date: new Date(activity.created_at).toISOString().split('T')[0],
-          message: `${activity.action} ${activity.repo}`,
-          repo: activity.repo
-        }));
+        // Handle null case or ensure it's an array
+        if (parsedActivity === null || !Array.isArray(parsedActivity)) {
+          rawData.recentActivity = [];
+        } else {
+          // Transform the activity data to match expected format
+          rawData.recentActivity = parsedActivity.map((activity: any) => ({
+            date: new Date(activity.created_at).toISOString().split('T')[0],
+            message: `${activity.action} ${activity.repo}`,
+            repo: activity.repo
+          }));
+        }
       } catch (error) {
         console.error('Error parsing recent_activity JSON:', error);
         rawData.recentActivity = [];
       }
+    } else if (!rawData.recentActivity) {
+      rawData.recentActivity = [];
     }
     
     return rawData as GithubStats;
@@ -332,6 +339,22 @@ export const getProfile = async (): Promise<Profile> => {
 
 export const updateProfile = async (profile: Partial<Profile>): Promise<Profile> => {
   return authenticatedRequest<Profile>('/profile', 'PUT', profile as unknown as JsonObject);
+};
+
+// CV
+export const getCV = async (): Promise<string> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/cv`);
+    
+    if (!response.ok) {
+      throw new Error(`CV API error: ${response.status}`);
+    }
+    
+    return await response.text();
+  } catch (error) {
+    console.error('Error fetching CV:', error);
+    throw error;
+  }
 };
 
 // Contact Form
