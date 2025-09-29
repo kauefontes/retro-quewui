@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../../store/appStore';
 import { LiveBadge } from '../LiveBadge';
+import { usePageSectionStyles } from '../../../styles/components/PageSection.styles';
 
 interface PageSectionProps {
   /** Section title */
@@ -39,78 +40,47 @@ export const PageSection: React.FC<PageSectionProps> = ({
   action,
 }) => {
   const { theme } = useAppStore();
-  const isDebianTheme = theme === 'light';
+  const styles = usePageSectionStyles(theme);
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          fontSize: '1.125rem',
-          marginBottom: '1rem',
-          paddingBottom: '0.25rem',
-          borderBottomWidth: '1px',
-        };
-      case 'large':
-        return {
-          fontSize: '1.75rem',
-          marginBottom: '2rem',
-          paddingBottom: '0.75rem',
-          borderBottomWidth: '3px',
-        };
-      default: // medium
-        return {
-          fontSize: '1.5rem',
-          marginBottom: '1.5rem',
-          paddingBottom: '0.5rem',
-          borderBottomWidth: '2px',
-        };
-    }
+  // Combine styles based on size
+  const titleStyle = {
+    ...styles.titleBase,
+    ...styles[`title${size.charAt(0).toUpperCase() + size.slice(1)}` as keyof typeof styles],
   };
 
-  const sizeStyles = getSizeStyles();
+  const headerStyle = {
+    ...styles.header,
+    ...styles[`headerMargin${size.charAt(0).toUpperCase() + size.slice(1)}` as keyof typeof styles],
+  };
 
   return (
-    <section className={`page-section ${className}`} style={style}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'flex-end',
-        marginBottom: sizeStyles.marginBottom 
-      }}>
-        <div>
-          <h2 style={{ 
-            ...sizeStyles,
-            fontWeight: 'bold', 
-            borderBottom: 'solid',
-            borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-            color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            margin: 0,
-          }}>
+    <section 
+      className={className} 
+      style={{
+        ...styles.section,
+        ...style,
+      }}
+    >
+      <div style={headerStyle}>
+        <div style={styles.titleArea}>
+          <h2 style={titleStyle}>
             {title}
             {showLiveBadge && liveCondition && <LiveBadge />}
           </h2>
           {subtitle && (
-            <p style={{
-              margin: '0.5rem 0 0 0',
-              fontSize: '0.9rem',
-              opacity: 0.7,
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-            }}>
+            <p style={styles.subtitle}>
               {subtitle}
             </p>
           )}
         </div>
         {action && (
-          <div style={{ marginLeft: '1rem' }}>
+          <div style={styles.action}>
             {action}
           </div>
         )}
       </div>
       
-      <div className="page-section-content">
+      <div style={styles.content}>
         {children}
       </div>
     </section>

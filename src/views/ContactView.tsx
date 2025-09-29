@@ -3,6 +3,8 @@ import { useAppStore } from '../store/appStore';
 import { submitContactForm, getProfile } from '../data/api';
 import type { ContactFormData, Profile } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState';
+import { InputField, TextAreaField } from '../components/common/Input';
+import { Button } from '../components/common/Button';
 import './ContactView.css';
 
 export const ContactView = () => {
@@ -138,64 +140,66 @@ export const ContactView = () => {
             isError={true}
           />
         ) : (
-          <form onSubmit={handleSubmit} className={`contact-form theme-${theme}`}>
-            <div className="contact-form-field">
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          <form onSubmit={handleSubmit} style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '1rem',
+            padding: '0rem 0.5rem'
+          }}>
+            <InputField
+              label="Name"
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
             
-            <div className="contact-form-field">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <InputField
+              label="Email"
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
             
-            <div className="contact-form-field">
-              <label htmlFor="message">
-                Message 
-                <span style={{ 
-                  fontSize: '0.75rem', 
-                  marginLeft: '0.5rem',
-                  opacity: 0.7,
-                  color: formData.message.length < 10 ? 'red' : 'inherit'
-                }}>
-                  ({formData.message.length}/5000 characters, min 10)
-                </span>
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={4}
-                style={{
-                  resize: 'vertical',
-                  minHeight: '100px'
-                }}
-              />
-            </div>
+            <TextAreaField
+              label={
+                <>
+                  Message{' '}
+                  <span style={{ 
+                    fontSize: '0.75rem', 
+                    marginLeft: '0.5rem',
+                    opacity: 0.7,
+                    color: formData.message.length < 10 ? 'red' : 'inherit'
+                  }}>
+                    ({formData.message.length}/5000 characters, min 10)
+                  </span>
+                </>
+              }
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              rows={4}
+              style={{
+                resize: 'vertical',
+                minHeight: '100px'
+              }}
+            />
             
-            <button 
+            <Button 
               type="submit"
-              className="form-button"
+              variant="primary"
               disabled={submitting}
+              style={{ alignSelf: 'flex-start' }}
             >
               {submitting ? 'Sending...' : 'Send Message'}
-            </button>
+            </Button>
           </form>
         )}
       </div>

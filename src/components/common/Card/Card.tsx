@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '../../../store/appStore';
+import { useCardStyles } from '../../../styles/components/Card.styles';
 
 interface CardProps {
   /** Card content */
@@ -36,73 +37,27 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const { theme } = useAppStore();
-  const isDebianTheme = theme === 'light';
+  const styles = useCardStyles(theme);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Padding sizes
-  const paddingMap = {
-    none: '0',
-    small: '0.5rem',
-    medium: '0.75rem',
-    large: '1rem'
-  };
-
-  // Variant styles
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.8)',
-          borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-        };
-      case 'secondary':
-        return {
-          backgroundColor: isDebianTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,255,0,0.1)',
-          borderColor: isDebianTheme ? '#666666' : '#103149',
-        };
-      case 'transparent':
-        return {
-          backgroundColor: 'transparent',
-          borderColor: isDebianTheme ? '#666666' : '#103149',
-        };
-      default:
-        return {
-          backgroundColor: isDebianTheme ? '#0000B3' : 'rgba(16, 49, 73, 0.5)',
-          borderColor: isDebianTheme ? '#666666' : '#103149',
-        };
-    }
-  };
-
-  const cardStyles: React.CSSProperties = {
-    padding: paddingMap[padding],
-    borderRadius: isDebianTheme ? '0' : '0.25rem',
-    border: border ? '1px solid' : 'none',
-    color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-    cursor: clickable || onClick ? 'pointer' : 'default',
-    transition: 'all 0.2s ease',
-    ...getVariantStyles(),
+  // Combine styles based on props and state
+  const cardStyle = {
+    ...styles.base,
+    ...(variant !== 'default' ? styles[variant as keyof typeof styles] : {}),
+    ...styles[`padding${padding.charAt(0).toUpperCase() + padding.slice(1)}` as keyof typeof styles],
+    ...(border ? {} : { border: 'none' }),
+    ...(clickable || onClick ? styles.clickable : {}),
+    ...(isHovered && (clickable || onClick) ? styles.hover : {}),
     ...style,
-  };
-
-  // Hover effects for clickable cards
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (clickable || onClick) {
-      e.currentTarget.style.opacity = '0.8';
-    }
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (clickable || onClick) {
-      e.currentTarget.style.opacity = '1';
-    }
   };
 
   return (
     <div
-      className={`card ${className}`}
-      style={cardStyles}
+      className={className}
+      style={cardStyle}
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
       {children}

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../../../hooks/useTheme';
-import './TechTag.css';
+import { useTechTagStyles } from '../../../styles/components/TechTag.styles';
 
 interface TechTagProps {
   /** The text to display in the tag */
@@ -30,15 +30,9 @@ export const TechTag: React.FC<TechTagProps> = ({
   size = 'small'
 }) => {
   const { theme } = useTheme();
-  
-  const tagClasses = [
-    'tech-tag',
-    `tech-tag-${size}`,
-    isSelected ? 'selected' : '',
-    `theme-${theme}`,
-    onClick ? 'clickable' : '',
-    className
-  ].filter(Boolean).join(' ');
+  const styles = useTechTagStyles(theme);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDeleteHovered, setIsDeleteHovered] = useState(false);
 
   const handleClick = () => {
     if (onClick) {
@@ -53,10 +47,27 @@ export const TechTag: React.FC<TechTagProps> = ({
     }
   };
 
+  // Combine styles based on state
+  const tagStyle = {
+    ...styles.base,
+    ...styles[size],
+    ...(isSelected ? styles.selected : styles.default),
+    ...(onClick ? styles.clickable : {}),
+    ...(isHovered && onClick ? styles.hover : {}),
+  };
+
+  const deleteButtonStyle = {
+    ...styles.deleteButton,
+    ...(isDeleteHovered ? styles.deleteButtonHover : {}),
+  };
+
   return (
     <span 
-      className={tagClasses}
+      style={tagStyle}
+      className={className}
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
@@ -65,8 +76,10 @@ export const TechTag: React.FC<TechTagProps> = ({
       {onDelete && (
         <button
           type="button"
+          style={deleteButtonStyle}
           onClick={handleDelete}
-          className="tech-tag-delete-btn"
+          onMouseEnter={() => setIsDeleteHovered(true)}
+          onMouseLeave={() => setIsDeleteHovered(false)}
           aria-label={`Remove ${label}`}
         >
           ×

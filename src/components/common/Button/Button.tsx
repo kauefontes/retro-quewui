@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../../../hooks/useTheme';
-import './Button.css';
+import { useButtonStyles } from '../../../styles/components/Button.styles';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button variant/style */
@@ -21,21 +21,29 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   className = '',
   children,
+  disabled,
   ...props
 }) => {
   const { theme } = useTheme();
-  
-  const buttonClasses = [
-    'button',
-    `button-${variant}`,
-    `button-${size}`,
-    `theme-${theme}`,
-    className
-  ].filter(Boolean).join(' ');
+  const styles = useButtonStyles(theme);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Combine styles based on variant, size, and state
+  const buttonStyle = {
+    ...styles.base,
+    ...styles[size],
+    ...styles[variant],
+    ...(isHovered && !disabled ? styles[`${variant}Hover` as keyof typeof styles] : {}),
+    ...(disabled ? styles.disabled : {}),
+  };
 
   return (
     <button 
-      className={buttonClasses}
+      style={buttonStyle}
+      className={className}
+      disabled={disabled}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
       {children}

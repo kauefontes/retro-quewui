@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppStore } from '../../../store/appStore';
+import { useTwoColumnLayoutStyles, generateGridTemplate } from '../../../styles/components/TwoColumnLayout.styles';
 
 interface TwoColumnLayoutProps {
   /** Left column content */
@@ -35,39 +36,22 @@ export const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   stackOnMobile = true,
 }) => {
   const { theme } = useAppStore();
+  const styles = useTwoColumnLayoutStyles(theme);
 
-  const getGap = () => {
-    switch (gap) {
-      case 'small':
-        return '1rem';
-      case 'medium':
-        return '2rem';
-      case 'large':
-        return '3rem';
-      default:
-        return '2rem';
-    }
-  };
-
-  const getGridTemplate = () => {
-    return `minmax(0, ${leftRatio}fr) minmax(0, ${rightRatio}fr)`;
+  // Combine styles based on props
+  const containerStyle = {
+    ...styles.container,
+    ...styles[`gap${gap.charAt(0).toUpperCase() + gap.slice(1)}` as keyof typeof styles],
+    gridTemplateColumns: generateGridTemplate(leftRatio, rightRatio),
+    ...style,
   };
 
   return (
-    <div
-      className={`two-column-layout theme-${theme} ${className}`}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: getGridTemplate(),
-        gap: getGap(),
-        width: '100%',
-        ...style,
-      }}
-    >
-      <div className="left-column">
+    <div className={className} style={containerStyle}>
+      <div style={styles.leftColumn}>
         {leftColumn}
       </div>
-      <div className="right-column">
+      <div style={styles.rightColumn}>
         {rightColumn}
       </div>
     </div>
