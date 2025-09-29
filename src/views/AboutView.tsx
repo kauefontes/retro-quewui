@@ -72,73 +72,10 @@ export const AboutView = () => {
     fetchGithubProfile();
   }, []);
 
-  const SkillCategory = ({ title, skills, isDebianTheme }: { 
-    title: string; 
-    skills: string[]; 
-    isDebianTheme: boolean;
-  }) => (
-    <div style={{ marginBottom: '1.5rem' }}>
-      <h4 style={{ 
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        marginBottom: '0.75rem',
-        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-      }}>
-        {title}
-      </h4>
-      <div style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '0.5rem'
-      }}>
-        {skills.map((skill, index) => (
-          <TechTag 
-            key={index} 
-            label={skill} 
-          />
-        ))}
-      </div>
-    </div>
-  );
 
-  const ProfileLink = ({ label, url, isDebianTheme }: { 
-    label: string; 
-    url: string; 
-    isDebianTheme: boolean;
-  }) => (
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '0.5rem',
-      padding: '0.5rem',
-      borderRadius: '0.25rem',
-      backgroundColor: isDebianTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,255,0,0.1)'
-    }}>
-      <span style={{ 
-        color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-        fontWeight: 'bold',
-        minWidth: '80px'
-      }}>
-        {label}:
-      </span>
-      <a 
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ 
-          color: isDebianTheme ? '#00FF00' : 'var(--accent-color)',
-          textDecoration: 'none'
-        }}
-        onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.textDecoration = 'underline'}
-        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.textDecoration = 'none'}
-      >
-        {url}
-      </a>
-    </div>
-  );
 
   return (
-    <PageContainer>
+    <PageContainer padding="small">
       {/* GitHub Profile Section - Top */}
       <section style={{ marginBottom: '2rem' }}>
         <GitHubProfileCard
@@ -178,14 +115,47 @@ export const AboutView = () => {
                 message="Toolbox information is not available at the moment."
               />
             ) : (
-              tools.map((toolCategory) => (
-                <SkillCategory 
-                  key={toolCategory.category}
-                  title={toolCategory.category} 
-                  skills={toolCategory.items} 
-                  isDebianTheme={isDebianTheme}
-                />
-              ))
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '0.75rem',
+                marginTop: '1rem'
+              }}>
+                {tools.map((toolCategory) => (
+                  <div
+                    key={toolCategory.category}
+                    style={{
+                      padding: '0.75rem',
+                      backgroundColor: isDebianTheme ? 'rgba(255,255,255,0.05)' : 'rgba(0,255,0,0.05)',
+                      borderRadius: '0.5rem',
+                      borderLeft: '3px solid',
+                      borderLeftColor: isDebianTheme ? '#00FF00' : 'var(--accent-color)'
+                    }}
+                  >
+                    <h4 style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                      marginTop: '0',
+                      color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
+                    }}>
+                      {toolCategory.category}
+                    </h4>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem'
+                    }}>
+                      {toolCategory.items.map((skill) => (
+                        <TechTag
+                          key={skill}
+                          label={skill}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </PageSection>
         }
@@ -206,7 +176,7 @@ export const AboutView = () => {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                About {profile.name}
+                About Me
                 <span style={{ 
                   fontSize: '0.75rem', 
                   backgroundColor: '#00AA00', 
@@ -242,103 +212,9 @@ export const AboutView = () => {
             </section>
           )}
 
-          {/* Contact & Links section */}
-          {profile && (
-            <section>
-              <h3 style={{ 
-                fontSize: '1.125rem',
-                fontWeight: 'bold', 
-                marginBottom: '1rem',
-                paddingBottom: '0.25rem',
-                borderBottom: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>
-                Contact & Links
-              </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {profile.email && (
-                  <ProfileLink 
-                    label="Email" 
-                    url={`mailto:${profile.email}`} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.phone && (
-                  <ProfileLink 
-                    label="Phone" 
-                    url={`tel:${profile.phone}`} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.linkedinUrl && (
-                  <ProfileLink 
-                    label="LinkedIn" 
-                    url={profile.linkedinUrl} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.githubUrl && (
-                  <ProfileLink 
-                    label="GitHub" 
-                    url={profile.githubUrl} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.twitterUrl && (
-                  <ProfileLink 
-                    label="Twitter" 
-                    url={profile.twitterUrl} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.websiteUrl && (
-                  <ProfileLink 
-                    label="Website" 
-                    url={profile.websiteUrl} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-                {profile.resumeUrl && (
-                  <ProfileLink 
-                    label="Resume" 
-                    url={profile.resumeUrl} 
-                    isDebianTheme={isDebianTheme}
-                  />
-                )}
-              </div>
-            </section>
-          )}
 
-          {/* Location section */}
-          {profile?.location && (
-            <section>
-              <h3 style={{ 
-                fontSize: '1.125rem',
-                fontWeight: 'bold', 
-                marginBottom: '1rem',
-                paddingBottom: '0.25rem',
-                borderBottom: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-              }}>
-                Location
-              </h3>
-              
-              <div style={{ 
-                padding: '0.75rem',
-                backgroundColor: isDebianTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,255,0,0.1)',
-                borderRadius: '0.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <span style={{ fontSize: '1.2rem' }}>📍</span>
-                <span>{profile.location}</span>
-              </div>
-            </section>
-          )}
+
+
 
           {/* Profile loading/error states */}
           {profileLoading && (

@@ -49,7 +49,7 @@ export const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
 
   const avatarSize = variant === 'compact' ? '100px' : '80px';
   const titleFontSize = variant === 'compact' ? '1.5rem' : '1.25rem';
-  const padding = variant === 'compact' ? '1.5rem' : '1rem';
+  const padding = variant === 'compact' ? '1rem' : '1rem';
 
   return (
     <div>
@@ -101,7 +101,7 @@ export const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       }}>
         <div style={{
           display: 'flex',
-          gap: variant === 'compact' ? '1.5rem' : '1rem',
+          gap: variant === 'compact' ? '1rem' : '1rem',
           alignItems: 'flex-start'
         }}>
           <LazyImage
@@ -116,11 +116,13 @@ export const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             }}
             placeholderColor={isDebianTheme ? '#00008B' : '#1e3a5e'}
           />
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, marginTop: '-0.1rem' }}>
             <h3 style={{
               fontSize: titleFontSize,
               fontWeight: 'bold',
-              marginBottom: '0.5rem',
+              marginBottom: '0.25rem',
+              marginTop: '0',
+              lineHeight: '1.2',
               color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
             }}>{githubProfile.name}</h3>
             
