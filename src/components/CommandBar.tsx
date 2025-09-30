@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { useAuth } from '../contexts/AuthUtils';
-import './CommandBar.css';
+import { useTheme } from '../hooks/useTheme';
+import { useCommandBarStyles } from '../styles/components/CommandBar.styles';
 
 export const CommandBar: React.FC = () => {
-  const { theme, isCommandMode } = useAppStore();
+  const { isCommandMode } = useAppStore();
   const { isAuthenticated } = useAuth();
-  const isDebianTheme = theme === 'light';
+  const { theme: currentTheme } = useTheme();
+  const styles = useCommandBarStyles(currentTheme);
   const [visible, setVisible] = useState(true);
   
   // Controls the visibility of the command bar
@@ -53,28 +55,34 @@ export const CommandBar: React.FC = () => {
     }
   };
 
-  // Display panel only if command mode is active and not in login process
-  if (!visible || !isCommandMode) return null;
-
   return (
-    <div className={`command-bar ${isDebianTheme ? 'theme-light' : 'theme-dark'}`}>
-      <div className="command-bar-content">
-        <div className="command-mode-indicator">
+    <div 
+      style={{
+        ...styles.commandBar,
+        display: visible && isCommandMode ? 'block' : 'none'
+      }}
+    >
+      <div style={styles.content}>
+        <div style={styles.modeIndicator}>
           COMMAND MODE: ON
-          {isAuthenticated && <span className="admin-indicator"> • ADMIN</span>}
+          {isAuthenticated && <span style={styles.adminIndicator}> • ADMIN</span>}
         </div>
-        <div className="command-items-container">
+        <div style={styles.itemsContainer}>
           {commands.map((cmd, index) => (
             <div 
               key={index} 
-              className="command-item" 
+              style={styles.item}
               onClick={() => handleCommandClick(cmd)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && handleCommandClick(cmd)}
+              onMouseEnter={(e) => Object.assign(e.currentTarget.style, styles.itemHover)}
+              onMouseLeave={(e) => Object.assign(e.currentTarget.style, styles.item)}
+              onFocus={(e) => Object.assign(e.currentTarget.style, styles.itemFocus)}
+              onBlur={(e) => Object.assign(e.currentTarget.style, styles.item)}
             >
-              <span className="command-key">{cmd.key}</span>
-              <span className="command-desc">{cmd.description}</span>
+              <span style={styles.key}>{cmd.key}</span>
+              <span style={styles.description}>{cmd.description}</span>
             </div>
           ))}
         </div>

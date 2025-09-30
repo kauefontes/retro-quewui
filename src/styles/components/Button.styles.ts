@@ -18,7 +18,9 @@ export const buttonStyles = createStyles((theme) => {
       justifyContent: 'center',
       fontFamily: "'Share Tech Mono', 'JetBrains Mono', monospace",
       fontWeight: typography.fontWeights.medium,
-      border: 'none',
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderColor: 'transparent',
       cursor: 'pointer',
       transition: createTransition('all'),
       textDecoration: 'none',
@@ -57,14 +59,14 @@ export const buttonStyles = createStyles((theme) => {
     secondary: {
       backgroundColor: 'transparent',
       color: colors.text,
-      border: `1px solid ${colors.border}`,
+      borderColor: colors.border,
       borderRadius: theme === 'dark' ? createBorderRadius('md') : createBorderRadius('none'),
     } as CSSProperties,
 
     terminal: {
       backgroundColor: 'transparent',
       color: colors.accent,
-      border: `1px solid ${colors.accent}`,
+      borderColor: colors.accent,
       borderRadius: theme === 'dark' ? createBorderRadius('md') : createBorderRadius('none'),
     } as CSSProperties,
 

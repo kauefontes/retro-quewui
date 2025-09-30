@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import type { TabName } from '../types';
 import { useAuth } from '../contexts/AuthUtils';
+import { useTheme } from '../hooks/useTheme';
+import { useMainContentStyles } from '../styles/components/MainContent.styles';
 
 // Import views
 import { HomeView } from '../views/HomeView';
@@ -13,9 +15,6 @@ import { ContactView } from '../views/ContactView';
 import { StatsView } from '../views/StatsView';
 import { MessagesView } from '../views/MessagesView';
 
-// Import CSS
-import './MainContent.css';
-
 export const MainContent: React.FC = () => {
   const { 
     currentTab, 
@@ -25,6 +24,8 @@ export const MainContent: React.FC = () => {
   } = useAppStore();
   
   const { isAuthenticated } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMainContentStyles(theme);
   
   // Global keyboard event handler for vim-like navigation
   useEffect(() => {
@@ -125,7 +126,7 @@ export const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="main-content-container">
+    <div style={styles.mainContentContainer}>
       {renderContent()}
     </div>
   );

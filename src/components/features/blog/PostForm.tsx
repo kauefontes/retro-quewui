@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { type Post, updatePost, createPost } from './utils';
 import { TechTag } from '../../../components/common/TechTag';
+import { InputField, TextAreaField, InputGroup } from '../../common/Input';
+import { Button } from '../../common/Button';
 
 interface PostFormProps {
   post?: Post;
@@ -113,73 +115,46 @@ export const PostForm: React.FC<PostFormProps> = ({
     }}>
       <h3>{isEditing ? 'Edit Post' : 'Create New Post'}</h3>
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <label htmlFor="title">Title</label>
-        <input
-          id="title"
-          name="title"
-          value={formData.title || ''}
-          onChange={handleInputChange}
-          placeholder="Post title"
-          style={{ 
-            padding: '0.5rem', 
-            borderRadius: '4px', 
-            border: errors.title ? '1px solid red' : '1px solid #ccc',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)'
-          }}
-        />
-        {errors.title && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.title}</span>}
-      </div>
+      <InputField
+        label="Title"
+        id="title"
+        name="title"
+        value={formData.title || ''}
+        onChange={handleInputChange}
+        placeholder="Post title"
+        error={!!errors.title}
+        errorMessage={errors.title}
+      />
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <label htmlFor="date">Publication Date</label>
-        <input
-          id="date"
-          name="date"
-          type="date"
-          value={formData.date || ''}
-          onChange={handleInputChange}
-          style={{ 
-            padding: '0.5rem', 
-            borderRadius: '4px', 
-            border: '1px solid #ccc',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            width: 'fit-content'
-          }}
-        />
-      </div>
+      <InputField
+        label="Publication Date"
+        id="date"
+        name="date"
+        type="date"
+        value={formData.date || ''}
+        onChange={handleInputChange}
+        style={{ width: 'fit-content' }}
+      />
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         <label>Tags</label>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <InputGroup>
           <input
             value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setTagInput(e.target.value)}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
             placeholder="Add a tag..."
-            style={{ 
-              padding: '0.5rem', 
-              borderRadius: '4px', 
-              border: '1px solid #ccc',
-              backgroundColor: 'rgba(0, 0, 0, 0.1)',
-              flex: 1
-            }}
+            style={{ flex: 1 }}
           />
-          <button 
-            type="button" 
+          <Button
+            type="button"
             onClick={handleAddTag}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            variant="primary"
+            size="small"
           >
             Add
-          </button>
-        </div>
+          </Button>
+        </InputGroup>
         
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
           {(formData.tags || []).map((tag, index) => (
@@ -193,76 +168,46 @@ export const PostForm: React.FC<PostFormProps> = ({
         </div>
       </div>
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <label htmlFor="excerpt">Excerpt</label>
-        <textarea
-          id="excerpt"
-          name="excerpt"
-          value={formData.excerpt || ''}
-          onChange={handleInputChange}
-          placeholder="Short excerpt or summary (will be displayed in the list)"
-          rows={3}
-          style={{ 
-            padding: '0.5rem', 
-            borderRadius: '4px', 
-            border: errors.excerpt ? '1px solid red' : '1px solid #ccc',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            fontFamily: 'inherit'
-          }}
-        />
-        {errors.excerpt && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.excerpt}</span>}
-      </div>
+      <TextAreaField
+        label="Excerpt"
+        id="excerpt"
+        name="excerpt"
+        value={formData.excerpt || ''}
+        onChange={handleInputChange}
+        placeholder="Short excerpt or summary (will be displayed in the list)"
+        rows={3}
+        error={!!errors.excerpt}
+        errorMessage={errors.excerpt}
+      />
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <label htmlFor="content">Content (Markdown supported)</label>
-        <textarea
-          id="content"
-          name="content"
-          value={formData.content || ''}
-          onChange={handleInputChange}
-          placeholder="Write your post content here... Markdown is supported."
-          rows={15}
-          style={{ 
-            padding: '0.5rem', 
-            borderRadius: '4px', 
-            border: errors.content ? '1px solid red' : '1px solid #ccc',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            fontFamily: 'monospace'
-          }}
-        />
-        {errors.content && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.content}</span>}
-      </div>
+      <TextAreaField
+        label="Content (Markdown supported)"
+        id="content"
+        name="content"
+        value={formData.content || ''}
+        onChange={handleInputChange}
+        placeholder="Write your post content here... Markdown is supported."
+        rows={15}
+        style={{ fontFamily: 'monospace' }}
+        error={!!errors.content}
+        errorMessage={errors.content}
+      />
       
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-        <button 
-          type="button" 
+        <Button
+          variant="secondary"
+          type="button"
           onClick={onCancel}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: 'transparent',
-            color: 'var(--text-color)',
-            border: '1px solid var(--accent-color)',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
         >
           Cancel
-        </button>
-        <button 
-          type="submit" 
+        </Button>
+        <Button
+          variant="primary"
+          type="submit"
           disabled={isSaving}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: 'var(--accent-color)',
-            color: 'black',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isSaving ? 'wait' : 'pointer',
-            opacity: isSaving ? 0.7 : 1
-          }}
         >
           {isSaving ? 'Saving...' : (isEditing ? 'Update Post' : 'Create Post')}
-        </button>
+        </Button>
       </div>
     </form>
   );

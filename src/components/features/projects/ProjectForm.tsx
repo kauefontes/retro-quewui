@@ -3,6 +3,8 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { type Project, updateProject, createProject, validateProject } from './utils';
 import { useAppStore } from '../../../store/appStore';
 import { TechTag } from '../../common/TechTag';
+import { InputField, TextAreaField, InputGroup, Input } from '../../common/Input';
+import { Button } from '../../common/Button';
 
 interface ProjectFormProps {
   project?: Project;
@@ -158,222 +160,77 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       
       <form onSubmit={handleSubmit}>
         {/* Title */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="title" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            Title *
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            value={formData.title || ''}
-            onChange={handleInputChange}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.title 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.title && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.title}
-            </div>
-          )}
-        </div>
+        <InputField
+          label="Title *"
+          id="title"
+          name="title"
+          value={formData.title || ''}
+          onChange={handleInputChange}
+          error={!!errors.title}
+          errorMessage={errors.title}
+        />
         
         {/* Year */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="year" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            Year *
-          </label>
-          <input
-            id="year"
-            name="year"
-            type="number"
-            min={2000}
-            max={new Date().getFullYear()}
-            value={formData.year || ''}
-            onChange={handleInputChange}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.year 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.year && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.year}
-            </div>
-          )}
-        </div>
+        <InputField
+          label="Year *"
+          id="year"
+          name="year"
+          type="number"
+          min={2000}
+          max={new Date().getFullYear()}
+          value={formData.year || ''}
+          onChange={handleInputChange}
+          error={!!errors.year}
+          errorMessage={errors.year}
+        />
         
         {/* Description */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="description" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            Description *
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description || ''}
-            onChange={handleInputChange}
-            rows={4}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.description 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.description && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.description}
-            </div>
-          )}
-        </div>
+        <TextAreaField
+          label="Description *"
+          id="description"
+          name="description"
+          value={formData.description || ''}
+          onChange={handleInputChange}
+          rows={4}
+          error={!!errors.description}
+          errorMessage={errors.description}
+        />
         
         {/* GitHub URL */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="githubUrl" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            GitHub URL
-          </label>
-          <input
-            id="githubUrl"
-            name="githubUrl"
-            type="url"
-            value={formData.githubUrl || ''}
-            onChange={handleInputChange}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.githubUrl 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.githubUrl && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.githubUrl}
-            </div>
-          )}
-        </div>
+        <InputField
+          label="GitHub URL"
+          id="githubUrl"
+          name="githubUrl"
+          type="url"
+          value={formData.githubUrl || ''}
+          onChange={handleInputChange}
+          error={!!errors.githubUrl}
+          errorMessage={errors.githubUrl}
+        />
         
         {/* Live URL */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="liveUrl" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            Live URL
-          </label>
-          <input
-            id="liveUrl"
-            name="liveUrl"
-            type="url"
-            value={formData.liveUrl || ''}
-            onChange={handleInputChange}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.liveUrl 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.liveUrl && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.liveUrl}
-            </div>
-          )}
-        </div>
+        <InputField
+          label="Live URL"
+          id="liveUrl"
+          name="liveUrl"
+          type="url"
+          value={formData.liveUrl || ''}
+          onChange={handleInputChange}
+          error={!!errors.liveUrl}
+          errorMessage={errors.liveUrl}
+        />
         
         {/* Image URL */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label 
-            htmlFor="imageUrl" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)'
-            }}
-          >
-            Main Image URL
-          </label>
-          <input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
-            value={formData.imageUrl || ''}
-            onChange={handleInputChange}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: errors.imageUrl 
-                ? '#FF6666' 
-                : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-            }}
-          />
-          {errors.imageUrl && (
-            <div style={{ color: '#FF6666', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              {errors.imageUrl}
-            </div>
-          )}
-        </div>
+        <InputField
+          label="Main Image URL"
+          id="imageUrl"
+          name="imageUrl"
+          type="url"
+          value={formData.imageUrl || ''}
+          onChange={handleInputChange}
+          error={!!errors.imageUrl}
+          errorMessage={errors.imageUrl}
+        />
         
         {/* Additional Images */}
         <div style={{ marginBottom: '1rem' }}>
@@ -386,38 +243,22 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           >
             Additional Images
           </label>
-          <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
-            <input
+          <InputGroup>
+            <Input
               type="url"
               value={imageInput}
               onChange={(e) => setImageInput(e.target.value)}
               placeholder="Add image URL..."
-              style={{
-                flex: 1,
-                padding: '0.5rem',
-                backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                border: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-              }}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddImage}
-              style={{
-                padding: '0.5rem 1rem',
-                marginLeft: '0.5rem',
-                backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                border: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                cursor: 'pointer'
-              }}
+              variant="secondary"
             >
               Add
-            </button>
-          </div>
+            </Button>
+          </InputGroup>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {formData.imageUrls?.map((url, index) => (
@@ -469,40 +310,23 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           >
             Technologies *
           </label>
-          <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
-            <input
+          <InputGroup>
+            <Input
               type="text"
               value={techInput}
               onChange={(e) => setTechInput(e.target.value)}
               placeholder="Add a technology..."
-              style={{
-                flex: 1,
-                padding: '0.5rem',
-                backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                border: '1px solid',
-                borderColor: errors.technologies 
-                  ? '#FF6666' 
-                  : (isDebianTheme ? '#FFFFFF' : 'var(--accent-color)')
-              }}
+              error={!!errors.technologies}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnology())}
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddTechnology}
-              style={{
-                padding: '0.5rem 1rem',
-                marginLeft: '0.5rem',
-                backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                border: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                cursor: 'pointer'
-              }}
+              variant="secondary"
             >
               Add
-            </button>
-          </div>
+            </Button>
+          </InputGroup>
           
           {errors.technologies && (
             <div style={{ color: '#FF6666', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
@@ -533,38 +357,22 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           >
             Highlights
           </label>
-          <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
-            <input
+          <InputGroup>
+            <Input
               type="text"
               value={highlightInput}
               onChange={(e) => setHighlightInput(e.target.value)}
               placeholder="Add a highlight..."
-              style={{
-                flex: 1,
-                padding: '0.5rem',
-                backgroundColor: isDebianTheme ? '#000080' : 'rgba(0, 0, 0, 0.3)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-                border: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)'
-              }}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddHighlight())}
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddHighlight}
-              style={{
-                padding: '0.5rem 1rem',
-                marginLeft: '0.5rem',
-                backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
-                color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                border: '1px solid',
-                borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-                cursor: 'pointer'
-              }}
+              variant="secondary"
             >
               Add
-            </button>
-          </div>
+            </Button>
+          </InputGroup>
           
           <ul style={{ 
             listStyleType: 'none',
@@ -619,37 +427,21 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         
         {/* Form actions */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-          <button
+          <Button
             type="button"
             onClick={onCancel}
             disabled={isSaving}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: 'transparent',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--text-color)',
-              border: '1px solid',
-              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              cursor: isSaving ? 'not-allowed' : 'pointer',
-              opacity: isSaving ? 0.7 : 1
-            }}
+            variant="secondary"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isSaving}
-            style={{
-              padding: '0.5rem 1.5rem',
-              backgroundColor: isDebianTheme ? '#0000D3' : 'rgba(0, 255, 217, 0.1)',
-              color: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              border: '1px solid',
-              borderColor: isDebianTheme ? '#FFFFFF' : 'var(--accent-color)',
-              cursor: isSaving ? 'not-allowed' : 'pointer',
-              opacity: isSaving ? 0.7 : 1
-            }}
+            variant="primary"
           >
             {isSaving ? 'Saving...' : (isEditing ? 'Update Project' : 'Create Project')}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

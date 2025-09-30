@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../../store/appStore';
 import { NavTabs } from '../../NavTabs';
 import { StatusBar } from '../../StatusBar';
 import { TerminalHeader } from '../TerminalHeader';
 import CommandBar from '../../CommandBar';
-import './TerminalLayout.css';
+import { useTerminalLayoutStyles } from '../../../styles/components/TerminalLayout.styles';
 
 interface TerminalLayoutProps {
   children: React.ReactNode;
@@ -20,6 +20,18 @@ export const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   className = ''
 }) => {
   const { theme } = useAppStore();
+  const terminalStyles = useTerminalLayoutStyles(theme);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  // Handle window resize for responsive design
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Apply theme class to body
   useEffect(() => {
@@ -27,11 +39,11 @@ export const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   }, [theme]);
 
   return (
-    <div className={`terminal-container theme-${theme} ${className}`}>
-      <div className="terminal-window">
+    <div style={{...terminalStyles.terminalContainer}} className={className}>
+      <div style={isMobile ? terminalStyles.terminalWindowMobile : terminalStyles.terminalWindow}>
         <TerminalHeader />
         <NavTabs />
-        <div className="terminal-content-wrapper">
+        <div style={terminalStyles.terminalContentWrapper}>
           {children}
         </div>
         <CommandBar />

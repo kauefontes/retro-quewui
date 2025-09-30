@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useAppStore } from '../store/appStore';
 import { useAuth } from '../contexts/AuthUtils';
-import './HelpModal.css';
+import { useTheme } from '../hooks/useTheme';
+import { useHelpModalStyles } from '../styles/components/HelpModal.styles';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -9,8 +9,9 @@ interface HelpModalProps {
 }
 
 export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
-  const { theme } = useAppStore();
   const { isAuthenticated } = useAuth();
+  const { theme: currentTheme } = useTheme();
+  const styles = useHelpModalStyles(currentTheme);
   
   // Define commands and their descriptions
   const commands = [
@@ -71,36 +72,36 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
   
   return (
-    <div className="help-modal-overlay" onClick={onClose}>
+    <div style={styles.overlay} onClick={onClose}>
       <div 
-        className={`help-modal ${theme === 'light' ? 'theme-light' : 'theme-dark'}`}
+        style={styles.modal}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="help-modal-header">
-          <h2 className="help-modal-title">HELP</h2>
-          <button className="help-modal-close-btn" onClick={onClose}>×</button>
+        <div style={styles.header}>
+          <h2 style={styles.title}>HELP</h2>
+          <button style={styles.closeBtn} onClick={onClose}>×</button>
         </div>
         
-        <div className="help-modal-content">
-          <div className="help-section">
-            <h3 className="help-section-title">Available Commands</h3>
-            <div className="help-commands-grid">
+        <div style={styles.content}>
+          <div style={styles.section}>
+            <h3 style={styles.sectionTitle}>Available Commands</h3>
+            <div style={styles.commandsGrid}>
               {commands.map((cmd, index) => (
-                <div key={index} className="help-command-item">
-                  <span className="help-command-key">{cmd.key}</span>
-                  <span className="help-command-desc">{cmd.description}</span>
+                <div key={index} style={styles.commandItem}>
+                  <span style={styles.commandKey}>{cmd.key}</span>
+                  <span style={styles.commandDesc}>{cmd.description}</span>
                 </div>
               ))}
             </div>
           </div>
           
-          <div className="help-section">
-            <h3 className="help-section-title">Keyboard Shortcuts</h3>
-            <div className="help-commands-grid">
+          <div style={styles.section}>
+            <h3 style={styles.sectionTitle}>Keyboard Shortcuts</h3>
+            <div style={styles.commandsGrid}>
               {shortcuts.map((shortcut, index) => (
-                <div key={index} className="help-command-item">
-                  <span className="help-command-key">{shortcut.key}</span>
-                  <span className="help-command-desc">{shortcut.description}</span>
+                <div key={index} style={styles.commandItem}>
+                  <span style={styles.commandKey}>{shortcut.key}</span>
+                  <span style={styles.commandDesc}>{shortcut.description}</span>
                 </div>
               ))}
             </div>
@@ -108,13 +109,13 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
         </div>
         
         {isAuthenticated && (
-          <div className="help-section">
-            <h3 className="help-section-title">Admin Commands</h3>
-            <div className="help-commands-grid">
+          <div style={styles.section}>
+            <h3 style={styles.sectionTitle}>Admin Commands</h3>
+            <div style={styles.commandsGrid}>
               {adminCommands.map((cmd, index) => (
-                <div key={index} className="help-command-item">
-                  <span className="help-command-key">:{cmd.key}</span>
-                  <span className="help-command-desc">{cmd.description}</span>
+                <div key={index} style={styles.commandItem}>
+                  <span style={styles.commandKey}>:{cmd.key}</span>
+                  <span style={styles.commandDesc}>{cmd.description}</span>
                 </div>
               ))}
             </div>

@@ -1,5 +1,3 @@
-@import './views/BlogView.css';
-
 /* Base animation */
 :root {
   --blink-animation: blink 1.2s step-end infinite;

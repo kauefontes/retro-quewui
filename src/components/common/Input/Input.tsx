@@ -203,7 +203,10 @@ export const InputGroup: React.FC<InputGroupProps> = ({
   const [inputElement, buttonElement] = children;
 
   const inputWithGroupProps = React.cloneElement(inputElement, {
-    inGroup: true,
+    style: {
+      ...inputElement.props.style,
+      ...styles.inputGroupInput,
+    },
   });
 
   const buttonWithGroupStyles = React.cloneElement(buttonElement, {

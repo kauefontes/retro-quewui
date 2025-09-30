@@ -10,7 +10,7 @@ import { ListDetailLayout } from '../../components/common/ListDetailLayout';
 import { EmptyState, EmptyProjectState } from '../../components/common/EmptyState';
 import type { Project } from '../../types/index';
 import { deleteProject } from '../../data/api';
-import './ProjectsView.css';
+import { useProjectsViewStyles } from '../../styles/components/ProjectsView.styles';
 
 /**
  * Projects view component that displays a list of projects with filtering and details
@@ -29,6 +29,7 @@ export const ProjectsView: React.FC = () => {
   } = useProjects();
   
   const { theme } = useTheme();
+  const projectsViewStyles = useProjectsViewStyles(theme);
   
   // Admin state
   const [isEditing, setIsEditing] = useState(false);
@@ -137,7 +138,7 @@ export const ProjectsView: React.FC = () => {
   );
   
   const titleAction = !loading && !error && (
-    <span className="live-badge">live</span>
+    <span style={projectsViewStyles.liveBadge}>live</span>
   );
   
   const techFilter = (
@@ -157,7 +158,7 @@ export const ProjectsView: React.FC = () => {
   );
   
   return (
-    <div className={`projects-view theme-${theme}`}>
+    <div style={projectsViewStyles.projectsView}>
       {techFilter}
       
       <ListDetailLayout

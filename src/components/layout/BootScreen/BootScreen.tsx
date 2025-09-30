@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAppStore } from '../../../store/appStore';
 import { useTheme } from '../../../hooks/useTheme';
-import './BootScreen.css';
+import { useBootScreenStyles } from '../../../styles/components/BootScreen.styles';
 
 interface BootMessageProps {
   message: string;
@@ -10,6 +10,8 @@ interface BootMessageProps {
 
 const BootMessage: React.FC<BootMessageProps> = ({ message, delay }) => {
   const [visible, setVisible] = React.useState(false);
+  const { theme } = useTheme();
+  const styles = useBootScreenStyles(theme);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,8 +24,8 @@ const BootMessage: React.FC<BootMessageProps> = ({ message, delay }) => {
   if (!visible) return null;
   
   return (
-    <div className="boot-message">
-      <span className="boot-prompt">&gt;</span>
+    <div style={styles.bootMessage}>
+      <span style={styles.bootPrompt}>&gt;</span>
       <span>{message}</span>
     </div>
   );
@@ -36,6 +38,7 @@ const BootMessage: React.FC<BootMessageProps> = ({ message, delay }) => {
 export const BootScreen: React.FC = () => {
   const { setInitialized } = useAppStore();
   const { theme } = useTheme();
+  const styles = useBootScreenStyles(theme);
   
   useEffect(() => {
     // Simulate boot sequence
@@ -47,9 +50,9 @@ export const BootScreen: React.FC = () => {
   }, [setInitialized]);
 
   return (
-    <div className={`boot-screen theme-${theme}`}>
-      <div className="boot-header">
-        <pre className="ascii-art">
+    <div style={styles.bootScreen}>
+      <div style={styles.bootHeader}>
+        <pre style={styles.asciiArt}>
 {` ░▒▓██████▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓████████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░ 
 ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░ 
 ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░ 
@@ -61,11 +64,11 @@ export const BootScreen: React.FC = () => {
     ░▒▓██▓▒░                                                                              
 `}
         </pre>
-        <h1 className="boot-title">Quewui TUI v0.8</h1>
-        <div className="boot-subtitle">Loading system components...</div>
+        <h1 style={styles.bootTitle}>Quewui TUI v0.8</h1>
+        <div style={styles.bootSubtitle}>Loading system components...</div>
       </div>
       
-      <div className="boot-messages">
+      <div style={styles.bootMessages}>
         <BootMessage message="Initializing system..." delay={300} />
         <BootMessage message="Loading profile data..." delay={800} />
         <BootMessage message="Setting up terminal interface..." delay={1300} />

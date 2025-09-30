@@ -5,7 +5,6 @@ import type { ContactFormData, Profile } from '../types/index';
 import { EmptyState } from '../components/common/EmptyState';
 import { InputField, TextAreaField } from '../components/common/Input';
 import { Button } from '../components/common/Button';
-import './ContactView.css';
 
 export const ContactView = () => {
   const [formData, setFormData] = useState({

@@ -22,10 +22,10 @@ export const MessagesView = () => {
       try {
         setLoading(true);
         const messagesData = await getContactMessages();
-        setMessages(messagesData);
+        setMessages(messagesData || []); // Proteção contra null/undefined
         
         // Select the first message by default if available
-        if (messagesData.length > 0) {
+        if (messagesData && messagesData.length > 0) {
           setSelectedMessage(messagesData[0]);
         }
         
@@ -54,7 +54,7 @@ export const MessagesView = () => {
 
     try {
       await deleteContactMessage(selectedMessage.id);
-      const updatedMessages = messages.filter(message => message.id !== selectedMessage.id);
+      const updatedMessages = messages ? messages.filter(message => message.id !== selectedMessage.id) : [];
       setMessages(updatedMessages);
       
       // Select the first message in the updated list or null if empty
@@ -67,7 +67,7 @@ export const MessagesView = () => {
 
   const messagesList = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {messages.length > 0 ? (
+      {messages && messages.length > 0 ? (
         messages.map((message) => (
           <MessageCard 
             key={message.id} 
@@ -95,7 +95,7 @@ export const MessagesView = () => {
     />
   );
   
-  const titleAction = !loading && !error && messages.length > 0 && (
+  const titleAction = !loading && !error && messages && messages.length > 0 && (
     <span style={{ 
       fontSize: '0.75rem', 
       backgroundColor: '#00AA00', 
@@ -104,7 +104,7 @@ export const MessagesView = () => {
       borderRadius: '0.25rem',
       fontWeight: 'normal'
     }}>
-      {messages.length}
+      {messages ? messages.length : 0}
     </span>
   );
 

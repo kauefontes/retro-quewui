@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../../store/appStore';
 import { Button } from '../../common/Button';
-import './TerminalHeader.css';
+import { useTerminalHeaderStyles } from '../../../styles/components/TerminalHeader.styles';
 
 interface TerminalHeaderProps {
   className?: string;
@@ -15,23 +15,24 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
   className = '' 
 }) => {
   const { theme, toggleTheme, isCommandMode, toggleCommandMode } = useAppStore();
+  const headerStyles = useTerminalHeaderStyles(theme);
   
   return (
-    <div className={`terminal-header theme-${theme} ${className}`}>
-      <div className="terminal-header-left">
-        <span className="terminal-title">
+    <div style={{...headerStyles.terminalHeader}} className={className}>
+      <div style={headerStyles.terminalHeaderLeft}>
+        <span style={headerStyles.terminalTitle}>
           TERMINAL
         </span>
-        <span className={`cmd-mode-indicator ${isCommandMode ? 'active' : ''}`}>
+        <span style={isCommandMode ? headerStyles.cmdModeIndicatorActive : headerStyles.cmdModeIndicator}>
           [CMD MODE: {isCommandMode ? 'ON' : 'OFF'}]
         </span>
       </div>
-      <div className="terminal-header-buttons">
+      <div style={headerStyles.terminalHeaderButtons}>
         <Button 
           variant="terminal"
           size="small"
           onClick={toggleCommandMode}
-          className="cmd-mode-button"
+          style={headerStyles.cmdModeButton}
         >
           {isCommandMode ? 'Exit CMD' : 'CMD Mode'}
         </Button>
@@ -39,7 +40,7 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
           variant="terminal"
           size="small"
           onClick={toggleTheme}
-          className="theme-toggle-button"
+          style={headerStyles.themeToggleButton}
         >
           {theme === 'dark' ? 'LIGHT' : 'DARK'}
         </Button>

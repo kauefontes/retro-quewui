@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import type { TabName } from '../types';
 import { useAuth } from '../contexts/AuthUtils';
-import './CommandModal.css';
+import { useTheme } from '../hooks/useTheme';
+import { useCommandModalStyles } from '../styles/components/CommandModal.styles';
 
 interface CommandModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
     isHelpModalOpen
   } = useAppStore();
   const { login, isAuthenticated, logout } = useAuth();
+  const { theme: currentTheme } = useTheme();
+  const styles = useCommandModalStyles(currentTheme);
   const [input, setInput] = useState('');
   const [commandError, setCommandError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -256,14 +259,14 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   return (
-    <div className="command-modal-overlay" onClick={onClose}>
+    <div style={styles.overlay} onClick={onClose}>
       <div 
-        className={`command-modal ${theme === 'light' ? 'theme-light' : 'theme-dark'}`} 
+        style={styles.modal} 
         onClick={e => e.stopPropagation()}
       >
-        <div className="command-modal-input-container">
-          <span className="command-modal-prompt">{promptText}</span>
-          <div className="command-modal-input-wrapper">
+        <div style={styles.inputContainer}>
+          <span style={styles.prompt}>{promptText}</span>
+          <div style={styles.inputWrapper}>
             <input
               ref={inputRef}
               type={currentLoginState.state === 'password' ? 'password' : 'text'}
@@ -278,23 +281,31 @@ export const CommandModal: React.FC<CommandModalProps> = ({ isOpen, onClose }) =
                     ? "Enter your password" 
                     : commandError || ""
               }
-              className={`command-modal-input ${commandError ? 'error' : ''}`}
+              style={{
+                ...styles.input,
+                ...(commandError ? styles.inputError : {})
+              }}
               autoFocus
             />
-            <span className="command-modal-cursor"></span>
+            <span 
+              style={{
+                ...styles.cursor,
+                left: `calc(${input.length} * 0.6rem)`
+              }}
+            ></span>
           </div>
         </div>
         
-        {commandError && <div className="command-error">{commandError}</div>}
-        {isHelpModalOpen && <div className="help-modal-active">Help modal is open. Press 'h' or click outside to close it first.</div>}
+        {commandError && <div style={styles.commandError}>{commandError}</div>}
+        {isHelpModalOpen && <div style={styles.helpModalActive}>Help modal is open. Press 'h' or click outside to close it first.</div>}
         
-        <div className="command-shortcut-help">
+        <div style={styles.shortcutHelp}>
           {isHelpModalOpen ? (
-            <div className="help-message">
+            <div style={styles.helpMessage}>
               Help modal is open. Close it first to use commands.
             </div>
           ) : currentLoginState.state !== 'none' ? (
-            <div className="login-message">
+            <div style={styles.loginMessage}>
               {currentLoginState.state === 'username' 
                 ? "Enter username and press Enter" 
                 : "Enter password and press Enter"}

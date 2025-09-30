@@ -3,7 +3,7 @@ import type { Post } from '../types/index';
 import { deletePost } from '../data/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import './BlogView.css';
+import { useBlogViewStyles } from '../styles/components/BlogView.styles';
 import { useAppStore } from '../store/appStore';
 import { PostForm } from '../components/features/blog/PostForm';
 import { BlogFilter } from '../components/features/blog/BlogFilter';
@@ -247,6 +247,7 @@ interface PostDetailProps {
 
 const PostDetail = ({ post, onClose, onEdit, onDelete }: PostDetailProps) => {
   const { theme } = useAppStore();
+  const blogStyles = useBlogViewStyles(theme);
   const isDebianTheme = theme === 'light';
   
   return (
@@ -293,7 +294,7 @@ const PostDetail = ({ post, onClose, onEdit, onDelete }: PostDetailProps) => {
         }}>
           Post Content
         </h4>
-        <div className={`prose ${isDebianTheme ? 'prose-debian' : 'prose-tron'}`}>
+        <div style={blogStyles.prose}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {post.content}
           </ReactMarkdown>

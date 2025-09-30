@@ -10,7 +10,7 @@ import { ListDetailLayout } from '../components/common/ListDetailLayout';
 import { TechTag } from '../components/common/TechTag';
 import { EmptyState, EmptyProjectState } from '../components/common/EmptyState';
 import { useExperiences } from '../hooks/useExperiences';
-import './ExperiencesView.css';
+import { useExperiencesViewStyles } from '../styles/components/ExperiencesView.styles';
 
 export const ExperiencesView = () => {
   const {
@@ -26,6 +26,7 @@ export const ExperiencesView = () => {
   } = useExperiences();
   
   const { theme } = useAppStore();
+  const experiencesViewStyles = useExperiencesViewStyles(theme);
   const isDebianTheme = theme === 'light';
   
   // Admin state
@@ -187,7 +188,7 @@ export const ExperiencesView = () => {
   );
   
   return (
-    <div className={`experiences-view theme-${theme}`}>
+    <div style={experiencesViewStyles.experiencesView}>
       {techFilter}
       
       <ListDetailLayout
